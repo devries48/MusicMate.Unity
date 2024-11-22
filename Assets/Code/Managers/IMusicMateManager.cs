@@ -14,11 +14,14 @@ public interface IMusicMateManager
     void ChangeStates(Image[] images, bool enabled, bool isPlaying);
     void ChangeStates(TextMeshProUGUI[] texts, bool enabled);
     void ChangeStates(Slider[] sliders, bool enabled);
-
+    void HideSpinner();
+    void ShowError(ErrorType error, string message, string description = "");
+    void ShowLogin();
     void ShowRelease(ReleaseResult releaseModel);
     void ChangeVisiblePart(VisiblePart part);
     void SubscribeToVisiblePartChanged(VisiblePartChangedEventHandler handler);
     void UnsubscribeFromVisiblePartChanged(VisiblePartChangedEventHandler handler);
+    void QuitApplication();
 }
 
 #region EventHandlers & EventArgs

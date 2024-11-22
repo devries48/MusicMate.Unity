@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System;
 using UnityEngine;
 
 public class MainPageView : MonoBehaviour
@@ -20,7 +19,7 @@ public class MainPageView : MonoBehaviour
     IMusicMateManager _manager;
     State _state;
 
-    readonly float _fadeTime = 1;
+    float _fadeTime = 0;
     readonly float _popupTime = .5f;
 
     void Awake()
@@ -28,11 +27,14 @@ public class MainPageView : MonoBehaviour
         _service = ApiService.Instance.GetClient();
         _playerService = AudioPlayerService.Instance;
         _manager = MusicMateManager.Instance;
+
+        InitPanels();
     }
 
     void Start()
     {
         _state = new State();
+
         _releaseDetails.gameObject.SetActive(false);
         _artistDetails.gameObject.SetActive(false);
     }
@@ -49,10 +51,30 @@ public class MainPageView : MonoBehaviour
         _manager.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
     }
 
-    public void ShowRelease(ReleaseResult release) => _releaseDetails.GetRelease(release);
+    // Hide all elements
+    void InitPanels()
+    {
+        ActivatePanels(false);
+        ConnectionChanged(false);
+    }
+
+    void ActivatePanels(bool activate)
+    {
+        _audioPlayer.gameObject.SetActive(activate);
+        _releaseResult.gameObject.SetActive(activate);
+        _applicationToolbar.gameObject.SetActive(activate);
+        _searchToolbar.gameObject.SetActive(activate);
+        _importToolbar.gameObject.SetActive(activate);
+    }
 
     public void ConnectionChanged(bool connected)
     {
+        if (connected && _fadeTime == 0)
+        {
+            _fadeTime = 1;
+            ActivatePanels(true);
+        }
+
         PanelFade(_audioPlayer.m_canvasGroupExpanded, connected);
         PanelFade(_releaseResult.m_canvasGroup, connected);
         PanelFade(_applicationToolbar.m_canvasGroup, connected);
@@ -63,12 +85,14 @@ public class MainPageView : MonoBehaviour
             _service.GetInitialReleases(GetInitialReleasesCallback);
     }
 
+    public void ShowRelease(ReleaseResult release) => _releaseDetails.GetRelease(release);
+
+
     void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e)
     {
         _releaseResult.SetRightMargin(e.IsExpanded);
     }
 
-    // ReleaseResult -> ReleaseDetails
     void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)
     {
         var p = e.Part;
@@ -137,7 +161,7 @@ public class MainPageView : MonoBehaviour
         _state.ReleaseDetails = show ? State.States.visible : State.States.hidden;
     }
 
-    void MoveReleaseDetails(bool show, float delay=0)
+    void MoveReleaseDetails(bool show, float delay = 0)
     {
         var pivotTo = show ? .5f : 2f;
         var easing = show ? Ease.OutBack : Ease.InBack;
@@ -173,11 +197,18 @@ public class MainPageView : MonoBehaviour
 
     void PanelFade(CanvasGroup canvas, bool fadeIn)
     {
+        if (canvas == null)
+            return;
+
         canvas.alpha = fadeIn ? 0f : 1f;
         canvas.DOFade(fadeIn ? 1f : 0f, _fadeTime).SetEase(Ease.InSine).SetDelay(fadeIn ? .5f : 0f);
     }
 
-    void GetInitialReleasesCallback(PagedResult<ReleaseResult> result) => _releaseResult.SetResult(result);
+    void GetInitialReleasesCallback(PagedResult<ReleaseResult> result)
+    {
+        _releaseResult.SetResult(result);
+        _manager.HideSpinner();
+    }
 
     class State
     {

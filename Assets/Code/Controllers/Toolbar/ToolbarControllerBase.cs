@@ -13,13 +13,12 @@ public abstract class ToolbarControllerBase : MonoBehaviour
     {
         m_Manager = MusicMateManager.Instance;
         m_ApiService = ApiService.Instance.GetClient();
+        m_CanvasGroup = GetComponent<CanvasGroup>();
+        m_CanvasGroup.alpha = 0f;
     }
 
     protected virtual void Start()
     {
-        m_CanvasGroup = GetComponent<CanvasGroup>();
-        m_CanvasGroup.alpha = 0f;
-
         InitElements();
         ChangeElementStates();
     }

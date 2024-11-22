@@ -1,12 +1,22 @@
 using DG.Tweening;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateManager
 {
-    [Header("Views")]
+    [Header("Configuration")]
+    [SerializeField] AppConfiguration _appConfig;
+
+    [Header("Elements")]
+    [SerializeField] GameObject _logo;
+    [SerializeField] GameObject _connectionSpinner;
     [SerializeField] MainPageView _mainPage;
+
+    [Header("Controllers")]
+    [SerializeField] ErrorWindowController _errorController;
+    [SerializeField] LoginWindowController _loginController;
 
     [Header("Colors")]
     [SerializeField] Color32 _accentColor;
@@ -20,13 +30,15 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     [SerializeField] Sprite _muteSprite;
     [SerializeField] Sprite _unmuteSprite;
 
+    readonly float _popupTime = .5f;
+
     event VisiblePartChangedEventHandler VisiblePartChanged;
+
+    IApiService _service;
+    VisiblePart _parentPart, _currentPart;
 
     public Color32 ForegroundColor => _foregroundColor;
     public Color32 AccentColor => _accentColor;
-
-    IApiService _service;
-    VisiblePart _parentPart,_currentPart;
 
     void Awake() => _service = ApiService.Instance.GetClient();
 
@@ -34,7 +46,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     void OnDisable() => _service.UnsubscribeFromConnectionChanged(OnConnectionChanged);
 
-    void Start() { _service.SignIn("admin", "123"); }
+    void Start() { _service.SignIn(_appConfig.ApiServiceUrl, "admin", "123"); }
 
     public IMusicMateManager GetClient() => this;
 
@@ -100,9 +112,28 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     }
     #endregion
 
-    public void ChangeVisiblePart(VisiblePart part)
+
+    /// <summary>
+    /// Notify subscribed controllers the visibility of a particular part has changed.
+    /// </summary>
+    public void ChangeVisiblePart(VisiblePart part) => VisiblePartChanged?.Invoke(this, new VisiblePartChangedEventArgs(part));
+
+    public void ShowError(ErrorType error, string message, string description = "")
     {
-        VisiblePartChanged?.Invoke(this, new VisiblePartChangedEventArgs( part));
+        _errorController.SetError(error, message, description);
+        MoveErrorPanel(true);
+    }
+
+    public void ShowLogin()
+    {
+        float delay = 0f;
+        if (_errorController.gameObject.activeSelf)
+        {
+            MoveErrorPanel(false);
+            delay = .5f;
+        }
+
+        MoveLoginPanel(true, delay);
     }
 
     public void ShowRelease(ReleaseResult releaseModel)
@@ -111,15 +142,95 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         ChangeVisiblePart(VisiblePart.ReleaseDetails);
     }
 
+    void HideLogo(bool quit=false)
+    {
+        var par = _logo.GetComponentInChildren<ParticleSystem>(true);
+        var anim = _logo.GetComponent<Animator>();
+
+        anim.Play("Fade");
+
+        if (quit)
+            StartCoroutine(DelayAndQuit(par.main.duration));
+    }
+
+    public void HideSpinner()
+    {
+        var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
+        var seq = DOTween.Sequence();
+
+        for (int i = 0; i < images.Length; ++i)
+        {
+            var img = images[i];
+            seq.Join(img.DOFade(0f, .5f));
+        }
+    }
+
+    void MoveErrorPanel(bool show) => MovePanel(show, _errorController.gameObject, 3f, .5f);
+
+    void MoveLoginPanel(bool show, float delay = 0f) => MovePanel(show, _loginController.gameObject, -2f, .5f, delay);
+
+    void MovePanel(bool show, GameObject panelObj, float hidePivot, float showPivot, float delay = 0f)
+    {
+        if (show)
+            panelObj.SetActive(true);
+
+        var pivotTo = show ? showPivot : hidePivot;
+        var easing = show ? Ease.OutBack : Ease.InBack;
+        var rect = panelObj.GetComponent<RectTransform>();
+
+        rect.DOPivotY(pivotTo, _popupTime).SetEase(easing)
+            .SetDelay(delay)
+            .OnComplete(() =>
+            {
+                if (!show)
+                    panelObj.SetActive(false);
+            });
+    }
+
     public void SubscribeToVisiblePartChanged(VisiblePartChangedEventHandler handler) => VisiblePartChanged += handler;
 
     public void UnsubscribeFromVisiblePartChanged(VisiblePartChangedEventHandler handler) => VisiblePartChanged -= handler;
 
-    void OnConnectionChanged(object sender, ConnectionChangedEventArgs e)
+    public void QuitApplication()
     {
-        _mainPage.ConnectionChanged(e.Connected);
-        //TODO: Display error, login
+        if (_errorController.gameObject.activeInHierarchy)
+            MoveErrorPanel(false);
+        else if (_loginController.gameObject.activeInHierarchy)
+            MoveLoginPanel(false);
+
+        if (_logo.activeInHierarchy)
+            HideLogo(true);
+        else
+            QuitApp();
     }
 
+    IEnumerator DelayAndQuit(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        QuitApp();
+    }
+
+    /// <summary>
+    /// Application.Quit() does not work in the editor so
+    /// UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+    /// </summary>
+    void QuitApp()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
+    }
+
+    // 
+    void OnConnectionChanged(object sender, ConnectionChangedEventArgs e)
+    {        
+        _mainPage.ConnectionChanged(e.Connected);
+
+        if (!e.Connected)
+            ShowError(ErrorType.Connection, e.Error, _appConfig.ApiServiceUrl);
+        else
+            HideLogo();
+    }
 
 }

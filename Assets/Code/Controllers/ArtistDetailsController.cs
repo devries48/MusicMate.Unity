@@ -21,7 +21,6 @@ public class ArtistDetailsController : MonoBehaviour
 
     IMusicMateManager _manager;
     IApiService _apiService;
-
     bool _loading;
 
     readonly float _speed = 1.5f;
@@ -29,15 +28,13 @@ public class ArtistDetailsController : MonoBehaviour
 
     void Awake()
     {
-        gameObject.SetActive(false);
-
         _manager = MusicMateManager.Instance;
         _apiService = ApiService.Instance.GetClient();
     }
 
     void OnEnable()
     {
-        StartCoroutine(GetArtistCore());
+            StartCoroutine(GetArtistCore());
     }
 
     void OnDisable()
@@ -54,7 +51,7 @@ public class ArtistDetailsController : MonoBehaviour
 
     public void CloseDetails()
     {
-        _manager.ChangeVisiblePart(VisiblePart.ReleaseResult);
+        _manager.ChangeVisiblePart(VisiblePart.Previous);
     }
 
     IEnumerator GetArtistCore()
@@ -83,10 +80,10 @@ public class ArtistDetailsController : MonoBehaviour
 
         //    _apiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
 
-        //    _spinner.DOFade(0, .25f);
-        //    _spinnerBackground.DOFade(0, .25f);
+            _spinner.DOFade(0, .25f);
+            _spinnerBackground.DOFade(0, .25f);
 
-        //    _loading = false;
+            _loading = false;
 
         //});
     }

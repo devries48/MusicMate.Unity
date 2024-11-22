@@ -19,3 +19,8 @@
         Incomplete,
         Processed,
     }
+
+public enum ErrorType:short
+{
+    Connection=0
+}

@@ -2,15 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Plastic.Newtonsoft.Json;
-using Unity.Plastic.Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class ApiService : SceneSingleton<ApiService>, IApiService
 {
-    readonly string _url = "https://localhost:7111/";
+    string _apiUrl;
     string _accessToken;
+
     readonly JsonSerializerSettings _jsonSettings = new()
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -26,7 +27,7 @@ public class ApiService : SceneSingleton<ApiService>, IApiService
 
     public void UnsubscribeFromConnectionChanged(ConnectionChangedEventHandler handler) => ConnectionChanged -= handler;
 
-    public void SignIn(string user, string password) => StartCoroutine(PostSignInRequest(user, password));
+    public void SignIn(string url, string user, string password) => StartCoroutine(PostSignInRequest(url,user, password));
 
     public void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback) => StartCoroutine(GetReleases(callback));
 
@@ -47,8 +48,10 @@ public class ApiService : SceneSingleton<ApiService>, IApiService
         });
     }
 
-    IEnumerator PostSignInRequest(string user, string password)
+    IEnumerator PostSignInRequest(string url, string user, string password)
     {
+        _apiUrl = url;
+
         var model = JsonUtility.ToJson(new LoginModel { Username = user, Password = password });
         using UnityWebRequest wr = UnityWebRequest.Post(UriCombine("auth/token"), model, "application/json");
         wr.certificateHandler = new CertificateWhore();
@@ -195,7 +198,7 @@ public class ApiService : SceneSingleton<ApiService>, IApiService
 
     string UriCombine(string uri)
     {
-        var uri1 = _url.TrimEnd('/');
+        var uri1 = _apiUrl.TrimEnd('/');
         var uri2 = uri.TrimStart('/');
         return $"{uri1}/{uri2}";
     }

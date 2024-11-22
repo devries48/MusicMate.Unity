@@ -70,14 +70,14 @@ public class AudioPlayerController : MonoBehaviour
         _manager= MusicMateManager.Instance; ;
         _playerService = AudioPlayerService.Instance;
         _apiService = ApiService.Instance.GetClient();
+        _audioSource = GetComponent<AudioSource>();
+
+        m_canvasGroupExpanded = _expandedPlayer.gameObject.GetComponent<CanvasGroup>();
+        m_canvasGroupExpanded.alpha = 0f;
     }
 
     void Start()
     {
-        m_canvasGroupExpanded = _expandedPlayer.gameObject.GetComponent<CanvasGroup>();
-        m_canvasGroupExpanded.alpha = 0f;
-
-        _audioSource = GetComponent<AudioSource>();
         _playerService.PlayerWidth = _expandedPlayer.rect.width;
         _fade = new FadeData(.2f, .4f);
 

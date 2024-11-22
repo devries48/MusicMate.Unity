@@ -49,8 +49,8 @@ public class ToolbarPartController : ToolbarControllerBase
 
     protected override IEnumerator SetElementStates()
     {
-        _releaseToggle.IsToggleOn = _toggled == DetailsToggle.release;
-        _artistToggle.IsToggleOn = _toggled == DetailsToggle.artist;
+        _releaseToggle.SetToggle(_toggled == DetailsToggle.release);
+        _artistToggle.SetToggle(_toggled == DetailsToggle.artist);
 
         yield return null;
     }

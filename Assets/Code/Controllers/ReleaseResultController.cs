@@ -27,7 +27,7 @@ public class ReleaseResultController : MonoBehaviour
 
     public enum ThumbnailSize { Tiny, Small, Medium, Large };
 
-    void Start()
+    void Awake()
     {
         _parentTrans = transform.parent.GetComponent<RectTransform>();
         _releaseGrid = GetComponent<GridLayoutGroup>();

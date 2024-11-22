@@ -3,7 +3,7 @@ using UnityEngine;
 
 public interface IApiService
 {
-    void SignIn(string user, string password);
+    void SignIn(string url, string user, string password);
     void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback);
     void GetRelease(Guid id, Action<ReleaseModel> callback);
  

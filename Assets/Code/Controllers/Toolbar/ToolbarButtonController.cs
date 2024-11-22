@@ -43,11 +43,7 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
     public bool IsToggleOn
     {
         get => _isToggleOn;
-        set
-        {
-            _isToggleOn = value;
-            SetToggle();
-        }
+        private set => _isToggleOn = value;
     }
 
     Coroutine _tooltipShowCoroutine;
@@ -59,7 +55,7 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
     void OnEnable() => _button.onClick.AddListener(() => OnButtonClick?.Invoke());
 
     void OnDisable() => _button.onClick.RemoveAllListeners();
-    
+
     void Start()
     {
         float padding = 40f;
@@ -98,6 +94,13 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
         });
     }
 
+    public void SetToggle(bool toggle)
+    {
+        _isToggleOn = toggle;
+        if (this.gameObject.activeInHierarchy)
+            SetToggle();
+    }
+
     void SetToggle()
     {
         var animator = _button.GetComponent<Animator>();
@@ -107,14 +110,12 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
         _icon.transform.DOScale(scaleTo, .25f).SetEase(easing).OnComplete(() =>
             {
                 _toggleIcon.gameObject.SetActive(_isToggleOn);
-                
-                SetInterActable(!IsToggleOn);
+
                 animator.enabled = !IsToggleOn;
-                
-                if (IsToggleOn) 
-                    _icon.color=_manager.AccentColor;
-                else
-                    _icon.color=_manager.ForegroundColor;
+                SetInterActable(!IsToggleOn);
+
+                if (IsToggleOn)
+                    _icon.color = _manager.AccentColor;
             });
     }
 

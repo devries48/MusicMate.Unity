@@ -27,8 +27,6 @@ public class ReleaseDetailsController : MonoBehaviour
 
     void Awake()
     {
-        gameObject.SetActive(false);
-
         _manager = MusicMateManager.Instance;
         _apiService = ApiService.Instance.GetClient();
     }

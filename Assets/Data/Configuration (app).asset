@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: SceneMusicMateProfile
+  m_Script: {fileID: 11500000, guid: 3c2eef3d50d577a439d622ac91850620, type: 3}
+  m_Name: Configuration (app)
   m_EditorClassIdentifier: 
-  components: []
+  ApiServiceUrl: https://localhost:7111
