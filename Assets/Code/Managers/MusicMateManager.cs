@@ -20,6 +20,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     [Header("Colors")]
     [SerializeField] Color32 _accentColor;
+    [SerializeField] Color32 _accentTextColor;
     [SerializeField] Color32 _foregroundColor;
     [SerializeField] Color32 _disabledColor;
     [SerializeField] Color32 _disabledTextColor;
