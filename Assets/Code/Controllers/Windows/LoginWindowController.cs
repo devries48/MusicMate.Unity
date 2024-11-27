@@ -11,7 +11,11 @@ public class LoginWindowController : MonoBehaviour
     [SerializeField] Button _acceptButton;
     [SerializeField] Button _cancelButton;
 
+    [Header("Initial Focus")]
+    [SerializeField, Tooltip("Set focus to the first empty input field in the list")] InputController[] _inputControllers;
+
     IMusicMateManager _manager;
+
 
     void Awake()
     {

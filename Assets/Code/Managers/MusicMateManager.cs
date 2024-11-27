@@ -9,21 +9,22 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     [Header("Configuration")]
     [SerializeField] AppConfiguration _appConfig;
 
-    [Header("Elements")]
-    [SerializeField] GameObject _logo;
-    [SerializeField] GameObject _connectionSpinner;
-    [SerializeField] MainPageView _mainPage;
-
-    [Header("Controllers")]
-    [SerializeField] ErrorWindowController _errorController;
-    [SerializeField] LoginWindowController _loginController;
-
     [Header("Colors")]
     [SerializeField] Color32 _accentColor;
     [SerializeField] Color32 _accentTextColor;
     [SerializeField] Color32 _foregroundColor;
     [SerializeField] Color32 _disabledColor;
     [SerializeField] Color32 _disabledTextColor;
+
+    [Header("Controllers")]
+    [SerializeField] ErrorWindowController _errorController;
+    [SerializeField] LoginWindowController _loginController;
+
+    [Header("Elements")]
+    [SerializeField] GameObject _logo;
+    [SerializeField] GameObject _connectionSpinner;
+    [SerializeField] MainPageView _mainPage;
+    [SerializeField] GameObject[] _inactivateOnStart;
 
     [Header("Sprites")]
     [SerializeField] Sprite _playSprite;
@@ -41,7 +42,11 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public Color32 ForegroundColor => _foregroundColor;
     public Color32 AccentColor => _accentColor;
 
-    void Awake() => _service = ApiService.Instance.GetClient();
+    void Awake()
+    {
+        InactivateGameObjects();
+        _service = ApiService.Instance.GetClient();
+    }
 
     void OnEnable() => _service.SubscribeToConnectionChanged(OnConnectionChanged);
 
@@ -166,6 +171,15 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         }
     }
 
+    // Hide GameObjects initially not shown.
+    void InactivateGameObjects()
+    {
+        for (int i = 0; i < _inactivateOnStart?.Length; i++)
+        {
+            _inactivateOnStart[i].SetActive(false);
+        }
+    }
+
     void MoveErrorPanel(bool show) => MovePanel(show, _errorController.gameObject, 3f, .5f);
 
     void MoveLoginPanel(bool show, float delay = 0f) => MovePanel(show, _loginController.gameObject, -2f, .5f, delay);
@@ -229,7 +243,10 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         _mainPage.ConnectionChanged(e.Connected);
 
         if (!e.Connected)
+        {
             ShowError(ErrorType.Connection, e.Error, _appConfig.ApiServiceUrl);
+            HideSpinner();
+        }
         else
             HideLogo();
     }
