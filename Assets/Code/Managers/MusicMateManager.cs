@@ -39,6 +39,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     IApiService _service;
     VisiblePart _parentPart, _currentPart;
 
+    public AppConfiguration AppConfiguration => _appConfig;
     public Color32 ForegroundColor => _foregroundColor;
     public Color32 AccentColor => _accentColor;
 

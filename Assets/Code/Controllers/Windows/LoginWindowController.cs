@@ -5,17 +5,20 @@ using UnityEngine.UI;
 
 public class LoginWindowController : MonoBehaviour
 {
+    [Header("Controllers")]
+    [SerializeField] InputController _inputUrl;
+    [SerializeField] InputController _inputUser;
+    [SerializeField] InputController _inputPassword;
+
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _titleText;
     [SerializeField] Image _loginImage;
     [SerializeField] Button _acceptButton;
     [SerializeField] Button _cancelButton;
 
-    [Header("Initial Focus")]
-    [SerializeField, Tooltip("Set focus to the first empty input field in the list")] InputController[] _inputControllers;
-
     IMusicMateManager _manager;
 
+    static readonly string encryptionKey = "YourEncryptionKeyHere";
 
     void Awake()
     {
@@ -25,6 +28,12 @@ public class LoginWindowController : MonoBehaviour
     void Start()
     {
         _cancelButton.onClick.AddListener(() => OnCancelClicked());
+        
+        var cfg = _manager.AppConfiguration;
+        _inputUrl.ValueText = cfg.ApiServiceUrl;
+        _inputUser.ValueText = cfg.User;
+        _inputPassword.ValueText = cfg.GetPassword(encryptionKey);
+        
     }
 
     void OnCancelClicked()

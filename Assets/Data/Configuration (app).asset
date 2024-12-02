@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Configuration (app)
   m_EditorClassIdentifier: 
   ApiServiceUrl: https://localhost:7111
+  User: 
+  encryptedPassword: 

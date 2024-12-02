@@ -16,6 +16,13 @@ public class InputController : MonoBehaviour
         _label.text = _labelText;
     }
 
+    public string ValueText { get => _inputTextField.text; set => _inputTextField.text = value; }
+
+    public bool HasValue() => !string.IsNullOrWhiteSpace(_inputTextField.text);
+
+    public void SetFocus() => _inputTextField.ActivateInputField();
+
+
 #if UNITY_EDITOR
     void OnValidate()
     {

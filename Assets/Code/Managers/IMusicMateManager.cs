@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public interface IMusicMateManager
 {
+    AppConfiguration AppConfiguration { get; }
     Color32 AccentColor { get; }
     Color32 ForegroundColor { get; }
 

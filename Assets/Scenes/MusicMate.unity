@@ -658,10 +658,6 @@ MonoBehaviour:
   _loginImage: {fileID: 938917599}
   _acceptButton: {fileID: 2094356374}
   _cancelButton: {fileID: 364157330}
-  _inputControllers:
-  - {fileID: 4219719127982208865}
-  - {fileID: 1253133836}
-  - {fileID: 1850351038}
 --- !u!1 &120393066
 GameObject:
   m_ObjectHideFlags: 0
@@ -2818,7 +2814,7 @@ GameObject:
   - component: {fileID: 495005012}
   - component: {fileID: 495005011}
   m_Layer: 0
-  m_Name: '* API Service (Keep in root)'
+  m_Name: '*Keep in root*   API Service'
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -5036,7 +5032,7 @@ GameObject:
   - component: {fileID: 750652477}
   - component: {fileID: 750652481}
   m_Layer: 5
-  m_Name: Canvas Main Page
+  m_Name: ' Main Page Canvas'
   m_TagString: Untagged
   m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -6183,7 +6179,7 @@ GameObject:
   - component: {fileID: 993701835}
   - component: {fileID: 993701836}
   m_Layer: 0
-  m_Name: '* Manager (Keep in root)'
+  m_Name: '*Keep in root*   Manager'
   m_TagString: Untagged
   m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -8119,18 +8115,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1248231244}
   m_CullTransparentMesh: 1
---- !u!114 &1253133836 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6118127728040208413, guid: 1ee2ce22dda9b3c4ba16d57e9da78986,
-    type: 3}
-  m_PrefabInstance: {fileID: 592566374}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be05f22d4130b7c40b73f72adc12aa4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1260602310
 GameObject:
   m_ObjectHideFlags: 0
@@ -17266,7 +17250,7 @@ GameObject:
   - component: {fileID: 1799646940}
   - component: {fileID: 1799646941}
   m_Layer: 0
-  m_Name: '* Player Service (Keep in root)'
+  m_Name: '*Keep in root*   Player Service'
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -17692,18 +17676,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1850351036}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1850351038 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6118127728040208413, guid: 1ee2ce22dda9b3c4ba16d57e9da78986,
-    type: 3}
-  m_PrefabInstance: {fileID: 1850351036}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be05f22d4130b7c40b73f72adc12aa4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1850669840
 GameObject:
   m_ObjectHideFlags: 0
@@ -18424,7 +18396,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1031630491}
   m_HandleRect: {fileID: 1031630490}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -20852,18 +20824,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 6559374293748285397}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4219719127982208865 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6118127728040208413, guid: 1ee2ce22dda9b3c4ba16d57e9da78986,
-    type: 3}
-  m_PrefabInstance: {fileID: 6559374293748285397}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be05f22d4130b7c40b73f72adc12aa4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &5394696289774453695
 RectTransform:
   m_ObjectHideFlags: 0
