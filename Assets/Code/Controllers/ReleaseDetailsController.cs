@@ -54,7 +54,7 @@ public class ReleaseDetailsController : MonoBehaviour
 
     public void CloseDetails()
     {
-        _manager.ChangeVisiblePart(VisiblePart.ReleaseResult);
+        _manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseResult);
     }
 
     IEnumerator GetReleaseCore()

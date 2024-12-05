@@ -20,25 +20,39 @@ public class LoginWindowController : MonoBehaviour
 
     static readonly string encryptionKey = "YourEncryptionKeyHere";
 
-    void Awake()
-    {
-        _manager = MusicMateManager.Instance;
-    }
+    void Awake() => _manager = MusicMateManager.Instance;
 
-    void Start()
+    void Start() => Initialize();
+
+    void Initialize()
     {
-        _cancelButton.onClick.AddListener(() => OnCancelClicked());
-        
         var cfg = _manager.AppConfiguration;
         _inputUrl.ValueText = cfg.ApiServiceUrl;
         _inputUser.ValueText = cfg.User;
         _inputPassword.ValueText = cfg.GetPassword(encryptionKey);
-        
+
+        if (!_inputUser.HasValue)
+            _inputUser.SetFocus();
+        else if (!_inputPassword.HasValue)
+            _inputPassword.SetFocus();
+        else
+            _inputUrl.SetFocus();
+
+        _inputUrl.ValueTextChanged.AddListener(() => OnInputChanged());
+        _inputUser.ValueTextChanged.AddListener(() => OnInputChanged());
+        _inputPassword.ValueTextChanged.AddListener(() => OnInputChanged());
+
+        _cancelButton.onClick.AddListener(() => OnCancelClicked());
+        _acceptButton.onClick.AddListener(() => OnAcceptClicked());
     }
 
-    void OnCancelClicked()
+    void OnInputChanged() => _acceptButton.interactable = _inputUrl.HasValue && _inputUser.HasValue && _inputPassword.HasValue;
+
+    void OnCancelClicked() => _manager.QuitApplication();
+
+    void OnAcceptClicked()
     {
-        _manager.QuitApplication();
+
     }
 
 }

@@ -2,13 +2,27 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/Create App Configuration", fileName = "Configuration (app)")]
+[CreateAssetMenu(menuName = "MusicMate/App Configuration", fileName = "Configuration (app)")]
 public class AppConfiguration : ScriptableObject
 {
+
+    [Header("Connection")]
     public string ApiServiceUrl;
     public string User;
-
     [SerializeField, HideInInspector] private string encryptedPassword;
+
+    [Header("Colors")]
+    public Color32 AccentColor;
+    public Color32 AccentTextColor;
+    public Color32 ForegroundColor;
+    public Color32 DisabledColor;
+    public Color32 DisabledTextColor;
+
+    [Header("Sprites")]
+    public Sprite PlaySprite;
+    public Sprite PauseSprite;
+    public Sprite MuteSprite;
+    public Sprite UnMuteSprite;
 
     public void SetPassword(string password, string key) => encryptedPassword = Encrypt(password, key);
 
@@ -30,6 +44,9 @@ public class AppConfiguration : ScriptableObject
 
     private static string Decrypt(string encryptedText, string key)
     {
+        if (string.IsNullOrWhiteSpace(encryptedText))
+            return null;
+
         using Aes aes = Aes.Create();
         var keyBytes = Encoding.UTF8.GetBytes(key.PadRight(32));
         aes.Key = keyBytes;

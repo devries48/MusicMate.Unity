@@ -25,9 +25,9 @@ public class ToolbarPartController : ToolbarControllerBase
 
     enum DetailsToggle { release, artist }
 
-    void OnEnable() => m_Manager.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
+    void OnEnable() => m_Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
 
-    void OnDisable() => m_Manager.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+    void OnDisable() => m_Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
 
     protected override void Start()
     {
@@ -60,7 +60,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.release;
         ChangeElementStates();
 
-        m_Manager.ChangeVisiblePart(VisiblePart.ReleaseDetails);
+        m_Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
     }
 
     void OnArtistToggleClicked()
@@ -68,7 +68,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.artist;
         ChangeElementStates();
 
-        m_Manager.ChangeVisiblePart(VisiblePart.ArtistDetails);
+        m_Manager.AppState.ChangeVisiblePart(VisiblePart.ArtistDetails);
     }
 
     void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)

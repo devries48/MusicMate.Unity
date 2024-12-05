@@ -24,6 +24,7 @@ public class MainPageView : MonoBehaviour
 
     void Awake()
     {
+        _state = new State();
         _service = ApiService.Instance.GetClient();
         _playerService = AudioPlayerService.Instance;
         _manager = MusicMateManager.Instance;
@@ -33,8 +34,6 @@ public class MainPageView : MonoBehaviour
 
     void Start()
     {
-        _state = new State();
-
         _releaseDetails.gameObject.SetActive(false);
         _artistDetails.gameObject.SetActive(false);
     }
@@ -42,13 +41,13 @@ public class MainPageView : MonoBehaviour
     void OnEnable()
     {
         _playerService.SubscribeToExpandedChanged(OnAudioPlayerExpandedChanged);
-        _manager.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
+        _manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
     }
 
     void OnDisable()
     {
         _playerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
-        _manager.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+        _manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
     }
 
     // Hide all elements

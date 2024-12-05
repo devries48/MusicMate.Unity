@@ -2,12 +2,22 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 public interface IMusicMateManager
 {
     AppConfiguration AppConfiguration { get; }
-    Color32 AccentColor { get; }
-    Color32 ForegroundColor { get; }
+    IAppState AppState { get; }
 
+    void Connect();
+    void HideSpinner();
+    void ShowError(ErrorType error, string message, string description = "");
+    void ShowLogin();
+    void ShowRelease(ReleaseResult releaseModel);
+    void QuitApplication();
+}
+
+public interface IAppState
+{
     void ChangeState(Button button, bool enabled, bool? isPlaying);
     void ChangeState(Image image, bool enabled, bool? isPlaying = null);
     void ChangeState(TextMeshProUGUI text, bool enabled);
@@ -15,14 +25,9 @@ public interface IMusicMateManager
     void ChangeStates(Image[] images, bool enabled, bool isPlaying);
     void ChangeStates(TextMeshProUGUI[] texts, bool enabled);
     void ChangeStates(Slider[] sliders, bool enabled);
-    void HideSpinner();
-    void ShowError(ErrorType error, string message, string description = "");
-    void ShowLogin();
-    void ShowRelease(ReleaseResult releaseModel);
     void ChangeVisiblePart(VisiblePart part);
     void SubscribeToVisiblePartChanged(VisiblePartChangedEventHandler handler);
     void UnsubscribeFromVisiblePartChanged(VisiblePartChangedEventHandler handler);
-    void QuitApplication();
 }
 
 #region EventHandlers & EventArgs

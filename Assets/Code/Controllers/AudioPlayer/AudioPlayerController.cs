@@ -239,14 +239,14 @@ public class AudioPlayerController : MonoBehaviour
 
     IEnumerator SetPlayerState()
     {
-        _manager.ChangeStates(_playPauseButtons, _playerService.IsActive, _playerService.IsPlaying);
-        _manager.ChangeStates(_previousButtons, _playerService.CanMoveBack);
-        _manager.ChangeStates(_nextButtons, _playerService.CanMoveForward);
+        _manager.AppState.ChangeStates(_playPauseButtons, _playerService.IsActive, _playerService.IsPlaying);
+        _manager.AppState.ChangeStates(_previousButtons, _playerService.CanMoveBack);
+        _manager.AppState.ChangeStates(_nextButtons, _playerService.CanMoveForward);
 
-        _manager.ChangeStates(_trackStartTexts, _playerService.IsActive);
-        _manager.ChangeState(_trackTotalText, _playerService.IsActive);
-        _manager.ChangeStates(_positionSliders, _playerService.IsActive);
-        _manager.ChangeStates(_releaseImages, _playerService.IsActive, _playerService.IsPlaying);
+        _manager.AppState.ChangeStates(_trackStartTexts, _playerService.IsActive);
+        _manager.AppState.ChangeState(_trackTotalText, _playerService.IsActive);
+        _manager.AppState.ChangeStates(_positionSliders, _playerService.IsActive);
+        _manager.AppState.ChangeStates(_releaseImages, _playerService.IsActive, _playerService.IsPlaying);
 
         yield return null;
     }

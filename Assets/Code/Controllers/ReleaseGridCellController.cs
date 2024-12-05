@@ -135,7 +135,7 @@ public class ReleaseGridCellController : MonoBehaviour
 
     IEnumerator SetPlayerState()
     {
-        _manager.ChangeState(_playPauseButton, _playerService.IsActive, _playerService.IsPlaying);
+        _manager.AppState.ChangeState(_playPauseButton, _playerService.IsActive, _playerService.IsPlaying);
 
         yield return null;
     }
