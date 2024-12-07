@@ -9,10 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b5cb4992d7a5064c9ce47a575acdcb0, type: 3}
-  m_Name: Sprite Animations
+  m_Script: {fileID: 11500000, guid: 6459aab4c21257d4ba2774a175b12690, type: 3}
+  m_Name: Input Animations
   m_EditorClassIdentifier: 
-  enableGlanceEffect: 0
-  glanceColor: {r: 1, g: 1, b: 1, a: 1}
-  glanceEase: 7
-  glanceDuration: 1
+  TextTransitionDuration: 0.2

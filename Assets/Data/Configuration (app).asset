@@ -18,18 +18,15 @@ MonoBehaviour:
   AccentColor:
     serializedVersion: 2
     rgba: 4282954999
-  AccentTextColor:
+  TextColor:
     serializedVersion: 2
-    rgba: 4278484479
-  ForegroundColor:
+    rgba: 4288651167
+  BackgroundColor:
     serializedVersion: 2
-    rgba: 4288980133
+    rgba: 4280622092
   DisabledColor:
     serializedVersion: 2
     rgba: 4284699969
-  DisabledTextColor:
-    serializedVersion: 2
-    rgba: 4280622092
   PlaySprite: {fileID: 21300000, guid: 835f9ee7e8087414db410ffdbef75890, type: 3}
   PauseSprite: {fileID: 21300000, guid: a82d55f7a65dd9c4194d4cda31519ca5, type: 3}
   MuteSprite: {fileID: 21300000, guid: 7e08cacdb7047a34e96f6cb190c8cefd, type: 3}

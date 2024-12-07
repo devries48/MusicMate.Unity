@@ -36,7 +36,7 @@ public class AppState : IAppState
     }
 
     public void ChangeState(TextMeshProUGUI text, bool enabled) => text.color =
-        enabled ? _config.ForegroundColor : _config.DisabledTextColor;
+        enabled ? _config.AccentColor : _config.BackgroundColor;
 
     public void ChangeStates(Button[] buttons, bool enabled, bool? isPlaying = null)
     {
@@ -60,7 +60,7 @@ public class AppState : IAppState
             var handle = slider.transform.Find("Handle Slide Area/Handle").GetComponent<Image>();
             var fill = slider.transform.Find("Fill Area").gameObject;
 
-            background.color = enabled ? _config.ForegroundColor : _config.DisabledColor;
+            background.color = enabled ? _config.AccentColor : _config.DisabledColor;
             handle.color = enabled ? _config.AccentColor : _config.DisabledColor;
             fill.SetActive(enabled);
         }

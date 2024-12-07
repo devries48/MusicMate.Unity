@@ -12,11 +12,6 @@ public class LogoAnimations : ScriptableObject
     public float particleDuration = 5f;
     public float particleStartLifetime = 5f;
 
-    [Header("Glance Animation")]
-    public float glanceDuration = 1f;
-    public Color glanceColor = Color.white;
-    public Ease glanceEase = Ease.InOutQuad; 
-
     public async void PlayLogoFade(GameObject logo, Action onComplete = null)
     {
         var spriteRenderer = logo.GetComponent<SpriteRenderer>();

@@ -8,16 +8,14 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     [Header("Configuration")]
     [SerializeField] AppConfiguration _appConfig;
 
-    [Header("Animators")]
-    [SerializeField] LogoAnimator _logoAnimator;
-
-    [Header("Controllers")]
+    [Header("Controllers & Animators")]
     [SerializeField] ErrorWindowController _errorController;
     [SerializeField] LoginWindowController _loginController;
+    [SerializeField] MainPageView _mainPage;
+    [SerializeField] LogoAnimator _logoAnimator;
 
     [Header("Elements")]
     [SerializeField] GameObject _connectionSpinner;
-    [SerializeField] MainPageView _mainPage;
     [SerializeField] GameObject[] _inactivateOnStart;
 
     public AppConfiguration AppConfiguration => _appConfig;
@@ -29,6 +27,13 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             return _appState;
         }
     }
+
+    public Color32 AccentColor => _appConfig.AccentColor;
+    public Color32 TextColor => _appConfig.TextColor;
+
+    public Color32 BackgroundColor => _appConfig.BackgroundColor;
+    public Color32 DisabledColor => _appConfig.DisabledColor;
+
 
     readonly float _popupTime = .5f;
     IApiService _service;
@@ -45,7 +50,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     void OnDisable() => _service.UnsubscribeFromConnectionChanged(OnConnectionChanged);
 
-    void Start() => StartCoroutine(DelayAndConnect(1f));
+    void Start() => StartCoroutine(DelayAndConnect(.5f));
 
     public IMusicMateManager GetClient() => this;
 
@@ -84,15 +89,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
                 QuitApp();
 
         });
-
-    //    var par = _logo.GetComponentInChildren<ParticleSystem>(true);
-    //    var anim = _logo.GetComponent<Animator>();
-
-    //    anim.Play("Fade");
-
-    //    if (quit)
-    //        StartCoroutine(DelayAndQuit(par.main.duration));
-    //}
 
     public void HideSpinner()
     {
@@ -150,18 +146,11 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             QuitApp();
     }
 
-    IEnumerator DelayAndQuit(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        QuitApp();
-    }
-
     IEnumerator DelayAndConnect(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         Connect();
     }
-
 
     /// <summary>
     /// Application.Quit() does not work in the editor so

@@ -8,12 +8,19 @@ public interface IMusicMateManager
     AppConfiguration AppConfiguration { get; }
     IAppState AppState { get; }
 
+     Color32 AccentColor { get; }
+    Color32 TextColor { get; }
+    Color32 BackgroundColor { get; }
+    Color32 DisabledColor { get; }
+
     void Connect();
     void HideSpinner();
     void ShowError(ErrorType error, string message, string description = "");
     void ShowLogin();
     void ShowRelease(ReleaseResult releaseModel);
     void QuitApplication();
+
+
 }
 
 public interface IAppState

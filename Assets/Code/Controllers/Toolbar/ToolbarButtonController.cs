@@ -149,7 +149,7 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
     {
         yield return new WaitForSeconds(delay);
 
-        _tooltipText.color = _button.interactable || IsToggleOn ? _manager.AppConfiguration.AccentColor : _manager.AppConfiguration.ForegroundColor;
+        _tooltipText.color = _button.interactable || IsToggleOn ? _manager.AppConfiguration.AccentColor : _manager.AppConfiguration.AccentColor;
 
         _tooltipPanel.localScale = Vector3.zero;
         _tooltipPanel.gameObject.SetActive(true);

@@ -11,7 +11,7 @@ public class SceneSingleton<T> : MonoBehaviour where T : SceneSingleton<T>
         {
             if (m_Instance == null)
             {
-                m_Instance = FindObjectOfType<T>();
+                m_Instance = FindAnyObjectByType<T>();
 
                 // fallback, might not be necessary.
                 if (m_Instance == null)
