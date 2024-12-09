@@ -5,18 +5,18 @@ using UnityEngine.EventSystems;
 
 public class InputController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField] string _labelText;
+
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _label;
     [SerializeField] TMP_InputField _inputTextField;
 
-    [Header("Values")]
-    [SerializeField] string _labelText;
-
+    [HideInInspector]
     public UnityEvent ValueTextChanged;
 
     AnimationManager _animations;
 
-    void Awake() => _animations =AnimationManager.Instance;
+    void Awake() => _animations = AnimationManager.Instance;
 
     void Start()
     {

@@ -13,7 +13,7 @@ public class LoginWindowController : MonoBehaviour
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _titleText;
     [SerializeField] Image _loginImage;
-    [SerializeField] Button _acceptButton;
+    [SerializeField] ButtonInteractable _acceptButton;
     [SerializeField] Button _cancelButton;
 
     IMusicMateManager _manager;

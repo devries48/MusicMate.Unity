@@ -10,7 +10,7 @@ public class ErrorWindowController : MonoBehaviour
     [SerializeField] TextMeshProUGUI _descriptionText;
     [SerializeField] TextMeshProUGUI _errorText;
     [SerializeField] Image _warningImage;
-    [SerializeField] Button _acceptButton;
+    [SerializeField] ButtonInteractable _acceptButton;
     [SerializeField] Button _cancelButton;
 
     IMusicMateManager _manager;

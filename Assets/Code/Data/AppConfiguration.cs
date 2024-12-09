@@ -13,10 +13,10 @@ public class AppConfiguration : ScriptableObject
 
     [Header("Colors")]
     public Color32 AccentColor;
+    public Color32 DefaultColor;
     public Color32 TextColor;
     public Color32 BackgroundColor;
-    public Color32 DisabledColor;
-
+    
     [Header("Sprites")]
     public Sprite PlaySprite;
     public Sprite PauseSprite;

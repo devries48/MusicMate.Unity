@@ -29,10 +29,10 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     }
 
     public Color32 AccentColor => _appConfig.AccentColor;
+    public Color32 DefaultColor => _appConfig.DefaultColor;
+    public Color32 AccentTextColor => _appConfig.BackgroundColor;
     public Color32 TextColor => _appConfig.TextColor;
-
     public Color32 BackgroundColor => _appConfig.BackgroundColor;
-    public Color32 DisabledColor => _appConfig.DisabledColor;
 
 
     readonly float _popupTime = .5f;

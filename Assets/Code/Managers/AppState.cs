@@ -60,8 +60,8 @@ public class AppState : IAppState
             var handle = slider.transform.Find("Handle Slide Area/Handle").GetComponent<Image>();
             var fill = slider.transform.Find("Fill Area").gameObject;
 
-            background.color = enabled ? _config.AccentColor : _config.DisabledColor;
-            handle.color = enabled ? _config.AccentColor : _config.DisabledColor;
+            background.color = enabled ? _config.AccentColor : _config.DefaultColor;
+            handle.color = enabled ? _config.AccentColor : _config.DefaultColor;
             fill.SetActive(enabled);
         }
     }
