@@ -9,23 +9,24 @@ public class ButtonInteractable : Button
     public Image ImageComponent { get; private set; }
     public TextMeshProUGUI TextComponent { get; private set; }
 
-    protected SelectionState _prevState;
+     bool _interactable;
 
     protected override void Awake()
     {
         base.Awake();
-
+        
         ImageComponent = GetComponent<Image>();
         TextComponent = GetComponentInChildren<TextMeshProUGUI>();
+        _interactable = interactable;
     }
 
     protected override void DoStateTransition(SelectionState state, bool instant)
     {
         base.DoStateTransition(state, instant);
-        if (state != _prevState)
+        if (_interactable != interactable)
         {
             OnInteractableChanged?.Invoke(interactable);
-            _prevState = state;
+            _interactable = interactable;
         }
     }
 }

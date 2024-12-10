@@ -573,7 +573,7 @@ GameObject:
   m_Layer: 5
   m_Name: Login window
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -657,7 +657,7 @@ MonoBehaviour:
   _titleText: {fileID: 634526383}
   _loginImage: {fileID: 938917599}
   _acceptButton: {fileID: 2094356379}
-  _cancelButton: {fileID: 364157330}
+  _cancelButton: {fileID: 1858142603}
 --- !u!1 &120393066
 GameObject:
   m_ObjectHideFlags: 0
@@ -2205,18 +2205,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 364157328}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &364157330 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8851373556479876653, guid: 29835095346c54f4d9bfc056e770a670,
-    type: 3}
-  m_PrefabInstance: {fileID: 364157328}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &364729112 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5327755655762657517, guid: 35828c5b613b6b349810a1ad8efcbe5f,
@@ -3662,7 +3650,7 @@ GameObject:
   m_Layer: 5
   m_Name: Error window
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -3746,7 +3734,7 @@ MonoBehaviour:
   _errorText: {fileID: 1434184547}
   _warningImage: {fileID: 1639855008}
   _acceptButton: {fileID: 1530352717}
-  _cancelButton: {fileID: 926593668}
+  _cancelButton: {fileID: 926593673}
 --- !u!111 &644388913
 Animation:
   m_ObjectHideFlags: 0
@@ -3919,7 +3907,7 @@ GameObject:
   m_Layer: 0
   m_Name: Connection spinner
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -5488,16 +5476,16 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1926812188781237935}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &926593668 stripped
+--- !u!114 &926593673 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8851373556479876653, guid: 29835095346c54f4d9bfc056e770a670,
+  m_CorrespondingSourceObject: {fileID: 650381435541889005, guid: 29835095346c54f4d9bfc056e770a670,
     type: 3}
   m_PrefabInstance: {fileID: 1926812188781237935}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 1960f51c7b0159a46a642a0e6c5657bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &938917597
@@ -17691,6 +17679,18 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1858142603 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 650381435541889005, guid: 29835095346c54f4d9bfc056e770a670,
+    type: 3}
+  m_PrefabInstance: {fileID: 364157328}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1960f51c7b0159a46a642a0e6c5657bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1890057090
 GameObject:
   m_ObjectHideFlags: 0

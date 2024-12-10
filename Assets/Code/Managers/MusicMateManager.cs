@@ -56,6 +56,12 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     public void Connect()
     {
+        if (_loginController.gameObject.activeInHierarchy)
+            MoveLoginPanel(false);
+
+        if (!_connectionSpinner.gameObject.activeInHierarchy)
+            ShowSpinner();
+
         _service.SignIn(_appConfig.ApiServiceUrl, "admin", "123");
     }
 
@@ -90,6 +96,20 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
         });
 
+    void ShowSpinner()
+    {
+        _connectionSpinner.SetActive(true);
+
+        var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
+        var seq = DOTween.Sequence();
+
+        for (int i = 0; i < images.Length; ++i)
+        {
+            var img = images[i];
+            seq.Join(img.DOFade(1f, .2f));
+        }
+    }
+
     public void HideSpinner()
     {
         var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
@@ -100,6 +120,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             var img = images[i];
             seq.Join(img.DOFade(0f, .5f));
         }
+        seq.OnComplete(()=>_connectionSpinner.SetActive(false));
     }
 
     // Hide GameObjects initially not shown.

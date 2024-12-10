@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,15 +43,21 @@ public class LoginWindowController : MonoBehaviour
 
         _cancelButton.onClick.AddListener(() => OnCancelClicked());
         _acceptButton.onClick.AddListener(() => OnAcceptClicked());
+
+        OnInputChanged();
     }
 
-    void OnInputChanged() => _acceptButton.interactable = _inputUrl.HasValue && _inputUser.HasValue && _inputPassword.HasValue;
+    void OnInputChanged()
+    {
+        var hasValue = _inputUrl.HasValue && _inputUser.HasValue && _inputPassword.HasValue;
+        if (_acceptButton.interactable == hasValue)
+            return;
+
+        _acceptButton.interactable = hasValue;
+    }
 
     void OnCancelClicked() => _manager.QuitApplication();
 
-    void OnAcceptClicked()
-    {
-
-    }
+    void OnAcceptClicked() => _manager.Connect();
 
 }

@@ -15,10 +15,7 @@ public class ErrorWindowController : MonoBehaviour
 
     IMusicMateManager _manager;
 
-    void Awake()
-    {
-        _manager = MusicMateManager.Instance;
-    }
+    void Awake() => _manager = MusicMateManager.Instance;
 
 
     void Start()

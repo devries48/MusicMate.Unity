@@ -9,9 +9,9 @@ public class AnimationManager : SceneSingleton<AnimationManager>
     [SerializeField] ButtonAnimations _buttonAnimations;
     [SerializeField] InputAnimations _inputAnimations;
 
-    IMusicMateManager _musicMateManager;
+    IMusicMateManager _manager;
 
-    void Awake() => _musicMateManager = MusicMateManager.Instance;
+    void Awake() => _manager = MusicMateManager.Instance;
 
     public void HideLogo(GameObject logo, Action onComplete = null) => _logoAnimations.PlayLogoFade(logo, () =>
         {
@@ -21,16 +21,16 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void InputTextNormal(TMP_InputField input)
     {
-        _inputAnimations.SetColor(input, _musicMateManager.TextColor);
-        _inputAnimations.SetBackgroundColor(input, _musicMateManager.BackgroundColor);
+        _inputAnimations.SetColor(input, _manager.TextColor);
+        _inputAnimations.SetBackgroundColor(input, _manager.BackgroundColor);
     }
 
-    public void InputTextSelect(TMP_InputField input) => _inputAnimations.SetColor(input, _musicMateManager.AccentColor);
+    public void InputTextSelect(TMP_InputField input) => _inputAnimations.SetColor(input, _manager.AccentColor);
 
     public void InputTextHighlight(TMP_InputField input)
     {
-        _inputAnimations.SetColor(input, _musicMateManager.AccentColor);
-        _inputAnimations.SetBackgroundColor(input, _musicMateManager.DefaultColor);
+        _inputAnimations.SetColor(input, _manager.AccentColor);
+        _inputAnimations.SetBackgroundColor(input, _manager.DefaultColor);
     }
 
     public void ButtonHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType)
@@ -38,18 +38,21 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         Debug.Log("Hover enter");
         _buttonAnimations.PlayHover(button, buttonType);
     }
+
     public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
     {
         Debug.Log("Hover exit");
 
         _buttonAnimations.PlayNormal(button, buttonType);
     }
+
     public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType)
     {
         Debug.Log("Clicked");
 
         _buttonAnimations.PlayClicked(button, buttonType);
     }
+
     public void ButtonInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
     {
         Debug.Log("Interactable: " + isInteractable);
@@ -58,13 +61,13 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
         if (isInteractable)
         {
-            backgroundColor = isPrimary ? _musicMateManager.AccentColor : _musicMateManager.DefaultColor;
-            foregroundColor = isPrimary ? _musicMateManager.AccentTextColor : _musicMateManager.TextColor;
+            backgroundColor = isPrimary ? _manager.AccentColor : _manager.DefaultColor;
+            foregroundColor = isPrimary ? _manager.AccentTextColor : _manager.TextColor;
         }
         else
         {
-            backgroundColor = _musicMateManager.DefaultColor;
-            foregroundColor = _musicMateManager.AccentTextColor;
+            backgroundColor = _manager.DefaultColor;
+            foregroundColor = _manager.AccentTextColor;
         }
 
         _buttonAnimations.PlayButtonInteractable(button, backgroundColor, foregroundColor, buttonType);
