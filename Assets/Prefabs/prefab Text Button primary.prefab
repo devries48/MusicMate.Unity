@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 8494812403512336425}
   - component: {fileID: 5706239366082308638}
   m_Layer: 5
-  m_Name: AcceptButton
+  m_Name: prefab Text Button primary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

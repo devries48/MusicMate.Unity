@@ -6,9 +6,9 @@ using UnityEngine;
 public class InputAnimations : ScriptableObject
 {
     [Header("InputText Animation")]
-    public float TextTransitionDuration = .2f;
+    [SerializeField] float _textTransitionDuration = .2f;
 
-    public void SetColor(TMP_InputField input, Color targetColor) => input.textComponent.DOColor(targetColor, TextTransitionDuration);
+    public void SetColor(TMP_InputField input, Color targetColor) => input.textComponent.DOColor(targetColor, _textTransitionDuration);
 
-    public void SetBackgroundColor(TMP_InputField input, Color targetColor) => input.image.DOColor(targetColor, TextTransitionDuration);
+    public void SetBackgroundColor(TMP_InputField input, Color targetColor) => input.image.DOColor(targetColor, _textTransitionDuration);
 }

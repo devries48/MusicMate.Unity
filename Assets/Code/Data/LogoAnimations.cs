@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 public class LogoAnimations : ScriptableObject
 {
     [Header("Fade Animation")]
-    public float delayBeforeFade = 0.25f;
-    public float fadeDuration = 1.75f;
-    public float particleDuration = 5f;
-    public float particleStartLifetime = 5f;
+    [SerializeField] float _delayBeforeFade = 0.25f;
+    [SerializeField] float _fadeDuration = 1.75f;
+    [SerializeField] float _particleDuration = 5f;
+    [SerializeField] float _particleStartLifetime = 5f;
 
     public async void PlayLogoFade(GameObject logo, Action onComplete = null)
     {
@@ -30,11 +30,11 @@ public class LogoAnimations : ScriptableObject
         }
         var particleMain = particleSystem.main;
  
-        particleMain.duration = particleDuration;
-        particleMain.startLifetime = particleStartLifetime;
+        particleMain.duration = _particleDuration;
+        particleMain.startLifetime = _particleStartLifetime;
 
         Sequence sequence = DOTween.Sequence();
-        sequence.AppendInterval(delayBeforeFade);
+        sequence.AppendInterval(_delayBeforeFade);
 
         sequence.AppendCallback(() =>
         {
@@ -42,7 +42,7 @@ public class LogoAnimations : ScriptableObject
                 particleSystem.Play();
         });
 
-        sequence.Append(spriteRenderer.DOFade(0, fadeDuration));
+        sequence.Append(spriteRenderer.DOFade(0, _fadeDuration));
 
         await sequence.AsyncWaitForCompletion();
         await WaitForParticlesToEnd(particleSystem);

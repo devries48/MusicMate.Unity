@@ -2815,7 +2815,7 @@ GameObject:
   m_Layer: 0
   m_Name: '*Keep in root*   API Service'
   m_TagString: Untagged
-  m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -6073,6 +6073,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _logoAnimations: {fileID: 11400000, guid: 2db94d21c2ac9dd4aa7f0852d4ce59e1, type: 2}
+  _panelAndWindowAnimations: {fileID: 11400000, guid: 0f1a589cac9e76048b2c12e57d7a6b4c,
+    type: 2}
   _buttonAnimations: {fileID: 11400000, guid: 6318746c1badd5543b66fbc35b62f638, type: 2}
   _inputAnimations: {fileID: 11400000, guid: 032772be21351ca4f96c984a5a88c31a, type: 2}
 --- !u!1 &997061748

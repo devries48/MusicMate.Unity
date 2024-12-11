@@ -6,37 +6,37 @@ using UnityEngine;
 public class ButtonAnimations : ScriptableObject
 {
     [Header("General Settings")]
-    public float animationDuration = 0.2f;
-    public Ease animationEase = Ease.OutBack;
+    [SerializeField] float _animationDuration = 0.2f;
+    [SerializeField] Ease _animationEase = Ease.OutBack;
+    [SerializeField] int _maxAnimationCacheSize = 100;
 
     [Header("Text Button Animations")]
-    public float textHoverScale = 1.1f;
-    public float textClickScale = 0.9f;
+    [SerializeField] float _textHoverScale = 1.1f;
+    [SerializeField] float _textClickScale = 0.9f;
 
     [Header("Image Button Animations")]
-    public float imageHoverScale = 1.2f;
-    public float imageClickScale = 0.8f;
+    [SerializeField] float _imageHoverScale = 1.2f;
+    [SerializeField] float _imageClickScale = 0.8f;
 
     readonly Dictionary<string, Sequence> _sequenceCache = new();
-    const int MaxCacheSize = 100;
-
+    
     void OnDisable() => ClearCache();
 
     public void PlayClicked(ButtonInteractable button, ButtonAnimationType buttonType)
     {
         var scaleClick = buttonType switch
         {
-            ButtonAnimationType.ImageButton => imageClickScale,
-            _ => textClickScale
+            ButtonAnimationType.ImageButton => _imageClickScale,
+            _ => _textClickScale
         };
 
         var scaleHover = buttonType switch
         {
-            ButtonAnimationType.ImageButton => imageHoverScale,
-            _ => textHoverScale
+            ButtonAnimationType.ImageButton => _imageHoverScale,
+            _ => _textHoverScale
         };
 
-        var key = GenerateCacheKey(buttonType, scaleClick, scaleHover);
+        var key = GenerateCacheKey(button, buttonType, scaleClick, scaleHover);
         if (TryGetSequence(key, out Sequence cachedSequence))
         {
             Debug.Log($"PlayClicked Sequence started from cache (key: {key})");
@@ -45,8 +45,8 @@ public class ButtonAnimations : ScriptableObject
         }
 
         var seq = DOTween.Sequence()
-            .Append(button.transform.DOScale(scaleClick, animationDuration).SetEase(animationEase))
-            .Append(button.transform.DOScale(scaleHover, animationDuration).SetEase(animationEase))
+            .Append(button.transform.DOScale(scaleClick, _animationDuration).SetEase(_animationEase))
+            .Append(button.transform.DOScale(scaleHover, _animationDuration).SetEase(_animationEase))
             .Pause()
             .SetAutoKill(false);
 
@@ -58,8 +58,8 @@ public class ButtonAnimations : ScriptableObject
     {
         var scale = buttonType switch
         {
-            ButtonAnimationType.ImageButton => imageHoverScale,
-            _ => textHoverScale
+            ButtonAnimationType.ImageButton => _imageHoverScale,
+            _ => _textHoverScale
         };
         SetScale(button, scale);
     }
@@ -71,7 +71,7 @@ public class ButtonAnimations : ScriptableObject
 
     public void PlayButtonInteractable(ButtonInteractable button, Color32 backgroundColor, Color32 foreGroundColor, ButtonAnimationType buttonType)
     {
-        var key = GenerateCacheKey(buttonType, backgroundColor, foreGroundColor);
+        var key = GenerateCacheKey(button, buttonType, backgroundColor, foreGroundColor);
         if (TryGetSequence(key, out Sequence cachedSequence))
         {
             cachedSequence.Restart();
@@ -81,8 +81,8 @@ public class ButtonAnimations : ScriptableObject
         }
 
         var seq = DOTween.Sequence()
-            .Append(button.ImageComponent.DOColor(backgroundColor, animationDuration))
-            .Join(button.TextComponent.DOColor(foreGroundColor, animationDuration))
+            .Append(button.ImageComponent.DOColor(backgroundColor, _animationDuration))
+            .Join(button.TextComponent.DOColor(foreGroundColor, _animationDuration))
             .Pause()
             .SetAutoKill(false);
 
@@ -90,20 +90,20 @@ public class ButtonAnimations : ScriptableObject
         seq.Restart();
     }
 
-    string GenerateCacheKey(ButtonAnimationType buttonType, Color32 backgroundColor, Color32 foregroundColor)
+    string GenerateCacheKey(ButtonInteractable button, ButtonAnimationType buttonType, Color32 backgroundColor, Color32 foregroundColor)
     {
         string backgroundHex = ColorUtility.ToHtmlStringRGB(backgroundColor);
         string foregroundHex = ColorUtility.ToHtmlStringRGB(foregroundColor);
-        return $"{buttonType}_{backgroundHex}_{foregroundHex}";
+        return $"{button.GetInstanceID()}_{buttonType}_{backgroundHex}_{foregroundHex}";
     }
 
-    string GenerateCacheKey(ButtonAnimationType buttonType, float scaleClick, float scaleHover) => $"{buttonType}_{scaleClick}_{scaleHover}";
+    string GenerateCacheKey(ButtonInteractable button, ButtonAnimationType buttonType, float scaleClick, float scaleHover) => $"{button.GetInstanceID()}_{buttonType}_{scaleClick}_{scaleHover}";
 
     bool TryGetSequence(string key, out Sequence sequence) => _sequenceCache.TryGetValue(key, out sequence);
 
     void AddSequence(string key, Sequence sequence)
     {
-        if (_sequenceCache.Count >= MaxCacheSize)
+        if (_sequenceCache.Count >= _maxAnimationCacheSize)
         {
             var oldestKey = new List<string>(_sequenceCache.Keys)[0];
             _sequenceCache[oldestKey].Kill();
@@ -124,6 +124,6 @@ public class ButtonAnimations : ScriptableObject
 
     void SetScale(ButtonInteractable button, float scale)
     {
-        button.transform.DOScale(scale, animationDuration).SetEase(animationEase);
+        button.transform.DOScale(scale, _animationDuration).SetEase(_animationEase);
     }
 }

@@ -6,6 +6,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 {
     [Header("Animations")]
     [SerializeField] LogoAnimations _logoAnimations;
+    [SerializeField] PanelAndWindowsAnimations _panelAndWindowAnimations;
     [SerializeField] ButtonAnimations _buttonAnimations;
     [SerializeField] InputAnimations _inputAnimations;
 
@@ -71,5 +72,21 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         }
 
         _buttonAnimations.PlayButtonInteractable(button, backgroundColor, foregroundColor, buttonType);
+    }
+
+    public void WindowLoginVisible(GameObject loginWindow, bool show, float delay=0f)
+    {
+        if (show)
+            _panelAndWindowAnimations.PlayShowLoginWindow(loginWindow, delay); 
+        else
+            _panelAndWindowAnimations.PlayHideLoginWindow(loginWindow);
+    }
+
+    public void WindowErrorVisible(GameObject errorWindow, bool show)
+    {
+        if (show)
+            _panelAndWindowAnimations.PlayShowErrorWindow(errorWindow);
+        else
+            _panelAndWindowAnimations.PlayHideErrorWindow(errorWindow);
     }
 }

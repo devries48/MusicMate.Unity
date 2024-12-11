@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ErrorWindowController : MonoBehaviour
+public class ErrorWindow : MonoBehaviour
 {
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _titleText;

@@ -8,10 +8,10 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     [Header("Configuration")]
     [SerializeField] AppConfiguration _appConfig;
 
-    [Header("Controllers & Animators")]
-    [SerializeField] ErrorWindowController _errorController;
-    [SerializeField] LoginWindowController _loginController;
-    [SerializeField] MainPageView _mainPage;
+    [Header("Windows & Animators")]
+    [SerializeField] ErrorWindow _errorController;
+    [SerializeField] LoginWindow _loginController;
+    [SerializeField] MainWindow _mainPage;
     [SerializeField] LogoAnimator _logoAnimator;
 
     [Header("Elements")]
@@ -19,6 +19,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     [SerializeField] GameObject[] _inactivateOnStart;
 
     public AppConfiguration AppConfiguration => _appConfig;
+
     public IAppState AppState
     {
         get
@@ -35,15 +36,17 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public Color32 BackgroundColor => _appConfig.BackgroundColor;
 
 
-    readonly float _popupTime = .5f;
+    //readonly float _popupTime = .5f;
     IApiService _service;
     IAppState _appState;
+    AnimationManager _animations;
 
     void Awake()
     {
         InactivateGameObjects();
 
         _service = ApiService.Instance.GetClient();
+        _animations = AnimationManager.Instance;
     }
 
     void OnEnable() => _service.SubscribeToConnectionChanged(OnConnectionChanged);
@@ -57,7 +60,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public void Connect()
     {
         if (_loginController.gameObject.activeInHierarchy)
-            MoveLoginPanel(false);
+            ShowOrHideLoginPanel(false);
 
         if (!_connectionSpinner.gameObject.activeInHierarchy)
             ShowSpinner();
@@ -68,7 +71,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public void ShowError(ErrorType error, string message, string description = "")
     {
         _errorController.SetError(error, message, description);
-        MoveErrorPanel(true);
+        ShowOrHideErrorPanel(true);
     }
 
     public void ShowLogin()
@@ -76,11 +79,11 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         float delay = 0f;
         if (_errorController.gameObject.activeSelf)
         {
-            MoveErrorPanel(false);
+            ShowOrHideErrorPanel(false);
             delay = .5f;
         }
 
-        MoveLoginPanel(true, delay);
+        ShowOrHideLoginPanel(true, delay);
     }
 
     public void ShowRelease(ReleaseResult releaseModel)
@@ -132,34 +135,34 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         }
     }
 
-    void MoveErrorPanel(bool show) => MovePanel(show, _errorController.gameObject, 3f, .5f);
+    void ShowOrHideErrorPanel(bool show) => _animations.WindowErrorVisible(_errorController.gameObject, show);
 
-    void MoveLoginPanel(bool show, float delay = 0f) => MovePanel(show, _loginController.gameObject, -2f, .5f, delay);
+    void ShowOrHideLoginPanel(bool show, float delay = 0f) => _animations.WindowLoginVisible(_loginController.gameObject, show, delay);
 
-    void MovePanel(bool show, GameObject panelObj, float hidePivot, float showPivot, float delay = 0f)
-    {
-        if (show)
-            panelObj.SetActive(true);
+    //void MovePanel(bool show, GameObject panelObj, float hidePivot, float showPivot, float delay = 0f)
+    //{
+    //    if (show)
+    //        panelObj.SetActive(true);
 
-        var pivotTo = show ? showPivot : hidePivot;
-        var easing = show ? Ease.OutBack : Ease.InBack;
-        var rect = panelObj.GetComponent<RectTransform>();
+    //    var pivotTo = show ? showPivot : hidePivot;
+    //    var easing = show ? Ease.OutBack : Ease.InBack;
+    //    var rect = panelObj.GetComponent<RectTransform>();
 
-        rect.DOPivotY(pivotTo, _popupTime).SetEase(easing)
-            .SetDelay(delay)
-            .OnComplete(() =>
-            {
-                if (!show)
-                    panelObj.SetActive(false);
-            });
-    }
+    //    rect.DOPivotY(pivotTo, _popupTime).SetEase(easing)
+    //        .SetDelay(delay)
+    //        .OnComplete(() =>
+    //        {
+    //            if (!show)
+    //                panelObj.SetActive(false);
+    //        });
+    //}
 
     public void QuitApplication()
     {
         if (_errorController.gameObject.activeInHierarchy)
-            MoveErrorPanel(false);
+            ShowOrHideErrorPanel(false);
         else if (_loginController.gameObject.activeInHierarchy)
-            MoveLoginPanel(false);
+            ShowOrHideLoginPanel(false);
 
         if (_logoAnimator.IsLogoActive())
             HideLogo(true);

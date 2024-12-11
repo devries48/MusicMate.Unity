@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoginWindowController : MonoBehaviour
+public class LoginWindow : MonoBehaviour
 {
     [Header("Controllers")]
     [SerializeField] InputController _inputUrl;

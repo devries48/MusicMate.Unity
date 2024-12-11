@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class MainPageView : MonoBehaviour
+public class MainWindow : MonoBehaviour
 {
     [Header("Controllers")]
     [SerializeField] AudioPlayerController _audioPlayer;
