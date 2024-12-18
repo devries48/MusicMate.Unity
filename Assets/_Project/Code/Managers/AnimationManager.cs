@@ -14,7 +14,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     void Awake() => _manager = MusicMateManager.Instance;
 
-    public void HideLogo(GameObject logo, Action onComplete = null) => _logoAnimations.PlayLogoFade(logo, () =>
+    public void LogoHide(GameObject logo, Action onComplete = null) => _logoAnimations.PlayLogoFade(logo, () =>
         {
             logo.SetActive(false);
             onComplete?.Invoke();
@@ -34,25 +34,11 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _inputAnimations.SetBackgroundColor(input, _manager.DefaultColor);
     }
 
-    public void ButtonHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType)
-    {
-        Debug.Log("Hover enter");
-        _buttonAnimations.PlayHover(button, buttonType);
-    }
+    public void ButtonHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayHover(button, buttonType);
 
-    public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
-    {
-        Debug.Log("Hover exit");
+    public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayNormal(button, buttonType);
 
-        _buttonAnimations.PlayNormal(button, buttonType);
-    }
-
-    public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType)
-    {
-        Debug.Log("Clicked");
-
-        _buttonAnimations.PlayClicked(button, buttonType);
-    }
+    public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayClicked(button, buttonType);
 
     public void ButtonInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
     {
@@ -71,7 +57,32 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             foregroundColor = _manager.AccentTextColor;
         }
 
-        _buttonAnimations.PlayButtonInteractable(button, backgroundColor, foregroundColor, buttonType);
+        _buttonAnimations.PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
+    }
+
+    public void ToolbarButtonSpinner(ToolbarButtonController button, bool isVisible)
+    {
+        if (isVisible)
+            _buttonAnimations.PlayToolbarShowSpinner(button);
+        else
+            _buttonAnimations.PlayToolbarHideSpinner(button);
+    }
+
+    public void ToolbarButtonToggle(ToolbarButtonController button, bool isOn)
+    {
+        if (isOn)
+            _buttonAnimations.PlayToolbarToggleOn(button);
+        else
+            _buttonAnimations.PlayToolbarToggleOff(button);
+    }
+
+    public void ToolbarButtonTooltip(ToolbarButtonController button, bool isVisible)
+    {
+        if (isVisible)
+            _buttonAnimations.PlayToolbarShowTooltip(button);
+        else
+            _buttonAnimations.PlayToolbarHideTooltip(button);
+
     }
 
     public void WindowLoginVisible(GameObject loginWindow, bool show, float delay=0f)

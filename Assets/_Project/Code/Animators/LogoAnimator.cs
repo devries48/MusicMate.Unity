@@ -10,6 +10,6 @@ public class LogoAnimator : MonoBehaviour
 
     public void HideLogo(Action onComplete = null)
     {
-        AnimationManager.Instance.HideLogo(_logo, () => onComplete?.Invoke());
+        AnimationManager.Instance.LogoHide(_logo, () => onComplete?.Invoke());
     }
 }
