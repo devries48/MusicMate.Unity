@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4288980133
-  m_fontColor: {r: 0.64705884, g: 0.6431373, b: 0.6431373, a: 1}
+    rgba: 4288651167
+  m_fontColor: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -258,6 +258,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  Colors: {fileID: 11400000, guid: 6812727ca4414e349b275ec425d69d93, type: 2}
 --- !u!114 &1688897903985325820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,3 +273,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isPrimary: 0
   _buttonType: 0
+  _text: Quit

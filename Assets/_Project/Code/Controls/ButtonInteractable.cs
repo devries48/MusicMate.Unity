@@ -4,19 +4,40 @@ using UnityEngine.UI;
 
 public class ButtonInteractable : Button
 {
+    public ColorSettings Colors;
+
+    public Image ImageComponent
+    {
+        get
+        {
+            if (_imageComponent == null)
+                _imageComponent = GetComponent<Image>();
+
+            return _imageComponent;
+        }
+    }
+
+    public TextMeshProUGUI TextComponent
+    {
+        get
+        {
+            if (_textComponent == null)
+                _textComponent = GetComponentInChildren<TextMeshProUGUI>();
+
+            return _textComponent;
+        }
+    }
+
+
     public event Action<bool> OnInteractableChanged;
 
-    public Image ImageComponent { get; private set; }
-    public TextMeshProUGUI TextComponent { get; private set; }
-
     bool _interactable;
+    Image _imageComponent;
+    TextMeshProUGUI _textComponent;
 
     protected override void Awake()
     {
         base.Awake();
-
-        ImageComponent = GetComponent<Image>();
-        TextComponent = GetComponentInChildren<TextMeshProUGUI>();
 
         _interactable = interactable;
     }
@@ -31,5 +52,4 @@ public class ButtonInteractable : Button
             _interactable = interactable;
         }
     }
-
 }

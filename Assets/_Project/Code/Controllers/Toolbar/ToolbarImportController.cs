@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ToolbarImportController : ToolbarControllerBase
 {
-    [SerializeField] ToolbarButtonController _scanFolderButton;
-    [SerializeField] ToolbarButtonController _scanLastFmButton;
+    [SerializeField] ToolbarButtonAnimator _scanFolderButton;
+    [SerializeField] ToolbarButtonAnimator _scanLastFmButton;
 
     readonly float _checkRunningInterval = 10f;
 

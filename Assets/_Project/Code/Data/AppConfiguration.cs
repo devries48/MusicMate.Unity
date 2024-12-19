@@ -12,11 +12,8 @@ public class AppConfiguration : ScriptableObject
     [SerializeField, HideInInspector] private string encryptedPassword;
 
     [Header("Colors")]
-    public Color32 AccentColor;
-    public Color32 DefaultColor;
-    public Color32 TextColor;
-    public Color32 BackgroundColor;
-    
+    public ColorSettings Colors;
+
     [Header("Sprites")]
     public Sprite PlaySprite;
     public Sprite PauseSprite;

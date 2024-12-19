@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(CanvasGroup))]
 public abstract class ToolbarControllerBase : MonoBehaviour
 {
-    public CanvasGroup m_CanvasGroup;
+    internal CanvasGroup m_CanvasGroup;
 
     protected IMusicMateManager m_Manager;
     protected IApiService m_ApiService;

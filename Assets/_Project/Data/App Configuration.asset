@@ -15,18 +15,7 @@ MonoBehaviour:
   ApiServiceUrl: https://localhost:7111
   User: Admin
   encryptedPassword: 
-  AccentColor:
-    serializedVersion: 2
-    rgba: 4282954999
-  DefaultColor:
-    serializedVersion: 2
-    rgba: 4284699969
-  TextColor:
-    serializedVersion: 2
-    rgba: 4288651167
-  BackgroundColor:
-    serializedVersion: 2
-    rgba: 4280622092
+  Colors: {fileID: 11400000, guid: 6812727ca4414e349b275ec425d69d93, type: 2}
   PlaySprite: {fileID: 21300000, guid: 835f9ee7e8087414db410ffdbef75890, type: 3}
   PauseSprite: {fileID: 21300000, guid: a82d55f7a65dd9c4194d4cda31519ca5, type: 3}
   MuteSprite: {fileID: 21300000, guid: 7e08cacdb7047a34e96f6cb190c8cefd, type: 3}

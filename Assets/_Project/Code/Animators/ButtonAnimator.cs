@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(ButtonInteractable))]
 public class ButtonAnimator : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Settings")]
@@ -42,9 +43,17 @@ public class ButtonAnimator : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     void InitializeValues()
     {
-        Button.ImageComponent.color = _isPrimary ? MusicMateManager.Instance.AccentColor : MusicMateManager.Instance.DefaultColor;
-        Button.TextComponent.color = _isPrimary ? MusicMateManager.Instance.AccentTextColor : MusicMateManager.Instance.TextColor;
-        Button.TextComponent.text = _text;
+
+        try
+        {
+            Button.ImageComponent.color = _isPrimary ? Button.Colors.AccentColor : Button.Colors.DefaultColor;
+            Button.TextComponent.color = _isPrimary ? Button.Colors.AccentTextColor : Button.Colors.TextColor;
+            Button.TextComponent.text = _text;
+        }
+        catch (System.Exception)
+        {
+            Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name+ ")");
+        }
     }
 
     void OnButtonClicked()
@@ -62,8 +71,9 @@ public class ButtonAnimator : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 #if UNITY_EDITOR
     void OnValidate()
     {
-        InitializeComponents();
-        InitializeValues();
+        Button = (ButtonInteractable)GetComponent<Button>();
+        if (Button != null)
+            InitializeValues();
     }
 #endif
 

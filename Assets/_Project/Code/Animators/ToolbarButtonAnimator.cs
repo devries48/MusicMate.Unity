@@ -1,5 +1,6 @@
 #region Usings
 using DG.Tweening;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 #endregion
-public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ToolbarButtonAnimator : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Toolbar Button")]
     [SerializeField] Sprite _icon;
@@ -29,11 +30,9 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
     public bool CanHideSpinner => !IsSpinning && m_spinner.isActiveAndEnabled;
 
     #region Field Declarations
-    IMusicMateManager _manager;
     AnimationManager _animations;
 
     internal ButtonInteractable m_button;
-    internal ButtonAnimator m_animator;
     internal Image m_icon;
     internal Image m_toggleIcon;
     internal Image m_spinnerBackground;
@@ -42,20 +41,29 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
     internal RectTransform m_tooltipPanel;
     internal TextMeshProUGUI m_tooltipText;
     internal bool m_tooltipVisible;
-    float _tooltipPadding = 40f;
 
     Coroutine _tooltipShowCoroutine;
     Coroutine _tooltipHideCoroutine;
 
     readonly float _speed = 1.5f;
     readonly float _tooltipDelay = .05f;
-    readonly float _popupTime = .1f;
+    readonly float _tooltipPadding = 40f;
+
+    readonly ButtonAnimationType _buttonType = ButtonAnimationType.ToolbarButton;
     #endregion
 
     #region Unity Events
-    void OnEnable() => m_animator.OnButtonClick.AddListener(() => OnButtonClick?.Invoke());
+    void OnEnable()
+    {
+        m_button.onClick.AddListener(() => OnButtonClicked());
+        m_button.OnInteractableChanged += OnInteractableChanged;
+    }
 
-    void OnDisable() => m_animator.OnButtonClick.RemoveAllListeners();
+    void OnDisable()
+    {
+        m_button.onClick.RemoveListener(() => OnButtonClicked());
+        m_button.OnInteractableChanged -= OnInteractableChanged;
+    }
 
     void Awake() => InitializeComponents();
 
@@ -63,16 +71,17 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
 
     void Update()
     {
-        if(IsSpinning)
+        if (IsSpinning)
             m_spinner.transform.Rotate(new Vector3(0, 0, -1 * _speed));
     }
     #endregion
 
     void InitializeComponents()
     {
-        _manager = MusicMateManager.Instance;
+
         _animations = AnimationManager.Instance;
 
+        transform.Find("Button").TryGetComponent(out m_button);
         transform.Find("Button").TryGetComponent(out m_button);
         transform.Find("Button/Icon").TryGetComponent(out m_icon);
         transform.Find("Button/Background").TryGetComponent(out m_spinnerBackground);
@@ -81,16 +90,14 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
         transform.Find("Tooltip").TryGetComponent(out m_tooltipPanel);
         transform.Find("Tooltip/Text (TMP)").TryGetComponent(out m_tooltipText);
 
-        m_animator = GetComponentInChildren<ButtonAnimator>();
         m_tooltipText = m_tooltipPanel.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     void InitializeValues()
     {
-        if (m_icon == null)
-            Debug.Log("ICON=0");
-        else
+        if (m_icon != null)
             m_icon.sprite = _icon;
+
         m_tooltipText.text = _tooltip;
         m_tooltipPanel.sizeDelta = new Vector2(
             m_tooltipText.preferredWidth + (2 * _tooltipPadding),
@@ -106,35 +113,43 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
     public void SetToggle(bool toggle)
     {
         IsToggleOn = toggle;
-        if(this.gameObject.activeInHierarchy)
+        if (this.gameObject.activeInHierarchy)
             SetToggle();
     }
 
     void SetToggle() => _animations.ToolbarButtonToggle(this, IsToggleOn);
 
-    public void SetInterActable(bool interactable) => m_animator.Button.interactable = interactable;
+    public void SetInterActable(bool interactable) => m_button.interactable = interactable;
+
+    void OnInteractableChanged(bool isInteractable) => _animations.ButtonInteractableChanged(m_button, isInteractable, false, _buttonType);
+
+    void OnButtonClicked()
+    {
+        OnButtonClick?.Invoke();
+        _animations.ButtonClicked(m_button, _buttonType);
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(_tooltipHideCoroutine != null)
+        if (_tooltipHideCoroutine != null)
         {
             StopCoroutine(_tooltipHideCoroutine);
             _tooltipHideCoroutine = null;
         }
 
-        if(!string.IsNullOrEmpty(_tooltip) && !m_tooltipVisible)
+        if (!string.IsNullOrEmpty(_tooltip) && !m_tooltipVisible)
             _tooltipShowCoroutine = StartCoroutine(ShowTooltipWithDelay(_tooltipDelay));
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(_tooltipShowCoroutine != null)
+        if (_tooltipShowCoroutine != null)
         {
             StopCoroutine(_tooltipShowCoroutine);
             _tooltipShowCoroutine = null;
         }
 
-        if(m_tooltipVisible)
+        if (m_tooltipVisible)
             _tooltipHideCoroutine = StartCoroutine(HideTooltipWithDelay(_tooltipDelay));
     }
 
@@ -155,8 +170,11 @@ public class ToolbarButtonController : MonoBehaviour, IPointerEnterHandler, IPoi
 #if UNITY_EDITOR
     void OnValidate()
     {
-        InitializeComponents();
-        InitializeValues();
+        transform.Find("Button").TryGetComponent(out m_button);
+        transform.Find("Button/Icon").TryGetComponent(out m_icon);
+
+        if (m_icon != null)
+            m_icon.sprite = _icon;
     }
 #endif
 }

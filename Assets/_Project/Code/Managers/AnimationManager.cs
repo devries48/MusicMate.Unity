@@ -34,9 +34,17 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _inputAnimations.SetBackgroundColor(input, _manager.DefaultColor);
     }
 
-    public void ButtonHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayHover(button, buttonType);
+    public void ButtonHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType)
+    {
+        if (button.interactable)
+            _buttonAnimations.PlayHover(button, buttonType);
+    }
 
-    public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayNormal(button, buttonType);
+    public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
+    {
+        if (button.interactable)
+            _buttonAnimations.PlayNormal(button, buttonType);
+    }
 
     public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayClicked(button, buttonType);
 
@@ -60,7 +68,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _buttonAnimations.PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
     }
 
-    public void ToolbarButtonSpinner(ToolbarButtonController button, bool isVisible)
+    public void ToolbarButtonSpinner(ToolbarButtonAnimator button, bool isVisible)
     {
         if (isVisible)
             _buttonAnimations.PlayToolbarShowSpinner(button);
@@ -68,7 +76,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _buttonAnimations.PlayToolbarHideSpinner(button);
     }
 
-    public void ToolbarButtonToggle(ToolbarButtonController button, bool isOn)
+    public void ToolbarButtonToggle(ToolbarButtonAnimator button, bool isOn)
     {
         if (isOn)
             _buttonAnimations.PlayToolbarToggleOn(button);
@@ -76,7 +84,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _buttonAnimations.PlayToolbarToggleOff(button);
     }
 
-    public void ToolbarButtonTooltip(ToolbarButtonController button, bool isVisible)
+    public void ToolbarButtonTooltip(ToolbarButtonAnimator button, bool isVisible)
     {
         if (isVisible)
             _buttonAnimations.PlayToolbarShowTooltip(button);
@@ -85,10 +93,10 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     }
 
-    public void WindowLoginVisible(GameObject loginWindow, bool show, float delay=0f)
+    public void WindowLoginVisible(GameObject loginWindow, bool show, float delay = 0f)
     {
         if (show)
-            _panelAndWindowAnimations.PlayShowLoginWindow(loginWindow, delay); 
+            _panelAndWindowAnimations.PlayShowLoginWindow(loginWindow, delay);
         else
             _panelAndWindowAnimations.PlayHideLoginWindow(loginWindow);
     }

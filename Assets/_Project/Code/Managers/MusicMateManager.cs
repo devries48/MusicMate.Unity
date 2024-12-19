@@ -29,11 +29,11 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         }
     }
 
-    public Color32 AccentColor => _appConfig.AccentColor;
-    public Color32 DefaultColor => _appConfig.DefaultColor;
-    public Color32 AccentTextColor => _appConfig.BackgroundColor;
-    public Color32 TextColor => _appConfig.TextColor;
-    public Color32 BackgroundColor => _appConfig.BackgroundColor;
+    public Color32 AccentColor => _appConfig.Colors.AccentColor;
+    public Color32 DefaultColor => _appConfig.Colors.DefaultColor;
+    public Color32 AccentTextColor => _appConfig.Colors.BackgroundColor;
+    public Color32 TextColor => _appConfig.Colors.TextColor;
+    public Color32 BackgroundColor => _appConfig.Colors.BackgroundColor;
 
 
     //readonly float _popupTime = .5f;

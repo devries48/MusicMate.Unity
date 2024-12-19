@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 98496537753e3884aa15fd5b92c64535, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -160,7 +160,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8005552528156054470}
   - component: {fileID: 2471296133889974511}
-  - component: {fileID: 408630542582044102}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -234,21 +233,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &408630542582044102
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2295789091444348390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2268e44929c70dd49a809802a2039c8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isPrimary: 0
-  _buttonType: 2
-  _text: 
+  Colors: {fileID: 11400000, guid: 6812727ca4414e349b275ec425d69d93, type: 2}
 --- !u!1 &2972706929063535212
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,7 +445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3c6205a860f2de4eabdeb35cfba5f7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 98496537753e3884aa15fd5b92c64535, type: 3}
   _tooltip: 
   _isToggleButon: 0
   _isToggleOn: 0

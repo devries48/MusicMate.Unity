@@ -41,7 +41,7 @@ public class PlaylistController : MonoBehaviour
         var item = _trans.Find($"{_playerService.CurrentIndex}_item") ;
         var ctrl = item.GetComponent<PlaylistItemController>();
         
-        ctrl.SetColor(_manager.AppConfiguration.AccentColor);
+        ctrl.SetColor(_manager.AccentColor);
     }
 
     void DestroyItems()

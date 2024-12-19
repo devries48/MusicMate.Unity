@@ -15,8 +15,8 @@ public class ToolbarPartController : ToolbarControllerBase
     [Header("Release Part")]
     [SerializeField] GameObject _releasePart;
     [SerializeField] string _titleRelease;
-    [SerializeField] ToolbarButtonController _releaseToggle;
-    [SerializeField] ToolbarButtonController _artistToggle;
+    [SerializeField] ToolbarButtonAnimator _releaseToggle;
+    [SerializeField] ToolbarButtonAnimator _artistToggle;
 
     DetailsToggle _toggled;
     RectTransform _rectTransform;

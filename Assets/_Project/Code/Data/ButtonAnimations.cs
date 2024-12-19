@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,31 +35,26 @@ public class ButtonAnimations : ScriptableObject
     {
         var scaleClick = buttonType switch
         {
+            ButtonAnimationType.ToolbarButton => _toolbarClickScale,
             ButtonAnimationType.ImageButton => _imageClickScale,
             _ => _textClickScale
         };
 
-        var scaleHover = buttonType switch
-        {
-            ButtonAnimationType.ImageButton => _imageHoverScale,
-            _ => _textHoverScale
-        };
 
-        var key = GenerateCacheKey(button, buttonType, scaleClick, scaleHover);
-        if (TryGetSequence(key, out Sequence cachedSequence))
-        {
-            Debug.Log($"PlayClicked Sequence started from cache (key: {key})");
-            cachedSequence.Restart();
-            return;
-        }
+        //var key = GenerateCacheKey(button, buttonType, scaleClick, scaleHover);
+        //if (TryGetSequence(key, out Sequence cachedSequence))
+        //{
+        //    Debug.Log($"PlayClicked Sequence started from cache (key: {key})");
+        //    cachedSequence.Restart();
+        //    return;
+        //}
 
         var seq = DOTween.Sequence()
             .Append(button.transform.DOScale(scaleClick, _animationDuration).SetEase(_animationEase))
-            .Append(button.transform.DOScale(scaleHover, _animationDuration).SetEase(_animationEase))
             .Pause()
             .SetAutoKill(false);
 
-        AddSequence(key, seq);
+        //AddSequence(key, seq);
         seq.Restart();
     }
 
@@ -69,6 +63,7 @@ public class ButtonAnimations : ScriptableObject
         var scale = buttonType switch
         {
             ButtonAnimationType.ImageButton => _imageHoverScale,
+            ButtonAnimationType.ToolbarButton => _toolbarHoverScale,
             _ => _textHoverScale
         };
         SetScale(button, scale);
@@ -82,14 +77,14 @@ public class ButtonAnimations : ScriptableObject
         Color32 foreGroundColor,
         ButtonAnimationType buttonType)
     {
-        var key = GenerateCacheKey(button, buttonType, backgroundColor, foreGroundColor);
-        if (TryGetSequence(key, out Sequence cachedSequence))
-        {
-            cachedSequence.Restart();
-            Debug.Log($"PlayButtonInteractable Sequence started from cache (key: {key})");
+        //var key = GenerateCacheKey(button, buttonType, backgroundColor, foreGroundColor);
+        //if (TryGetSequence(key, out Sequence cachedSequence))
+        //{
+        //    cachedSequence.Restart();
+        //    Debug.Log($"PlayButtonInteractable Sequence started from cache (key: {key})");
 
-            return;
-        }
+        //    return;
+        //}
 
         var seq = DOTween.Sequence()
             .Append(button.ImageComponent.DOColor(backgroundColor, _animationDuration))
@@ -97,12 +92,12 @@ public class ButtonAnimations : ScriptableObject
             .Pause()
             .SetAutoKill(false);
 
-        AddSequence(key, seq);
+        //AddSequence(key, seq);
         seq.Restart();
     }
     #endregion
 
-    public void PlayToolbarShowSpinner(ToolbarButtonController button)
+    public void PlayToolbarShowSpinner(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
             .DOScale(_toolbarSpinnerScale, .25f)
@@ -112,11 +107,11 @@ public class ButtonAnimations : ScriptableObject
                 {
                     button.m_spinnerBackground.gameObject.SetActive(true);
                     button.m_spinner.gameObject.SetActive(true);
-                    button.m_animator.Button.interactable = false;
+                    button.SetInterActable(false);
                 });
     }
 
-    public void PlayToolbarHideSpinner(ToolbarButtonController button)
+    public void PlayToolbarHideSpinner(ToolbarButtonAnimator button)
     {
         button.m_spinnerBackground.gameObject.SetActive(false);
         button.m_spinner.gameObject.SetActive(false);
@@ -125,13 +120,10 @@ public class ButtonAnimations : ScriptableObject
             .DOScale(1f, .25f)
             .SetEase(Ease.OutBack)
             .OnComplete(
-                () =>
-                {
-                    button.m_animator.Button.interactable = true;
-                });
+                () => button.SetInterActable(true));
     }
 
-    public void PlayToolbarToggleOn(ToolbarButtonController button)
+    public void PlayToolbarToggleOn(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
             .DOScale(_toolbarToggleScale, .25f)
@@ -149,7 +141,7 @@ public class ButtonAnimations : ScriptableObject
                 });
     }
 
-    public void PlayToolbarToggleOff(ToolbarButtonController button)
+    public void PlayToolbarToggleOff(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
             .DOScale(1f, .25f)
@@ -164,11 +156,11 @@ public class ButtonAnimations : ScriptableObject
                 });
     }
 
-    public void PlayToolbarShowTooltip(ToolbarButtonController button)
+    public void PlayToolbarShowTooltip(ToolbarButtonAnimator button)
     {
         button.m_tooltipText.color = button.m_button.interactable || button.IsToggleOn
-            ? MusicMateManager.Instance.AppConfiguration.AccentColor
-            : MusicMateManager.Instance.AppConfiguration.TextColor;
+            ? MusicMateManager.Instance.AccentColor
+            : MusicMateManager.Instance.TextColor;
 
         button.m_tooltipPanel.localScale = Vector3.zero;
         button.m_tooltipPanel.gameObject.SetActive(true);
@@ -176,7 +168,7 @@ public class ButtonAnimations : ScriptableObject
         button.m_tooltipVisible = true;
     }
 
-    public void PlayToolbarHideTooltip(ToolbarButtonController button)
+    public void PlayToolbarHideTooltip(ToolbarButtonAnimator button)
     {
         button.m_tooltipPanel.DOScale(0, _toolbarTooltipPopupTime).OnComplete(() => button.m_tooltipPanel.gameObject.SetActive(false));
         button.m_tooltipVisible = false;
