@@ -7,7 +7,6 @@ public class ButtonAnimations : ScriptableObject
 {
     [Header("General Settings")]
     [SerializeField] float _animationDuration = 0.2f;
-    [SerializeField] int _maxAnimationCacheSize = 100;
     [SerializeField] Ease _animationEase = Ease.OutBack;
 
     [Header("Text Button Animations")]
@@ -20,7 +19,7 @@ public class ButtonAnimations : ScriptableObject
 
     [Header("Toolbar Button Animations")]
     [SerializeField] float _toolbarHoverScale = 1.2f;
-    [SerializeField, Tooltip("Change the color to the accent color")] bool _toolbarHoverColorChange = true;
+    //[SerializeField, Tooltip("Change the color to the accent color")] bool _toolbarHoverColorChange = true;
     [SerializeField] float _toolbarClickScale = 0.8f;
     [SerializeField] float _toolbarToggleScale = 0.7f;
     [SerializeField, Tooltip("Resize the icon when the spinner is active")] float _toolbarSpinnerScale = 0.7f;
@@ -28,48 +27,38 @@ public class ButtonAnimations : ScriptableObject
 
     readonly Dictionary<string, Sequence> _sequenceCache = new();
 
-    void OnDisable() => ClearCache();
-
     #region Default Button Events
     public void PlayClicked(ButtonInteractable button, ButtonAnimationType buttonType)
     {
+        var duration = _animationDuration / 2;
         var scaleClick = buttonType switch
         {
             ButtonAnimationType.ToolbarButton => _toolbarClickScale,
             ButtonAnimationType.ImageButton => _imageClickScale,
             _ => _textClickScale
         };
-
-
-        //var key = GenerateCacheKey(button, buttonType, scaleClick, scaleHover);
-        //if (TryGetSequence(key, out Sequence cachedSequence))
-        //{
-        //    Debug.Log($"PlayClicked Sequence started from cache (key: {key})");
-        //    cachedSequence.Restart();
-        //    return;
-        //}
-
-        var seq = DOTween.Sequence()
-            .Append(button.transform.DOScale(scaleClick, _animationDuration).SetEase(_animationEase))
-            .Pause()
-            .SetAutoKill(false);
-
-        //AddSequence(key, seq);
-        seq.Restart();
+        button.transform.DOScale(scaleClick, duration).SetEase(_animationEase)
+            .OnComplete(() => PlayHover(button, buttonType, duration));
     }
 
-    public void PlayHover(ButtonInteractable button, ButtonAnimationType buttonType)
+    public void PlayHover(ButtonInteractable button, ButtonAnimationType buttonType, float duration = 0)
     {
+        if (duration == 0) duration = _animationDuration;
+
         var scale = buttonType switch
         {
             ButtonAnimationType.ImageButton => _imageHoverScale,
             ButtonAnimationType.ToolbarButton => _toolbarHoverScale,
             _ => _textHoverScale
         };
-        SetScale(button, scale);
+
+        button.transform.DOScale(scale, duration).SetEase(_animationEase);
     }
 
-    public void PlayNormal(ButtonInteractable button, ButtonAnimationType buttonType) { SetScale(button, 1); }
+    public void PlayNormal(ButtonInteractable button, ButtonAnimationType buttonType)
+    {
+        button.transform.DOScale(1, _animationDuration).SetEase(_animationEase);
+    }
 
     public void PlayInteractable(
         ButtonInteractable button,
@@ -77,23 +66,15 @@ public class ButtonAnimations : ScriptableObject
         Color32 foreGroundColor,
         ButtonAnimationType buttonType)
     {
-        //var key = GenerateCacheKey(button, buttonType, backgroundColor, foreGroundColor);
-        //if (TryGetSequence(key, out Sequence cachedSequence))
-        //{
-        //    cachedSequence.Restart();
-        //    Debug.Log($"PlayButtonInteractable Sequence started from cache (key: {key})");
-
-        //    return;
-        //}
-
-        var seq = DOTween.Sequence()
-            .Append(button.ImageComponent.DOColor(backgroundColor, _animationDuration))
-            .Join(button.TextComponent.DOColor(foreGroundColor, _animationDuration))
-            .Pause()
-            .SetAutoKill(false);
-
-        //AddSequence(key, seq);
-        seq.Restart();
+        if (buttonType == ButtonAnimationType.TextButton)
+        {
+            button.TextComponent.DOColor(foreGroundColor, _animationDuration);
+            button.ImageComponent.DOColor(backgroundColor, _animationDuration);
+        }
+        else
+        {
+            button.ImageComponent.DOColor(foreGroundColor, _animationDuration);
+        }
     }
     #endregion
 
@@ -136,8 +117,8 @@ public class ButtonAnimations : ScriptableObject
 
                     //animator.enabled = !IsToggleOn;
 
-                    if (_toolbarHoverColorChange)
-                        button.m_icon.color = MusicMateManager.Instance.AccentColor;
+                    //if (_toolbarHoverColorChange)
+                    button.m_icon.color = MusicMateManager.Instance.AccentColor;
                 });
     }
 
@@ -158,63 +139,24 @@ public class ButtonAnimations : ScriptableObject
 
     public void PlayToolbarShowTooltip(ToolbarButtonAnimator button)
     {
-        button.m_tooltipText.color = button.m_button.interactable || button.IsToggleOn
-            ? MusicMateManager.Instance.AccentColor
-            : MusicMateManager.Instance.TextColor;
-
+        //button.m_tooltipText.color = button.m_button.interactable || button.IsToggleOn
+        //    ? MusicMateManager.Instance.AccentColor
+        //    : MusicMateManager.Instance.TextColor;
+        Debug.Log("Show tooltip 1");
         button.m_tooltipPanel.localScale = Vector3.zero;
         button.m_tooltipPanel.gameObject.SetActive(true);
         button.m_tooltipPanel.DOScale(1, _toolbarTooltipPopupTime);
         button.m_tooltipVisible = true;
+        Debug.Log("Show tooltip 2");
     }
 
     public void PlayToolbarHideTooltip(ToolbarButtonAnimator button)
     {
-        button.m_tooltipPanel.DOScale(0, _toolbarTooltipPopupTime).OnComplete(() => button.m_tooltipPanel.gameObject.SetActive(false));
+        Debug.Log("Hide tooltip 1");
+        button.m_tooltipPanel.DOScale(0, _toolbarTooltipPopupTime / 2).OnComplete(() => button.m_tooltipPanel.gameObject.SetActive(false));
         button.m_tooltipVisible = false;
+        Debug.Log("Hide tooltip 2");
     }
 
-    string GenerateCacheKey(
-        ButtonInteractable button,
-        ButtonAnimationType buttonType,
-        Color32 backgroundColor,
-        Color32 foregroundColor)
-    {
-        string backgroundHex = ColorUtility.ToHtmlStringRGB(backgroundColor);
-        string foregroundHex = ColorUtility.ToHtmlStringRGB(foregroundColor);
-        return $"{button.GetInstanceID()}_{buttonType}_{backgroundHex}_{foregroundHex}";
-    }
-
-    string GenerateCacheKey(
-        ButtonInteractable button,
-        ButtonAnimationType buttonType,
-        float scaleClick,
-        float scaleHover) => $"{button.GetInstanceID()}_{buttonType}_{scaleClick}_{scaleHover}";
-
-    bool TryGetSequence(string key, out Sequence sequence) => _sequenceCache.TryGetValue(key, out sequence);
-
-    void AddSequence(string key, Sequence sequence)
-    {
-        if (_sequenceCache.Count >= _maxAnimationCacheSize)
-        {
-            var oldestKey = new List<string>(_sequenceCache.Keys)[0];
-            _sequenceCache[oldestKey].Kill();
-            _sequenceCache.Remove(oldestKey);
-        }
-
-        _sequenceCache[key] = sequence;
-    }
-
-    [ContextMenu("Clear Animation Cache")]
-    void ClearCache()
-    {
-        foreach (var sequence in _sequenceCache.Values)
-            sequence.Kill();
-
-        _sequenceCache.Clear();
-    }
-
-    void SetScale(ButtonInteractable button, float scale) => button.transform
-        .DOScale(scale, _animationDuration)
-        .SetEase(_animationEase);
 }
+

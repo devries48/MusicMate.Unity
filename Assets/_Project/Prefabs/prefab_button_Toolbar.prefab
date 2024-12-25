@@ -446,7 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _icon: {fileID: 21300000, guid: 98496537753e3884aa15fd5b92c64535, type: 3}
-  _tooltip: 
+  _tooltip: Application settings
   _isToggleButon: 0
   _isToggleOn: 0
 --- !u!1 &5462085279653962995
@@ -599,7 +599,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4282954999
-  m_fontColor: {r: 0.9686275, g: 0.7058824, b: 0.28235295, a: 1}
+  m_fontColor: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

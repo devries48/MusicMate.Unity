@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class MainWindow : MonoBehaviour
+public class MainWindowAnimator : MonoBehaviour
 {
     [Header("Controllers")]
     [SerializeField] AudioPlayerController _audioPlayer;
@@ -14,28 +14,27 @@ public class MainWindow : MonoBehaviour
     [SerializeField] ToolbarPartController _searchToolbar;
     [SerializeField] ToolbarImportController _importToolbar;
 
+    #region Field Declarations
     IApiService _service;
     IAudioPlayerService _playerService;
     IMusicMateManager _manager;
+    AnimationManager _animations;
     State _state;
 
     float _fadeTime = 0;
     readonly float _popupTime = .5f;
+    #endregion
 
+    #region Unity Events
     void Awake()
     {
         _state = new State();
         _service = ApiService.Instance.GetClient();
         _playerService = AudioPlayerService.Instance;
         _manager = MusicMateManager.Instance;
+        _animations = AnimationManager.Instance;
 
         InitPanels();
-    }
-
-    void Start()
-    {
-        _releaseDetails.gameObject.SetActive(false);
-        _artistDetails.gameObject.SetActive(false);
     }
 
     void OnEnable()
@@ -49,8 +48,32 @@ public class MainWindow : MonoBehaviour
         _playerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
         _manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
     }
+    #endregion
 
-    // Hide all elements
+    public void ConnectionChanged(bool connected)
+    {
+        if (connected && _fadeTime == 0)
+        {
+            _fadeTime = 1;
+            ActivatePanels(true);
+        }
+
+        _animations.PanelVisible(connected, _fadeTime,
+            _audioPlayer.m_canvasGroupExpanded,
+            _releaseResult.m_canvasGroup,
+            _applicationToolbar.m_canvasGroup,
+            _searchToolbar.m_CanvasGroup,
+            _importToolbar.m_CanvasGroup);
+
+        if (connected)
+            _service.GetInitialReleases(GetInitialReleasesCallback);
+    }
+
+    public void ShowRelease(ReleaseResult release) => _releaseDetails.GetRelease(release);
+
+    /// <summary>
+    /// Hide all elements
+    /// </summary>
     void InitPanels()
     {
         ActivatePanels(false);
@@ -66,27 +89,68 @@ public class MainWindow : MonoBehaviour
         _importToolbar.gameObject.SetActive(activate);
     }
 
-    public void ConnectionChanged(bool connected)
+    void VisibleReleaseResult(bool show)
     {
-        if (connected && _fadeTime == 0)
-        {
-            _fadeTime = 1;
-            ActivatePanels(true);
-        }
+        var scaleTo = show ? 1f : .5f;
+        var fadeTo = show ? 1f : .01f;
+        var easing = show ? Ease.InQuint : Ease.OutQuint;
 
-        PanelFade(_audioPlayer.m_canvasGroupExpanded, connected);
-        PanelFade(_releaseResult.m_canvasGroup, connected);
-        PanelFade(_applicationToolbar.m_canvasGroup, connected);
-        PanelFade(_searchToolbar.m_CanvasGroup, connected);
-        PanelFade(_importToolbar.m_CanvasGroup, connected);
-
-        if (connected)
-            _service.GetInitialReleases(GetInitialReleasesCallback);
+        _releaseResult.transform.DOScale(scaleTo, _popupTime).SetEase(easing);
+        _releaseResult.m_canvasGroup.DOFade(fadeTo, _popupTime).SetEase(easing);
+     
+        _animations.PanelReleaseResultVisible(_releaseResult, show);
+        _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
     }
 
-    public void ShowRelease(ReleaseResult release) => _releaseDetails.GetRelease(release);
+    void VisibleReleaseDetails(bool show)
+    {
+        if (show)
+            ScaleIn(_releaseDetails.transform);
+        else
+            ScaleOut(_releaseDetails.transform);
 
+        _state.ReleaseDetails = show ? State.States.visible : State.States.hidden;
+    }
 
+    void MoveReleaseDetails(bool show, float delay = 0)
+    {
+        var pivotTo = show ? .5f : 2f;
+        var easing = show ? Ease.OutBack : Ease.InBack;
+        var rect = _releaseDetails.gameObject.GetComponent<RectTransform>();
+
+        rect.DOPivotY(pivotTo, _popupTime).SetEase(easing).SetDelay(delay);
+
+        _state.ReleaseDetails = show ? State.States.visible : State.States.moved;
+    }
+
+    void VisibleArtistDetails(bool show, float delay = 0)
+    {
+        if (show)
+            ScaleIn(_artistDetails.transform, delay);
+        else
+            ScaleOut(_artistDetails.transform);
+
+        _state.ReleaseDetailsArtist = show ? State.States.visible : State.States.hidden;
+    }
+
+    void ScaleIn(Transform trans, float delay = 0)
+    {
+        trans.localScale = Vector3.zero;
+        trans.gameObject.SetActive(true);
+        trans.DOScale(1, _popupTime).SetEase(Ease.OutBack).SetDelay(delay);
+    }
+
+    void ScaleOut(Transform trans)
+    {
+        trans.DOScale(0, _popupTime).SetEase(Ease.InBack)
+            .OnComplete(() => trans.gameObject.SetActive(false));
+    }
+
+    void GetInitialReleasesCallback(PagedResult<ReleaseResult> result)
+    {
+        _releaseResult.SetResult(result);
+        _manager.HideSpinner();
+    }
     void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e)
     {
         _releaseResult.SetRightMargin(e.IsExpanded);
@@ -136,77 +200,6 @@ public class MainWindow : MonoBehaviour
             default:
                 break;
         }
-    }
-
-    void VisibleReleaseResult(bool show)
-    {
-        var scaleTo = show ? 1f : .5f;
-        var fadeTo = show ? 1f : .01f;
-        var easing = show ? Ease.InQuint : Ease.OutQuint;
-
-        _releaseResult.transform.DOScale(scaleTo, _popupTime).SetEase(easing);
-        _releaseResult.m_canvasGroup.DOFade(fadeTo, _popupTime).SetEase(easing);
-
-        _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
-    }
-
-    void VisibleReleaseDetails(bool show)
-    {
-        if (show)
-            ScaleIn(_releaseDetails.transform);
-        else
-            ScaleOut(_releaseDetails.transform);
-
-        _state.ReleaseDetails = show ? State.States.visible : State.States.hidden;
-    }
-
-    void MoveReleaseDetails(bool show, float delay = 0)
-    {
-        var pivotTo = show ? .5f : 2f;
-        var easing = show ? Ease.OutBack : Ease.InBack;
-        var rect = _releaseDetails.gameObject.GetComponent<RectTransform>();
-
-        rect.DOPivotY(pivotTo, _popupTime).SetEase(easing).SetDelay(delay);
-
-        _state.ReleaseDetails = show ? State.States.visible : State.States.moved;
-    }
-
-    void VisibleArtistDetails(bool show, float delay = 0)
-    {
-        if (show)
-            ScaleIn(_artistDetails.transform, delay);
-        else
-            ScaleOut(_artistDetails.transform);
-
-        _state.ReleaseDetailsArtist = show ? State.States.visible : State.States.hidden;
-    }
-
-    void ScaleIn(Transform trans, float delay = 0)
-    {
-        trans.localScale = Vector3.zero;
-        trans.gameObject.SetActive(true);
-        trans.DOScale(1, _popupTime).SetEase(Ease.OutBack).SetDelay(delay);
-    }
-
-    void ScaleOut(Transform trans)
-    {
-        trans.DOScale(0, _popupTime).SetEase(Ease.InBack)
-            .OnComplete(() => trans.gameObject.SetActive(false));
-    }
-
-    void PanelFade(CanvasGroup canvas, bool fadeIn)
-    {
-        if (canvas == null)
-            return;
-
-        canvas.alpha = fadeIn ? 0f : 1f;
-        canvas.DOFade(fadeIn ? 1f : 0f, _fadeTime).SetEase(Ease.InSine).SetDelay(fadeIn ? .5f : 0f);
-    }
-
-    void GetInitialReleasesCallback(PagedResult<ReleaseResult> result)
-    {
-        _releaseResult.SetResult(result);
-        _manager.HideSpinner();
     }
 
     class State

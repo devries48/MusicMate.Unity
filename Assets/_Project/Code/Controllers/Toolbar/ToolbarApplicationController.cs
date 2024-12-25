@@ -8,6 +8,6 @@ public class ToolbarApplicationController : MonoBehaviour
     void Awake()
     {
         m_canvasGroup = GetComponent<CanvasGroup>();
-        m_canvasGroup.alpha = 0f;
+        //m_canvasGroup.alpha = 0f;
     }
 }

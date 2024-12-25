@@ -11,13 +11,14 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     [Header("Windows & Animators")]
     [SerializeField] ErrorWindow _errorController;
     [SerializeField] LoginWindow _loginController;
-    [SerializeField] MainWindow _mainPage;
+    [SerializeField] MainWindowAnimator _mainPage;
     [SerializeField] LogoAnimator _logoAnimator;
 
     [Header("Elements")]
     [SerializeField] GameObject _connectionSpinner;
     [SerializeField] GameObject[] _inactivateOnStart;
 
+    #region Properties
     public AppConfiguration AppConfiguration => _appConfig;
 
     public IAppState AppState
@@ -34,13 +35,15 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public Color32 AccentTextColor => _appConfig.Colors.BackgroundColor;
     public Color32 TextColor => _appConfig.Colors.TextColor;
     public Color32 BackgroundColor => _appConfig.Colors.BackgroundColor;
+    #endregion
 
-
-    //readonly float _popupTime = .5f;
+    #region #region Field Declarations
     IApiService _service;
     IAppState _appState;
     AnimationManager _animations;
+    #endregion
 
+    #region Unity Events
     void Awake()
     {
         InactivateGameObjects();
@@ -54,6 +57,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     void OnDisable() => _service.UnsubscribeFromConnectionChanged(OnConnectionChanged);
 
     void Start() => StartCoroutine(DelayAndConnect(.5f));
+    #endregion
 
     public IMusicMateManager GetClient() => this;
 
@@ -92,13 +96,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
     }
 
-    void HideLogo(bool quit = false) => _logoAnimator.HideLogo(() =>
-        {
-            if (quit)
-                QuitApp();
-
-        });
-
     void ShowSpinner()
     {
         _connectionSpinner.SetActive(true);
@@ -113,6 +110,13 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         }
     }
 
+    void HideLogo(bool quit = false) => _logoAnimator.HideLogo(() =>
+    {
+        if (quit)
+            QuitApp();
+
+    });
+
     public void HideSpinner()
     {
         var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
@@ -126,37 +130,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         seq.OnComplete(()=>_connectionSpinner.SetActive(false));
     }
 
-    // Hide GameObjects initially not shown.
-    void InactivateGameObjects()
-    {
-        for (int i = 0; i < _inactivateOnStart?.Length; i++)
-        {
-            _inactivateOnStart[i].SetActive(false);
-        }
-    }
-
-    void ShowOrHideErrorPanel(bool show) => _animations.WindowErrorVisible(_errorController.gameObject, show);
-
-    void ShowOrHideLoginPanel(bool show, float delay = 0f) => _animations.WindowLoginVisible(_loginController.gameObject, show, delay);
-
-    //void MovePanel(bool show, GameObject panelObj, float hidePivot, float showPivot, float delay = 0f)
-    //{
-    //    if (show)
-    //        panelObj.SetActive(true);
-
-    //    var pivotTo = show ? showPivot : hidePivot;
-    //    var easing = show ? Ease.OutBack : Ease.InBack;
-    //    var rect = panelObj.GetComponent<RectTransform>();
-
-    //    rect.DOPivotY(pivotTo, _popupTime).SetEase(easing)
-    //        .SetDelay(delay)
-    //        .OnComplete(() =>
-    //        {
-    //            if (!show)
-    //                panelObj.SetActive(false);
-    //        });
-    //}
-
     public void QuitApplication()
     {
         if (_errorController.gameObject.activeInHierarchy)
@@ -169,6 +142,20 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         else
             QuitApp();
     }
+
+
+    /// <summary>
+    /// Hide GameObjects initially not shown.
+    /// </summary>
+    void InactivateGameObjects()
+    {
+        for (int i = 0; i < _inactivateOnStart?.Length; i++)
+            _inactivateOnStart[i].SetActive(false);
+    }
+
+    void ShowOrHideErrorPanel(bool show) => _animations.WindowErrorVisible(_errorController.gameObject, show);
+
+    void ShowOrHideLoginPanel(bool show, float delay = 0f) => _animations.WindowLoginVisible(_loginController.gameObject, show, delay);
 
     IEnumerator DelayAndConnect(float seconds)
     {
@@ -201,5 +188,4 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         else
             HideLogo();
     }
-
 }

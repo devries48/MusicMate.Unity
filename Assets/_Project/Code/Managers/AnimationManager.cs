@@ -10,7 +10,15 @@ public class AnimationManager : SceneSingleton<AnimationManager>
     [SerializeField] ButtonAnimations _buttonAnimations;
     [SerializeField] InputAnimations _inputAnimations;
 
+    [Header("Tooltip Settings")]
+    [SerializeField] float _tooltipPadding = 10f;
+    [SerializeField] float _tooltipPanelWidth = 150f;
+
     IMusicMateManager _manager;
+
+    public float TooltipPadding { get => _tooltipPadding; } 
+    public float TooltipPanelWidth { get => _tooltipPanelWidth; } 
+
 
     void Awake() => _manager = MusicMateManager.Instance;
 
@@ -46,11 +54,13 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _buttonAnimations.PlayNormal(button, buttonType);
     }
 
-    public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType) => _buttonAnimations.PlayClicked(button, buttonType);
+    public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType)
+    {
+        _buttonAnimations.PlayClicked(button, buttonType);
+    }
 
     public void ButtonInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
     {
-        Debug.Log("Interactable: " + isInteractable);
         Color32 backgroundColor;
         Color32 foregroundColor;
 
@@ -68,6 +78,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _buttonAnimations.PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
     }
 
+
     public void ToolbarButtonSpinner(ToolbarButtonAnimator button, bool isVisible)
     {
         if (isVisible)
@@ -78,6 +89,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void ToolbarButtonToggle(ToolbarButtonAnimator button, bool isOn)
     {
+        print("ToolbarButtonToggle = " + isOn);
         if (isOn)
             _buttonAnimations.PlayToolbarToggleOn(button);
         else
@@ -90,6 +102,12 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _buttonAnimations.PlayToolbarShowTooltip(button);
         else
             _buttonAnimations.PlayToolbarHideTooltip(button);
+    }
+
+    public void PanelVisible(bool isVisible, float duration, params CanvasGroup[] panels) => _panelAndWindowAnimations.PlayPanelFade(isVisible, duration, panels);
+
+    public void PanelReleaseResultVisible(ReleaseResultController releaseResultController, bool show)
+    {
 
     }
 

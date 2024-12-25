@@ -9,4 +9,6 @@ public class ColorSettings : ScriptableObject
     public Color32 BackgroundColor;
 
     public Color32 AccentTextColor => BackgroundColor;
+    public Color32 IconColor => TextColor;
+    public Color32 DisabledIconColor => DefaultColor;
 }

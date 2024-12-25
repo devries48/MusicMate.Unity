@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine.UI;
 
@@ -6,13 +7,26 @@ public class ButtonInteractable : Button
 {
     public ColorSettings Colors;
 
+    /// <summary>
+    /// Get button foreground image for Text Button.
+    /// When not available get icon image in child.
+    /// </summary>
     public Image ImageComponent
     {
         get
         {
             if (_imageComponent == null)
+            {
                 _imageComponent = GetComponent<Image>();
 
+                if (_imageComponent == null)
+                    transform.Find("Icon").TryGetComponent(out _imageComponent);
+            }
+
+            if (_imageComponent == null)
+            {
+                Debug.WriteLine("error");
+            }
             return _imageComponent;
         }
     }
