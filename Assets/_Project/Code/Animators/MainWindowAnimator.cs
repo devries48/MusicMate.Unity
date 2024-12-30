@@ -54,16 +54,17 @@ public class MainWindowAnimator : MonoBehaviour
     {
         if (connected && _fadeTime == 0)
         {
-            _fadeTime = 1;
+            _fadeTime = 1f;
             ActivatePanels(true);
         }
 
-        _animations.PanelVisible(connected, _fadeTime,
+        _animations.PanelVisible(connected, _fadeTime, 0f,
             _audioPlayer.m_canvasGroupExpanded,
-            _releaseResult.m_canvasGroup,
             _applicationToolbar.m_canvasGroup,
             _searchToolbar.m_CanvasGroup,
             _importToolbar.m_CanvasGroup);
+
+        _animations.PanelVisible(connected, _fadeTime, 2f, _releaseResult.m_canvasGroup);
 
         if (connected)
             _service.GetInitialReleases(GetInitialReleasesCallback);
@@ -77,7 +78,7 @@ public class MainWindowAnimator : MonoBehaviour
     void InitPanels()
     {
         ActivatePanels(false);
-        ConnectionChanged(false);
+        //ConnectionChanged(false);
     }
 
     void ActivatePanels(bool activate)
@@ -97,7 +98,7 @@ public class MainWindowAnimator : MonoBehaviour
 
         _releaseResult.transform.DOScale(scaleTo, _popupTime).SetEase(easing);
         _releaseResult.m_canvasGroup.DOFade(fadeTo, _popupTime).SetEase(easing);
-     
+
         _animations.PanelReleaseResultVisible(_releaseResult, show);
         _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
     }
@@ -151,6 +152,7 @@ public class MainWindowAnimator : MonoBehaviour
         _releaseResult.SetResult(result);
         _manager.HideSpinner();
     }
+
     void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e)
     {
         _releaseResult.SetRightMargin(e.IsExpanded);

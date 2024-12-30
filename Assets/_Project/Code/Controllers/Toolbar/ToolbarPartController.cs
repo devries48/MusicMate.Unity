@@ -36,7 +36,6 @@ public class ToolbarPartController : ToolbarControllerBase
         _releasePart.SetActive(false);
         _activePart = _searchPart;
         _currentPart = VisiblePart.ReleaseResult;
-        _toggled = DetailsToggle.release;
 
         base.Start();
     }
@@ -86,11 +85,16 @@ public class ToolbarPartController : ToolbarControllerBase
         {
             title = _titleSearch;
             showPart = _searchPart;
+
+            // reset toolbar
+            _toggled = DetailsToggle.release;
+            ChangeElementStates();
         }
         else if (e.Part == VisiblePart.ReleaseDetails)
         {
             title = _titleRelease;
             showPart = _releasePart;
+            _toggled = DetailsToggle.release;
         }
 
         if (title != default)
@@ -105,6 +109,7 @@ public class ToolbarPartController : ToolbarControllerBase
                             hidePart.SetActive(false);
                             showPart.SetActive(true);
                             _titleText.text = title;
+
                         }));
             sequence.Append(
                 _rectTransform.DORotate(new Vector3(0, 0, 0), .25f)

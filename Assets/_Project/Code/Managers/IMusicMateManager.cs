@@ -28,6 +28,7 @@ public interface IAppState
     void ChangeState(Image image, bool enabled, bool? isPlaying = null);
     void ChangeState(TextMeshProUGUI text, bool enabled);
     void ChangeStates(Button[] buttons, bool enabled, bool? isPlaying = null);
+    void ChangeStates(ButtonAnimator[] buttons, bool enabled, bool? isPlaying = null);
     void ChangeStates(Image[] images, bool enabled, bool isPlaying);
     void ChangeStates(TextMeshProUGUI[] texts, bool enabled);
     void ChangeStates(Slider[] sliders, bool enabled);

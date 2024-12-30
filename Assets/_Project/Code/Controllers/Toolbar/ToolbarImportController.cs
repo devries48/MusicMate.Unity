@@ -12,7 +12,7 @@ public class ToolbarImportController : ToolbarControllerBase
 
     protected override void InitElements()
     {
-        _scanFolderButton.SetInterActable(true);
+        _scanFolderButton.SetInteractable(true);
         _scanFolderButton.OnButtonClick.AddListener(() => OnScanFolderClicked());
     }
 

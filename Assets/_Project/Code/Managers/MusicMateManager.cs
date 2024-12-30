@@ -110,13 +110,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         }
     }
 
-    void HideLogo(bool quit = false) => _logoAnimator.HideLogo(() =>
-    {
-        if (quit)
-            QuitApp();
-
-    });
-
     public void HideSpinner()
     {
         var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
@@ -125,10 +118,18 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         for (int i = 0; i < images.Length; ++i)
         {
             var img = images[i];
-            seq.Join(img.DOFade(0f, .5f));
+            seq.Join(img.DOFade(0f, 1f));
         }
         seq.OnComplete(()=>_connectionSpinner.SetActive(false));
     }
+
+    void HideLogo(bool quit = false) => _logoAnimator.HideLogo(() =>
+    {
+        if (quit)
+            QuitApp();
+
+    });
+
 
     public void QuitApplication()
     {

@@ -1,6 +1,7 @@
 public enum ButtonAnimationType
 {
     TextButton,
-    ImageButton,
+    DefaultImageButton,
+    LargeImageButton,
     ToolbarButton
 }

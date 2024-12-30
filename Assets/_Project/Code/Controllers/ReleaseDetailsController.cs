@@ -87,7 +87,6 @@ public class ReleaseDetailsController : MonoBehaviour
         });
         // get complete release
         //_manager.ChangeState(_releaseImage, false);
-
     }
 
     void ProcessImage(Sprite sprite)

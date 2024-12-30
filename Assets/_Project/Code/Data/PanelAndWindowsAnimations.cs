@@ -11,10 +11,8 @@ public class PanelAndWindowsAnimations : ScriptableObject
     [SerializeField] Ease _hideEase = Ease.InBack;
 
     [Header("Fading Animations")]
-    [SerializeField] float _fadeDuration = 1f;
-    [SerializeField, Tooltip("A delay before fading in a panel")] float _fadeInDelay = .5f;
-    [SerializeField] Ease _fadeInEase = Ease.OutSine;
-    [SerializeField] Ease _fadeOutEase = Ease.InSine;
+    [SerializeField] float _fadeDuration = .5f;
+    [SerializeField] Ease _fadeEase = Ease.InCirc;
 
     [Header("Login Window Visibility Animations")]
     [SerializeField, Tooltip("Pivot Y position to hide Login Window")] float _loginHidePivot = -2f;
@@ -38,15 +36,13 @@ public class PanelAndWindowsAnimations : ScriptableObject
 
     public void PlayHideErrorWindow(GameObject errorWindow) => MoveVertical(false, errorWindow, _errorHidePivot, _errorShowPivot, _hideDelay);
 
-    public void PlayPanelFade(bool fadeIn, float duration, params CanvasGroup[] canvases)
+    public void PlayPanelFade(bool fadeIn, float duration, float delay = 0, params CanvasGroup[] canvases)
     {
         if (canvases == null || canvases.Length == 0)
             return;
 
         if (duration == 0f)
             duration = _fadeDuration;
-
-        var easing = fadeIn ? _fadeInEase : _fadeOutEase;
 
         foreach (var canvas in canvases)
         {
@@ -55,8 +51,8 @@ public class PanelAndWindowsAnimations : ScriptableObject
 
             canvas.alpha = fadeIn ? 0f : 1f;
             canvas.DOFade(fadeIn ? 1f : 0f, duration)
-                .SetEase(easing)
-                .SetDelay(fadeIn ? _fadeInDelay : 0f);
+                .SetEase(_fadeEase)
+                .SetDelay(delay);
         }
     }
 

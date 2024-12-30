@@ -16,7 +16,13 @@ MonoBehaviour:
   _hideDelay: 0.2
   _showEase: 27
   _hideEase: 26
+  _fadeDuration: 1
+  _fadeEase: 14
   _loginHidePivot: -2
   _loginShowPivot: 0.5
   _errorHidePivot: 3
   _errorShowPivot: 0.5
+  _resultHideScaleTo: 0.5
+  _resultHideFadeTo: 0.01
+  _resultShowEase: 14
+  _resultHideEase: 15

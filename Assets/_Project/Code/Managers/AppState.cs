@@ -22,6 +22,17 @@ public class AppState : IAppState
         }
     }
 
+    public void ChangeState(ButtonAnimator button, bool enabled, bool? isPlaying)
+    {
+        button.SetInteractable(enabled);
+
+        if (isPlaying.HasValue)
+        {
+            var image = button.GetComponent<Image>();
+            image.sprite = isPlaying.Value ? _config.PauseSprite : _config.PlaySprite;
+        }
+    }
+
     public void ChangeState(Image image, bool enabled, bool? isPlaying = null)
     {
         float target;
@@ -36,9 +47,15 @@ public class AppState : IAppState
     }
 
     public void ChangeState(TextMeshProUGUI text, bool enabled) => text.color =
-        enabled ? _config.Colors.AccentColor : _config.Colors.BackgroundColor;
+        enabled ? _config.Colors.TextColor : _config.Colors.BackgroundColor;
 
     public void ChangeStates(Button[] buttons, bool enabled, bool? isPlaying = null)
+    {
+        foreach (var item in buttons)
+            ChangeState(item, enabled, isPlaying);
+    }
+
+    public void ChangeStates(ButtonAnimator[] buttons, bool enabled, bool? isPlaying = null)
     {
         foreach (var item in buttons)
             ChangeState(item, enabled, isPlaying);
@@ -54,15 +71,16 @@ public class AppState : IAppState
     {
         foreach (var slider in sliders)
         {
+            slider.gameObject.SetActive(enabled);
             slider.interactable = enabled;
 
-            var background = slider.transform.Find("Background").GetComponent<Image>();
             var handle = slider.transform.Find("Handle Slide Area/Handle").GetComponent<Image>();
-            var fill = slider.transform.Find("Fill Area").gameObject;
+            var fill = slider.transform.Find("Fill Area/Fill").GetComponent<Image>();
+            //var background = slider.transform.Find("Background").gameObject;
 
-            background.color = enabled ? _config.Colors.AccentColor : _config.Colors.DefaultColor;
             handle.color = enabled ? _config.Colors.AccentColor : _config.Colors.DefaultColor;
-            fill.SetActive(enabled);
+            fill.color = enabled ? _config.Colors.AccentColor : _config.Colors.DefaultColor;
+            //background.SetActive(enabled);
         }
     }
 

@@ -17,8 +17,10 @@ public class AnimationManager : SceneSingleton<AnimationManager>
     IMusicMateManager _manager;
 
     public float TooltipPadding { get => _tooltipPadding; } 
-    public float TooltipPanelWidth { get => _tooltipPanelWidth; } 
+    public float TooltipPanelWidth { get => _tooltipPanelWidth; }
 
+    public float ImageButtonScale => _buttonAnimations.ImageButtonScale;
+    public float ImageButtonLargeScale => _buttonAnimations.ImageButtonLargeScale;
 
     void Awake() => _manager = MusicMateManager.Instance;
 
@@ -50,7 +52,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
     {
-        if (button.interactable)
+       // if (button.interactable)
             _buttonAnimations.PlayNormal(button, buttonType);
     }
 
@@ -89,7 +91,6 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void ToolbarButtonToggle(ToolbarButtonAnimator button, bool isOn)
     {
-        print("ToolbarButtonToggle = " + isOn);
         if (isOn)
             _buttonAnimations.PlayToolbarToggleOn(button);
         else
@@ -104,7 +105,12 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _buttonAnimations.PlayToolbarHideTooltip(button);
     }
 
-    public void PanelVisible(bool isVisible, float duration, params CanvasGroup[] panels) => _panelAndWindowAnimations.PlayPanelFade(isVisible, duration, panels);
+    public void PanelVisible(bool isVisible, float duration, float delay=0, params CanvasGroup[] panels) => _panelAndWindowAnimations.PlayPanelFade(isVisible, duration, delay, panels);
+
+    public void PanelAudioPlayerState(bool isExpanded, RectTransform expandedPlayer, RectTransform collapsedPlayer, Action onComplete = null)
+    {
+        onComplete?.Invoke();
+    }
 
     public void PanelReleaseResultVisible(ReleaseResultController releaseResultController, bool show)
     {
@@ -126,4 +132,6 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         else
             _panelAndWindowAnimations.PlayHideErrorWindow(errorWindow);
     }
+
+
 }

@@ -1,14 +1,16 @@
+#region Usings
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
+#endregion
 
 [RequireComponent(typeof(AudioSource))]
-public class AudioPlayerController : MonoBehaviour
+public class AudioPlayerController : MusicMateBehavior
 {
-    #region Unity inspector fields
+    #region Serialized Fields
     [Header("Audio Players")]
     [SerializeField] RectTransform _expandedPlayer;
     [SerializeField] RectTransform _collapsedPlayer;
@@ -18,8 +20,8 @@ public class AudioPlayerController : MonoBehaviour
     [SerializeField] Slider[] _positionSliders;
     [SerializeField] TextMeshProUGUI[] _trackStartTexts;
     [SerializeField] Button[] _playPauseButtons; // _shuffleButton, _repeatButton;
-    [SerializeField] Button[] _nextButtons;
-    [SerializeField] Button[] _previousButtons;
+    [SerializeField] ButtonAnimator[] _nextButtons;
+    [SerializeField] ButtonAnimator[] _previousButtons;
 
     [Header("Elements Expanded")]
     [SerializeField] Button _collapseButton;
@@ -42,7 +44,6 @@ public class AudioPlayerController : MonoBehaviour
 
     IAudioPlayerService _playerService;
     IApiService _apiService;
-    IMusicMateManager _manager;
     AudioSource _audioSource;
     FadeData _fade;
 
@@ -52,22 +53,21 @@ public class AudioPlayerController : MonoBehaviour
     bool _isPosDrag = false;
     bool _isVolumeOn = false;
 
-    #region Unity callbacks
-    void OnEnable()
+    #region Base Class Methods
+    protected override void RegisterEventHandlers()
     {
         _playerService.SubscribeToStateChanged(OnPlayerStateChanged);
         _playerService.SubscribeToActionChanged(OnActionChanged);
     }
 
-    void OnDisable()
+    protected override void UnregisterEventHandlers()
     {
         _playerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
         _playerService.UnsubscribeFromActionChanged(OnActionChanged);
     }
 
-    void Awake()
+    protected override void InitializeComponents()
     {
-        _manager= MusicMateManager.Instance; ;
         _playerService = AudioPlayerService.Instance;
         _apiService = ApiService.Instance.GetClient();
         _audioSource = GetComponent<AudioSource>();
@@ -76,7 +76,7 @@ public class AudioPlayerController : MonoBehaviour
         m_canvasGroupExpanded.alpha = 0f;
     }
 
-    void Start()
+    protected override void InitializeValues()
     {
         _playerService.PlayerWidth = _expandedPlayer.rect.width;
         _fade = new FadeData(.2f, .4f);
@@ -84,6 +84,33 @@ public class AudioPlayerController : MonoBehaviour
         InitElements();
         StartCoroutine(SetPlayerState());
     }
+
+    void InitElements()
+    {
+        _volumeDropdown.gameObject.SetActive(false);
+        _artistMarquee.ClearText();
+        _titleMarquee.ClearText();
+        _artistAndTitleMarquee.ClearText();
+        _volumeSlider1.value = _volume;
+        _volumeSlider2.value = _volume;
+
+        _collapseButton.onClick.AddListener(() => OnCollapseClicked());
+        _expandButton.onClick.AddListener(() => OnExpandClicked());
+
+        foreach (var button in _playPauseButtons)
+            button.onClick.AddListener(() => OnPlayPauseClicked());
+
+        foreach (var button in _nextButtons)
+            button.OnButtonClick.AddListener(() => OnNextClicked());
+
+        foreach (var button in _previousButtons)
+            button.OnButtonClick.AddListener(() => OnPreviousClicked());
+
+        _volumeToggle.onClick.AddListener(() => OnVolumeToggled());
+        _volumeSlider1.onValueChanged.AddListener(delegate { OnVolume1Changed(); });
+        _volumeSlider2.onValueChanged.AddListener(delegate { OnVolume2Changed(); });
+    }
+    #endregion
 
     void Update()
     {
@@ -106,33 +133,6 @@ public class AudioPlayerController : MonoBehaviour
 
         //_audioSource.loop = repeat;
     }
-
-    void InitElements()
-    {
-        _volumeDropdown.gameObject.SetActive(false);
-        _artistMarquee.ClearText();
-        _titleMarquee.ClearText();
-        _artistAndTitleMarquee.ClearText();
-        _volumeSlider1.value = _volume;
-        _volumeSlider2.value = _volume;
-
-        _collapseButton.onClick.AddListener(() => OnCollapseClicked());
-        _expandButton.onClick.AddListener(() => OnExpandClicked());
-
-        foreach (var button in _playPauseButtons)
-            button.onClick.AddListener(() => OnPlayPauseClicked());
-
-        foreach (var button in _nextButtons)
-            button.onClick.AddListener(() => OnNextClicked());
-
-        foreach (var button in _previousButtons)
-            button.onClick.AddListener(() => OnPreviousClicked());
-
-        _volumeToggle.onClick.AddListener(() => OnVolumeToggled());
-        _volumeSlider1.onValueChanged.AddListener(delegate { OnVolume1Changed(); });
-        _volumeSlider2.onValueChanged.AddListener(delegate { OnVolume2Changed(); });
-    }
-    #endregion
 
     void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
 
@@ -239,14 +239,14 @@ public class AudioPlayerController : MonoBehaviour
 
     IEnumerator SetPlayerState()
     {
-        _manager.AppState.ChangeStates(_playPauseButtons, _playerService.IsActive, _playerService.IsPlaying);
-        _manager.AppState.ChangeStates(_previousButtons, _playerService.CanMoveBack);
-        _manager.AppState.ChangeStates(_nextButtons, _playerService.CanMoveForward);
+        Manager.AppState.ChangeStates(_playPauseButtons, _playerService.IsActive, _playerService.IsPlaying);
+        Manager.AppState.ChangeStates(_previousButtons, _playerService.CanMoveBack);
+        Manager.AppState.ChangeStates(_nextButtons, _playerService.CanMoveForward);
 
-        _manager.AppState.ChangeStates(_trackStartTexts, _playerService.IsActive);
-        _manager.AppState.ChangeState(_trackTotalText, _playerService.IsActive);
-        _manager.AppState.ChangeStates(_positionSliders, _playerService.IsActive);
-        _manager.AppState.ChangeStates(_releaseImages, _playerService.IsActive, _playerService.IsPlaying);
+        Manager.AppState.ChangeStates(_trackStartTexts, _playerService.IsActive);
+        Manager.AppState.ChangeState(_trackTotalText, _playerService.IsActive);
+        Manager.AppState.ChangeStates(_positionSliders, _playerService.IsActive);
+        Manager.AppState.ChangeStates(_releaseImages, _playerService.IsActive, _playerService.IsPlaying);
 
         yield return null;
     }

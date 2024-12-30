@@ -6,35 +6,48 @@ using UnityEngine;
 public class ButtonAnimations : ScriptableObject
 {
     [Header("General Settings")]
-    [SerializeField] float _animationDuration = 0.2f;
+    [SerializeField, Tooltip("Default animation duration")] float _animationTime = 0.2f;
     [SerializeField] Ease _animationEase = Ease.OutBack;
 
     [Header("Text Button Animations")]
     [SerializeField] float _textHoverScale = 1.1f;
     [SerializeField] float _textClickScale = 0.9f;
 
-    [Header("Image Button Animations")]
-    [SerializeField] float _imageHoverScale = 1.2f;
-    [SerializeField] float _imageClickScale = 0.8f;
+    [Header("Default Image Button Animations")]
+    [SerializeField] float _imageScale = .6f;
+    [SerializeField] float _imageHoverScale = .8f;
+    [SerializeField] float _imageClickScale = 0.4f;
+
+    [Header("Large Image Button Animations")]
+    [SerializeField] float _imageLargeScale = 1f;
+    [SerializeField] float _imageLargeHoverScale = 1.2f;
+    [SerializeField] float _imageLargeClickScale = 0.8f;
 
     [Header("Toolbar Button Animations")]
     [SerializeField] float _toolbarHoverScale = 1.2f;
     //[SerializeField, Tooltip("Change the color to the accent color")] bool _toolbarHoverColorChange = true;
     [SerializeField] float _toolbarClickScale = 0.8f;
     [SerializeField] float _toolbarToggleScale = 0.7f;
-    [SerializeField, Tooltip("Resize the icon when the spinner is active")] float _toolbarSpinnerScale = 0.7f;
     [SerializeField] float _toolbarTooltipPopupTime = 0.1f;
 
-    readonly Dictionary<string, Sequence> _sequenceCache = new();
+    [Header("Toolbar Spinner Animations")]
+    [SerializeField, Tooltip("Resize the icon when the spinner is active")] float _toolbarSpinnerScale = 0.7f;
+    [SerializeField, Tooltip("Animation duration when spinner is (de)activated")] float _toolbarSpinTime = 0.4f;
+
+    public float ImageButtonScale => _imageScale;
+    public float ImageButtonLargeScale => _imageLargeScale;
+
+    //readonly Dictionary<string, Sequence> _sequenceCache = new();
 
     #region Default Button Events
     public void PlayClicked(ButtonInteractable button, ButtonAnimationType buttonType)
     {
-        var duration = _animationDuration / 2;
+        var duration = _animationTime / 2;
         var scaleClick = buttonType switch
         {
             ButtonAnimationType.ToolbarButton => _toolbarClickScale,
-            ButtonAnimationType.ImageButton => _imageClickScale,
+            ButtonAnimationType.DefaultImageButton => _imageClickScale,
+            ButtonAnimationType.LargeImageButton => _imageLargeClickScale,
             _ => _textClickScale
         };
         button.transform.DOScale(scaleClick, duration).SetEase(_animationEase)
@@ -43,11 +56,12 @@ public class ButtonAnimations : ScriptableObject
 
     public void PlayHover(ButtonInteractable button, ButtonAnimationType buttonType, float duration = 0)
     {
-        if (duration == 0) duration = _animationDuration;
+        if (duration == 0) duration = _animationTime;
 
         var scale = buttonType switch
         {
-            ButtonAnimationType.ImageButton => _imageHoverScale,
+            ButtonAnimationType.DefaultImageButton => _imageHoverScale,
+            ButtonAnimationType.LargeImageButton => _imageLargeHoverScale,
             ButtonAnimationType.ToolbarButton => _toolbarHoverScale,
             _ => _textHoverScale
         };
@@ -57,7 +71,14 @@ public class ButtonAnimations : ScriptableObject
 
     public void PlayNormal(ButtonInteractable button, ButtonAnimationType buttonType)
     {
-        button.transform.DOScale(1, _animationDuration).SetEase(_animationEase);
+        var scale = buttonType switch
+        {
+            ButtonAnimationType.DefaultImageButton => _imageScale,
+            ButtonAnimationType.LargeImageButton => _imageLargeScale,
+            _ => 1.0f
+        };
+
+        button.transform.DOScale(scale, _animationTime).SetEase(_animationEase);
     }
 
     public void PlayInteractable(
@@ -68,12 +89,12 @@ public class ButtonAnimations : ScriptableObject
     {
         if (buttonType == ButtonAnimationType.TextButton)
         {
-            button.TextComponent.DOColor(foreGroundColor, _animationDuration);
-            button.ImageComponent.DOColor(backgroundColor, _animationDuration);
+            button.TextComponent.DOColor(foreGroundColor, _animationTime);
+            button.ImageComponent.DOColor(backgroundColor, _animationTime);
         }
         else
         {
-            button.ImageComponent.DOColor(foreGroundColor, _animationDuration);
+            button.ImageComponent.DOColor(foreGroundColor, _animationTime);
         }
     }
     #endregion
@@ -81,14 +102,14 @@ public class ButtonAnimations : ScriptableObject
     public void PlayToolbarShowSpinner(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
-            .DOScale(_toolbarSpinnerScale, .25f)
-            .SetEase(Ease.InBack)
+            .DOScale(_toolbarSpinnerScale, _toolbarSpinTime)
+            .SetEase(Ease.OutBack)
             .OnComplete(
                 () =>
                 {
                     button.m_spinnerBackground.gameObject.SetActive(true);
                     button.m_spinner.gameObject.SetActive(true);
-                    button.SetInterActable(false);
+                    button.SetInteractable(false);
                 });
     }
 
@@ -98,10 +119,10 @@ public class ButtonAnimations : ScriptableObject
         button.m_spinner.gameObject.SetActive(false);
 
         button.m_icon.transform
-            .DOScale(1f, .25f)
-            .SetEase(Ease.OutBack)
+            .DOScale(1f, _toolbarSpinTime)
+            .SetEase(Ease.InBack)
             .OnComplete(
-                () => button.SetInterActable(true));
+                () => button.SetInteractable(true));
     }
 
     public void PlayToolbarToggleOn(ToolbarButtonAnimator button)
@@ -114,11 +135,7 @@ public class ButtonAnimations : ScriptableObject
                 {
                     button.m_toggleIcon.gameObject.SetActive(true);
                     button.m_button.interactable = false;
-
-                    //animator.enabled = !IsToggleOn;
-
-                    //if (_toolbarHoverColorChange)
-                    button.m_icon.color = MusicMateManager.Instance.AccentColor;
+                    //button.m_icon.color = MusicMateManager.Instance.AccentColor;
                 });
     }
 
@@ -132,8 +149,6 @@ public class ButtonAnimations : ScriptableObject
                 {
                     button.m_toggleIcon.gameObject.SetActive(false);
                     button.m_button.interactable = true;
-
-                    //animator.enabled = !IsToggleOn;
                 });
     }
 
@@ -142,20 +157,16 @@ public class ButtonAnimations : ScriptableObject
         //button.m_tooltipText.color = button.m_button.interactable || button.IsToggleOn
         //    ? MusicMateManager.Instance.AccentColor
         //    : MusicMateManager.Instance.TextColor;
-        Debug.Log("Show tooltip 1");
         button.m_tooltipPanel.localScale = Vector3.zero;
         button.m_tooltipPanel.gameObject.SetActive(true);
         button.m_tooltipPanel.DOScale(1, _toolbarTooltipPopupTime);
         button.m_tooltipVisible = true;
-        Debug.Log("Show tooltip 2");
     }
 
     public void PlayToolbarHideTooltip(ToolbarButtonAnimator button)
     {
-        Debug.Log("Hide tooltip 1");
         button.m_tooltipPanel.DOScale(0, _toolbarTooltipPopupTime / 2).OnComplete(() => button.m_tooltipPanel.gameObject.SetActive(false));
         button.m_tooltipVisible = false;
-        Debug.Log("Hide tooltip 2");
     }
 
 }
