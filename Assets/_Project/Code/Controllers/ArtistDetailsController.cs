@@ -20,7 +20,7 @@ public class ArtistDetailsController : MonoBehaviour
     internal CanvasGroup m_canvasGroup;
 
     IMusicMateManager _manager;
-    IApiService _apiService;
+    IMusicMateApiService _apiService;
     bool _loading;
 
     readonly float _speed = 1.5f;
@@ -29,7 +29,7 @@ public class ArtistDetailsController : MonoBehaviour
     void Awake()
     {
         _manager = MusicMateManager.Instance;
-        _apiService = ApiService.Instance.GetClient();
+        _apiService = MusicMateApiService.Instance.GetClient();
     }
 
     void OnEnable()

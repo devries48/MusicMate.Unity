@@ -7,7 +7,7 @@ using Newtonsoft.Json.Serialization;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ApiService : SceneSingleton<ApiService>, IApiService
+public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMateApiService
 {
     string _apiUrl;
     string _accessToken;
@@ -21,7 +21,7 @@ public class ApiService : SceneSingleton<ApiService>, IApiService
 
     public bool IsConnected => _accessToken != null;
 
-    public IApiService GetClient() => this;
+    public IMusicMateApiService GetClient() => this;
 
     public void SubscribeToConnectionChanged(ConnectionChangedEventHandler handler) => ConnectionChanged += handler;
 

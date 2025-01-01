@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateManager
 {
+    #region Serialized Fields
     [Header("Configuration")]
     [SerializeField] AppConfiguration _appConfig;
 
@@ -16,7 +17,9 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     [Header("Elements")]
     [SerializeField] GameObject _connectionSpinner;
+    [SerializeField] GameObject[] _activateOnStart;
     [SerializeField] GameObject[] _inactivateOnStart;
+    #endregion
 
     #region Properties
     public AppConfiguration AppConfiguration => _appConfig;
@@ -38,7 +41,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     #endregion
 
     #region #region Field Declarations
-    IApiService _service;
+    IMusicMateApiService _service;
     IAppState _appState;
     AnimationManager _animations;
     #endregion
@@ -46,9 +49,10 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     #region Unity Events
     void Awake()
     {
+        ActivateGameObjects();
         InactivateGameObjects();
 
-        _service = ApiService.Instance.GetClient();
+        _service = MusicMateApiService.Instance.GetClient();
         _animations = AnimationManager.Instance;
     }
 
@@ -153,6 +157,17 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         for (int i = 0; i < _inactivateOnStart?.Length; i++)
             _inactivateOnStart[i].SetActive(false);
     }
+
+    /// <summary>
+    /// Show GameObjects initially hidden.
+    /// Logo was often set to disabled. 
+    /// </summary>
+    void ActivateGameObjects()
+    {
+        for (int i = 0; i < _inactivateOnStart?.Length; i++)
+            _inactivateOnStart[i].SetActive(false);
+    }
+
 
     void ShowOrHideErrorPanel(bool show) => _animations.WindowErrorVisible(_errorController.gameObject, show);
 

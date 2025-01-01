@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public interface IApiService
+public interface IMusicMateApiService
 {
     void SignIn(string url, string user, string password);
     void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback);

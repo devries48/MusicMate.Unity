@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoginWindow : MonoBehaviour
+public class LoginWindow : MusicMateBehavior
 {
     [Header("Controllers")]
     [SerializeField] InputController _inputUrl;
@@ -15,17 +15,32 @@ public class LoginWindow : MonoBehaviour
     [SerializeField] ButtonInteractable _acceptButton;
     [SerializeField] Button _cancelButton;
 
-    IMusicMateManager _manager;
-
     static readonly string encryptionKey = "YourEncryptionKeyHere";
 
-    void Awake() => _manager = MusicMateManager.Instance;
-
-    void Start() => Initialize();
-
-    void Initialize()
+    protected override void RegisterEventHandlers()
     {
-        var cfg = _manager.AppConfiguration;
+        _cancelButton.onClick.AddListener(OnCancelClicked);
+        _acceptButton.onClick.AddListener(OnAcceptClicked);
+   
+        _inputUrl.ValueTextChanged.AddListener(OnInputChanged);
+        _inputUser.ValueTextChanged.AddListener( OnInputChanged);
+        _inputPassword.ValueTextChanged.AddListener(OnInputChanged);
+    }
+
+    protected override void UnregisterEventHandlers()
+    {
+        _cancelButton.onClick.RemoveListener(OnCancelClicked);
+        _acceptButton.onClick.RemoveListener(OnAcceptClicked);
+
+        _inputUrl.ValueTextChanged.RemoveListener(OnInputChanged);
+        _inputUser.ValueTextChanged.RemoveListener(OnInputChanged);
+        _inputPassword.ValueTextChanged.RemoveListener(OnInputChanged);
+    }
+
+    protected override void InitializeValues()
+    {
+        var cfg = Manager.AppConfiguration;
+
         _inputUrl.ValueText = cfg.ApiServiceUrl;
         _inputUser.ValueText = cfg.User;
         _inputPassword.ValueText = cfg.GetPassword(encryptionKey);
@@ -36,13 +51,6 @@ public class LoginWindow : MonoBehaviour
             _inputPassword.SetFocus();
         else
             _inputUrl.SetFocus();
-
-        _inputUrl.ValueTextChanged.AddListener(() => OnInputChanged());
-        _inputUser.ValueTextChanged.AddListener(() => OnInputChanged());
-        _inputPassword.ValueTextChanged.AddListener(() => OnInputChanged());
-
-        _cancelButton.onClick.AddListener(() => OnCancelClicked());
-        _acceptButton.onClick.AddListener(() => OnAcceptClicked());
 
         OnInputChanged();
     }
@@ -56,8 +64,7 @@ public class LoginWindow : MonoBehaviour
         _acceptButton.interactable = hasValue;
     }
 
-    void OnCancelClicked() => _manager.QuitApplication();
+    void OnCancelClicked() => Manager.QuitApplication();
 
-    void OnAcceptClicked() => _manager.Connect();
-
+    void OnAcceptClicked() => Manager.Connect();
 }

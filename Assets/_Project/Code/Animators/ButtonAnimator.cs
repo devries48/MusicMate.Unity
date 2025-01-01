@@ -29,13 +29,13 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     #region Base Class Methods
     protected override void RegisterEventHandlers()
     {
-        Button.onClick.AddListener(() => OnButtonClicked());
+        Button.onClick.AddListener(OnButtonClicked);
         Button.OnInteractableChanged += OnInteractableChanged;
     }
 
     protected override void UnregisterEventHandlers()
     {
-        Button.onClick.RemoveListener(() => OnButtonClicked());
+        Button.onClick.RemoveListener(OnButtonClicked);
         Button.OnInteractableChanged -= OnInteractableChanged;
     }
 
@@ -58,13 +58,19 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
             if (Button.ImageComponent != null && _icon != null)
             {
-                if ((_buttonType == ButtonAnimationType.DefaultImageButton ||
-                    _buttonType == ButtonAnimationType.LargeImageButton))
+                if (_buttonType == ButtonAnimationType.DefaultImageButton ||
+                    _buttonType == ButtonAnimationType.LargeImageButton)
                 {
                     Button.ImageComponent.sprite = _icon;
-                    Button.ImageComponent.color = !_interactable
+                    Button.ImageComponent.color = !Button.interactable
                         ? Button.Colors.DisabledIconColor
                         : _isPrimary ? Button.Colors.AccentColor : Button.Colors.IconColor;
+
+                    var scale = _buttonType == ButtonAnimationType.DefaultImageButton
+                        ? Animations.ImageButtonScale
+                        : Animations.ImageButtonLargeScale;
+
+                    Button.transform.localScale = new Vector3(scale, scale, scale);
                 }
                 else
                     Button.ImageComponent.color = _isPrimary ? Button.Colors.AccentColor : Button.Colors.DefaultColor;
@@ -72,7 +78,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         }
         catch (System.Exception)
         {
-            Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name + ")");
+          //  Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name + ")");
         }
     }
     #endregion

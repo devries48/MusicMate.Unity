@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 [CreateAssetMenu(menuName = "MusicMate/Logo Animation Settings", fileName = "Logo Animations")]
 public class LogoAnimations : ScriptableObject
 {
-    [Header("Fade Animation")]
+    [Header("Fade")]
     [SerializeField] float _delayBeforeFade = 0.25f;
     [SerializeField] float _fadeDuration = 1.75f;
     [SerializeField] float _particleDuration = 5f;

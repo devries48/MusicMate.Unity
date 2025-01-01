@@ -1,11 +1,14 @@
+#region Usings
 using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#endregion
 
-public class ReleaseGridCellController : MonoBehaviour
+public class ReleaseGridCellController : MusicMateBehavior
 {
+    #region Serialized Fields
     [SerializeField] TextMeshProUGUI _artistText;
     [SerializeField] TextMeshProUGUI _titleText;
     [SerializeField] Image _releaseImage;
@@ -15,17 +18,9 @@ public class ReleaseGridCellController : MonoBehaviour
     [SerializeField] RectTransform _panelControls;
     [SerializeField] Button _playPauseButton;
     [SerializeField] Button _showReleaseButton;
+    #endregion
 
-    IApiService _apiService;
-    IAudioPlayerService _playerService;
-    IMusicMateManager _manager;
-    ReleaseResult _releaseModel;
-
-    RectTransform _rectTransform;
-    Animator _animator;
-    Image _borderImage;
-    ReleaseResultController _parentController;
-
+    #region Properties
     public bool IsSelected
     {
         get => _isSelected; set
@@ -35,42 +30,56 @@ public class ReleaseGridCellController : MonoBehaviour
         }
     }
     bool _isSelected = false;
+    #endregion
+
+    ReleaseResult _releaseModel;
+
+    Button _button;
+    RectTransform _rectTransform;
+    Animator _animator;
+    Image _borderImage;
+    ReleaseResultController _parentController;
 
     bool _showText = false;
     readonly float _maxPanelScale = 2;
     readonly float _slideTime = .25f;
 
-    void Awake() => _playerService = AudioPlayerService.Instance;
-
-    void OnEnable() => _playerService.SubscribeToStateChanged(OnPlayerStateChanged);
-
-    void OnDisable() => _playerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
-
-    void Start()
+    #region Base Class Methods
+    protected override void RegisterEventHandlers()
     {
-        _apiService = ApiService.Instance.GetClient();
-        _manager = MusicMateManager.Instance;
+        PlayerService.SubscribeToStateChanged(OnPlayerStateChanged);
+        _showReleaseButton.onClick.AddListener(OnShowReleaseClicked);
+        _button.onClick.AddListener(OnClicked);
+    }
 
-        _selectionColor.a = 0;
+    protected override void UnregisterEventHandlers()
+    {
+        PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
+        _showReleaseButton.onClick.RemoveListener(OnShowReleaseClicked);
+        _button.onClick.AddListener(OnClicked);
+    }
+
+    protected override void InitializeComponents()
+    {
         _rectTransform = GetComponent<RectTransform>();
         _animator = GetComponent<Animator>();
         _borderImage = GetComponent<Image>();
-        _borderImage.color = _selectionColor;
-
-        var button = GetComponent<Button>();
-        button.onClick.AddListener(() => OnClicked());
-
-        _showReleaseButton.onClick.AddListener(() => OnShowReleaseClicked());
-
+        _button = GetComponent<Button>();
     }
+
+    protected override void InitializeValues()
+    {
+        _selectionColor.a = 0;
+         _borderImage.color = _selectionColor;
+    }
+    #endregion
 
     public void Initialize(ReleaseResult model, ReleaseResultController controller)
     {
         _releaseModel = model;
         _parentController = controller;
 
-        _apiService = ApiService.Instance.GetClient();
-        _apiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
+        ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
 
         _artistText.text = model.Artist.Text;
         _titleText.text = model.Title;
@@ -80,13 +89,13 @@ public class ReleaseGridCellController : MonoBehaviour
 
     public void OnPlayOrPauseClicked()
     {
-        if (!_playerService.IsPlaying)
-            _playerService.Play(_releaseModel);
+        if (!PlayerService.IsPlaying)
+            PlayerService.Play(_releaseModel);
         else
-            _playerService.Pause();
+            PlayerService.Pause();
     }
 
-    public void OnShowReleaseClicked() => _manager.ShowRelease(_releaseModel);
+    public void OnShowReleaseClicked() => Manager.ShowRelease(_releaseModel);
 
     public void ChangeSelectedState()
     {
@@ -94,8 +103,8 @@ public class ReleaseGridCellController : MonoBehaviour
 
         _parentController.ChangeSelection(this); // Notify parent
 
-        _borderImage.DOFade(IsSelected ? 1 : 0,.25f);
-            //.SetEase(IsSelected ? Ease.InSine : Ease.OutQuint);
+        _borderImage.DOFade(IsSelected ? 1 : 0, .25f);
+        //.SetEase(IsSelected ? Ease.InSine : Ease.OutQuint);
 
         _panelControls.DOPivotY(IsSelected ? 0 : 1, _slideTime)
             .SetEase(IsSelected ? Ease.InBack : Ease.OutBack)
@@ -135,9 +144,8 @@ public class ReleaseGridCellController : MonoBehaviour
 
     IEnumerator SetPlayerState()
     {
-        _manager.AppState.ChangeState(_playPauseButton, _playerService.IsActive, _playerService.IsPlaying);
+        Manager.AppState.ChangeState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
 
         yield return null;
     }
-
 }

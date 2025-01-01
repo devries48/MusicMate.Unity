@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "MusicMate/Input Animation Settings", fileName = "Input Animations")]
 public class InputAnimations : ScriptableObject
 {
-    [Header("InputText Animation")]
+    [Header("InputText")]
     [SerializeField] float _textTransitionDuration = .2f;
 
     public void SetColor(TMP_InputField input, Color targetColor) => input.textComponent.DOColor(targetColor, _textTransitionDuration);

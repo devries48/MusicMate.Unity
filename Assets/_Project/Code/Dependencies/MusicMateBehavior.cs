@@ -3,7 +3,10 @@ using UnityEngine;
 public abstract class MusicMateBehavior : MonoBehaviour
 {
     private AnimationManager _animations;
-    private MusicMateManager _musicMateManager;
+    private IMusicMateManager _musicMateManager;
+    private IAudioPlayerService _playerService;
+    private IMusicMateApiService _apiService;
+
 
     /// <summary>
     /// Access the AnimationManager instance.
@@ -26,13 +29,37 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
         get
         {
-            if (_musicMateManager == null)
-                _musicMateManager = MusicMateManager.Instance;
+            _musicMateManager ??= MusicMateManager.Instance;
 
             return _musicMateManager;
         }
     }
 
+    /// <summary>
+    /// Access the Audio Player Service.
+    /// </summary>
+    protected IAudioPlayerService PlayerService
+    {
+        get
+        {
+            _playerService ??= AudioPlayerService.Instance;
+
+            return _playerService;
+        }
+    }
+
+    /// <summary>
+    /// Access the MusicMate API service.
+    /// </summary>
+    protected IMusicMateApiService ApiService
+    {
+        get
+        {
+            _apiService ??= MusicMateApiService.Instance;
+
+            return _apiService;
+        }
+    }
     protected virtual void OnEnable() => RegisterEventHandlers();
     protected virtual void OnDisable() => UnregisterEventHandlers();
     protected virtual void Awake() => InitializeComponents();

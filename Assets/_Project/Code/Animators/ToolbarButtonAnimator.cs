@@ -68,7 +68,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     {
         base.RegisterEventHandlers();
 
-        m_button.onClick.AddListener(() => OnButtonClicked());
+        m_button.onClick.AddListener(OnButtonClicked);
         m_button.OnInteractableChanged += OnInteractableChanged;
     }
 
@@ -76,7 +76,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     {
         base.UnregisterEventHandlers();
 
-        m_button.onClick.RemoveListener(() => OnButtonClicked());
+        m_button.onClick.RemoveListener(OnButtonClicked);
         m_button.OnInteractableChanged -= OnInteractableChanged;
     }
 

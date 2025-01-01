@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Button Animation Settings", fileName = "Button Animations")]
@@ -9,28 +8,28 @@ public class ButtonAnimations : ScriptableObject
     [SerializeField, Tooltip("Default animation duration")] float _animationTime = 0.2f;
     [SerializeField] Ease _animationEase = Ease.OutBack;
 
-    [Header("Text Button Animations")]
+    [Header("Text Button")]
     [SerializeField] float _textHoverScale = 1.1f;
     [SerializeField] float _textClickScale = 0.9f;
 
-    [Header("Default Image Button Animations")]
+    [Header("Default Image Button")]
     [SerializeField] float _imageScale = .6f;
     [SerializeField] float _imageHoverScale = .8f;
     [SerializeField] float _imageClickScale = 0.4f;
 
-    [Header("Large Image Button Animations")]
+    [Header("Large Image Button")]
     [SerializeField] float _imageLargeScale = 1f;
     [SerializeField] float _imageLargeHoverScale = 1.2f;
     [SerializeField] float _imageLargeClickScale = 0.8f;
 
-    [Header("Toolbar Button Animations")]
+    [Header("Toolbar Button")]
     [SerializeField] float _toolbarHoverScale = 1.2f;
     //[SerializeField, Tooltip("Change the color to the accent color")] bool _toolbarHoverColorChange = true;
     [SerializeField] float _toolbarClickScale = 0.8f;
     [SerializeField] float _toolbarToggleScale = 0.7f;
     [SerializeField] float _toolbarTooltipPopupTime = 0.1f;
 
-    [Header("Toolbar Spinner Animations")]
+    [Header("Toolbar Spinner")]
     [SerializeField, Tooltip("Resize the icon when the spinner is active")] float _toolbarSpinnerScale = 0.7f;
     [SerializeField, Tooltip("Animation duration when spinner is (de)activated")] float _toolbarSpinTime = 0.4f;
 

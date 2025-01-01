@@ -8,13 +8,16 @@ public class ToolbarImportController : ToolbarControllerBase
 
     readonly float _checkRunningInterval = 10f;
 
-    void OnDisable() => CancelInvoke();
+    private void OnEnable() => _scanFolderButton.OnButtonClick.AddListener(OnScanFolderClicked);
 
-    protected override void InitElements()
+    void OnDisable()
     {
-        _scanFolderButton.SetInteractable(true);
-        _scanFolderButton.OnButtonClick.AddListener(() => OnScanFolderClicked());
+        _scanFolderButton.OnButtonClick.RemoveListener(OnScanFolderClicked);
+
+        CancelInvoke();
     }
+
+    protected override void InitElements() => _scanFolderButton.SetInteractable(true);
 
     protected override IEnumerator SetElementStates()
     {

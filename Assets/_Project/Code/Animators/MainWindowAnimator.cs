@@ -15,7 +15,7 @@ public class MainWindowAnimator : MonoBehaviour
     [SerializeField] ToolbarImportController _importToolbar;
 
     #region Field Declarations
-    IApiService _service;
+    IMusicMateApiService _service;
     IAudioPlayerService _playerService;
     IMusicMateManager _manager;
     AnimationManager _animations;
@@ -29,7 +29,7 @@ public class MainWindowAnimator : MonoBehaviour
     void Awake()
     {
         _state = new State();
-        _service = ApiService.Instance.GetClient();
+        _service = MusicMateApiService.Instance.GetClient();
         _playerService = AudioPlayerService.Instance;
         _manager = MusicMateManager.Instance;
         _animations = AnimationManager.Instance;

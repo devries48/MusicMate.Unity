@@ -16,7 +16,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     IMusicMateManager _manager;
 
-    public float TooltipPadding { get => _tooltipPadding; } 
+    public float TooltipPadding { get => _tooltipPadding; }
     public float TooltipPanelWidth { get => _tooltipPanelWidth; }
 
     public float ImageButtonScale => _buttonAnimations.ImageButtonScale;
@@ -52,8 +52,8 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void ButtonHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
     {
-       // if (button.interactable)
-            _buttonAnimations.PlayNormal(button, buttonType);
+        // if (button.interactable)
+        _buttonAnimations.PlayNormal(button, buttonType);
     }
 
     public void ButtonClicked(ButtonInteractable button, ButtonAnimationType buttonType)
@@ -105,11 +105,14 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _buttonAnimations.PlayToolbarHideTooltip(button);
     }
 
-    public void PanelVisible(bool isVisible, float duration, float delay=0, params CanvasGroup[] panels) => _panelAndWindowAnimations.PlayPanelFade(isVisible, duration, delay, panels);
+    public void PanelVisible(bool isVisible, float duration, float delay = 0, params CanvasGroup[] panels) => _panelAndWindowAnimations.PlayPanelFade(isVisible, duration, delay, panels);
 
     public void PanelAudioPlayerState(bool isExpanded, RectTransform expandedPlayer, RectTransform collapsedPlayer, Action onComplete = null)
     {
-        onComplete?.Invoke();
+        if (isExpanded)
+            _panelAndWindowAnimations.PlayExpandAudioPlayer(expandedPlayer, collapsedPlayer, onComplete);
+        else
+            _panelAndWindowAnimations.PlayCollapseAudioPlayer(expandedPlayer, collapsedPlayer, onComplete);
     }
 
     public void PanelReleaseResultVisible(ReleaseResultController releaseResultController, bool show)

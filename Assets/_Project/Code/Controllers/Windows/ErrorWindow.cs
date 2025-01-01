@@ -1,10 +1,10 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ErrorWindow : MonoBehaviour
+public class ErrorWindow : MusicMateBehavior
 {
+    #region Serialized Fields
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _titleText;
     [SerializeField] TextMeshProUGUI _descriptionText;
@@ -12,17 +12,21 @@ public class ErrorWindow : MonoBehaviour
     [SerializeField] Image _warningImage;
     [SerializeField] ButtonInteractable _acceptButton;
     [SerializeField] Button _cancelButton;
+    #endregion
 
-    IMusicMateManager _manager;
-
-    void Awake() => _manager = MusicMateManager.Instance;
-
-
-    void Start()
+    #region Base Class Methods
+    protected override void RegisterEventHandlers()
     {
-        _cancelButton.onClick.AddListener(() => OnCancelClicked());
-        _acceptButton.onClick.AddListener(() => OnAcceptClicked());
+        _cancelButton.onClick.AddListener(OnCancelClicked);
+        _acceptButton.onClick.AddListener(OnAcceptClicked);
     }
+
+    protected override void UnregisterEventHandlers()
+    {
+        _cancelButton.onClick.RemoveListener(OnCancelClicked);
+        _acceptButton.onClick.RemoveListener(OnAcceptClicked);
+    }
+    #endregion
 
     public void SetError(ErrorType error, string message, string description = null)
     {
@@ -33,6 +37,6 @@ public class ErrorWindow : MonoBehaviour
         _errorText.text = message;
     }
 
-    void OnCancelClicked() => _manager.QuitApplication();
-    void OnAcceptClicked() => _manager.ShowLogin();
+    void OnCancelClicked() => Manager.QuitApplication();
+    void OnAcceptClicked() => Manager.ShowLogin();
 }

@@ -25,9 +25,21 @@ public class ToolbarPartController : ToolbarControllerBase
 
     enum DetailsToggle { release, artist }
 
-    void OnEnable() => m_Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
+    void OnEnable()
+    {
+        m_Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
 
-    void OnDisable() => m_Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+        _releaseToggle.OnButtonClick.AddListener(OnReleaseToggleClicked);
+        _artistToggle.OnButtonClick.AddListener(OnArtistToggleClicked);
+    }
+
+    void OnDisable()
+    {
+        m_Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+
+        _releaseToggle.OnButtonClick.RemoveListener(OnReleaseToggleClicked);
+        _artistToggle.OnButtonClick.RemoveListener(OnArtistToggleClicked);
+    }
 
     protected override void Start()
     {
@@ -38,12 +50,6 @@ public class ToolbarPartController : ToolbarControllerBase
         _currentPart = VisiblePart.ReleaseResult;
 
         base.Start();
-    }
-
-    protected override void InitElements()
-    {
-        _releaseToggle.OnButtonClick.AddListener(() => OnReleaseToggleClicked());
-        _artistToggle.OnButtonClick.AddListener(() => OnArtistToggleClicked());
     }
 
     protected override IEnumerator SetElementStates()

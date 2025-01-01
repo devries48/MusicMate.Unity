@@ -26,3 +26,13 @@ MonoBehaviour:
   _resultHideFadeTo: 0.01
   _resultShowEase: 14
   _resultHideEase: 15
+  _playerCollapseTime: 0.4
+  _playerSmallShowDelay: 0.2
+  _playerLargeShrinkEase: 5
+  _playerLargeHideEase: 26
+  _playerSmallShowEase: 27
+  _playerExpandTime: 0.4
+  _playerLargeGrowDelay: 0.2
+  _playerSmallHideEase: 26
+  _playerLargeShowEase: 27
+  _playerLargeGrowEase: 6

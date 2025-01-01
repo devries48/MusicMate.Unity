@@ -7,12 +7,12 @@ public abstract class ToolbarControllerBase : MonoBehaviour
     internal CanvasGroup m_CanvasGroup;
 
     protected IMusicMateManager m_Manager;
-    protected IApiService m_ApiService;
+    protected IMusicMateApiService m_ApiService;
 
     protected virtual void Awake()
     {
         m_Manager = MusicMateManager.Instance;
-        m_ApiService = ApiService.Instance.GetClient();
+        m_ApiService = MusicMateApiService.Instance.GetClient();
         m_CanvasGroup = GetComponent<CanvasGroup>();
         m_CanvasGroup.alpha = 0f;
     }

@@ -19,7 +19,7 @@ public class AudioPlayerController : MusicMateBehavior
     [SerializeField] Image[] _releaseImages;
     [SerializeField] Slider[] _positionSliders;
     [SerializeField] TextMeshProUGUI[] _trackStartTexts;
-    [SerializeField] Button[] _playPauseButtons; // _shuffleButton, _repeatButton;
+    [SerializeField] ButtonAnimator[] _playPauseButtons; // _shuffleButton, _repeatButton;
     [SerializeField] ButtonAnimator[] _nextButtons;
     [SerializeField] ButtonAnimator[] _previousButtons;
 
@@ -33,7 +33,7 @@ public class AudioPlayerController : MusicMateBehavior
     [Header("Elements Collapsed")]
     [SerializeField] Button _expandButton;
     [SerializeField] Marquee _artistAndTitleMarquee;
-    [SerializeField] Button _volumeToggle;
+    [SerializeField] ButtonAnimator _volumeToggle;
     [SerializeField] CloseOnContextLoss _volumeDropdown;
     [SerializeField] Slider _volumeSlider2;
     #endregion
@@ -43,11 +43,9 @@ public class AudioPlayerController : MusicMateBehavior
     internal CanvasGroup m_canvasGroupExpanded;
 
     IAudioPlayerService _playerService;
-    IApiService _apiService;
+    IMusicMateApiService _apiService;
     AudioSource _audioSource;
     FadeData _fade;
-
-    readonly float _collapseTime = 1f;
 
     float _volume = 0.5f;
     bool _isPosDrag = false;
@@ -69,7 +67,7 @@ public class AudioPlayerController : MusicMateBehavior
     protected override void InitializeComponents()
     {
         _playerService = AudioPlayerService.Instance;
-        _apiService = ApiService.Instance.GetClient();
+        _apiService = MusicMateApiService.Instance.GetClient();
         _audioSource = GetComponent<AudioSource>();
 
         m_canvasGroupExpanded = _expandedPlayer.gameObject.GetComponent<CanvasGroup>();
@@ -87,6 +85,7 @@ public class AudioPlayerController : MusicMateBehavior
 
     void InitElements()
     {
+        print("INIT ELMENTS");
         _volumeDropdown.gameObject.SetActive(false);
         _artistMarquee.ClearText();
         _titleMarquee.ClearText();
@@ -94,19 +93,20 @@ public class AudioPlayerController : MusicMateBehavior
         _volumeSlider1.value = _volume;
         _volumeSlider2.value = _volume;
 
-        _collapseButton.onClick.AddListener(() => OnCollapseClicked());
-        _expandButton.onClick.AddListener(() => OnExpandClicked());
+        _collapseButton.onClick.AddListener(OnCollapseClicked);
+        _expandButton.onClick.AddListener(OnExpandClicked);
 
         foreach (var button in _playPauseButtons)
-            button.onClick.AddListener(() => OnPlayPauseClicked());
+            button.OnButtonClick.AddListener(OnPlayPauseClicked);
 
         foreach (var button in _nextButtons)
-            button.OnButtonClick.AddListener(() => OnNextClicked());
+            button.OnButtonClick.AddListener(OnNextClicked);
 
         foreach (var button in _previousButtons)
-            button.OnButtonClick.AddListener(() => OnPreviousClicked());
+            button.OnButtonClick.AddListener(OnPreviousClicked);
 
-        _volumeToggle.onClick.AddListener(() => OnVolumeToggled());
+        _volumeToggle.OnButtonClick.AddListener(OnVolumeToggled);
+
         _volumeSlider1.onValueChanged.AddListener(delegate { OnVolume1Changed(); });
         _volumeSlider2.onValueChanged.AddListener(delegate { OnVolume2Changed(); });
     }
@@ -155,16 +155,10 @@ public class AudioPlayerController : MusicMateBehavior
         _collapseButton.gameObject.SetActive(false);
         _expandButton.gameObject.SetActive(true);
 
-        var scaleTo = _expandedPlayer.transform.localScale * .8f;
-
-        _expandedPlayer.DOScale(scaleTo, _collapseTime / 2)
-            .SetEase(Ease.InBack)
-            .OnComplete(
-                () => _expandedPlayer.DOPivotX(-.1f, _collapseTime / 2)
-                    .SetEase(Ease.InBack)
-                    .OnComplete(() => _playerService.ChangeExpandedState(false)));
-
-        _collapsedPlayer.DOPivotY(1, _collapseTime).SetEase(Ease.OutBack).SetDelay(.5f);
+        Animations.PanelAudioPlayerState(false, _expandedPlayer, _collapsedPlayer, () =>
+        {
+            _playerService.ChangeExpandedState(false);
+        });
     }
 
     /// <summary>
@@ -176,13 +170,7 @@ public class AudioPlayerController : MusicMateBehavior
         _expandButton.gameObject.SetActive(false);
         _playerService.ChangeExpandedState(true);
 
-        _collapsedPlayer.DOPivotY(-.5f, _collapseTime / 2).SetEase(Ease.InBack);
-
-        _expandedPlayer.DOPivotX(1, _collapseTime / 2)
-            .SetEase(Ease.OutBack).SetDelay(.5f)
-            .OnComplete(
-                () => _expandedPlayer.DOScale(1, _collapseTime / 2)
-                    .SetEase(Ease.OutBack));
+        Animations.PanelAudioPlayerState(true, _expandedPlayer, _collapsedPlayer);
     }
 
     void OnPlayPauseClicked()
