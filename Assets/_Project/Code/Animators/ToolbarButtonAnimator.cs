@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 #endregion
 
 public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
@@ -222,6 +225,9 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 #if UNITY_EDITOR
     void OnValidate()
     {
+        if (Application.isPlaying) return;
+        if (EditorApplication.isCompiling) return;
+
         transform.Find("Button").TryGetComponent(out m_button);
         transform.Find("Button/Icon").TryGetComponent(out m_icon);
 

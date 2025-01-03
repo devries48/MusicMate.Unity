@@ -1,12 +1,11 @@
 using DG.Tweening;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class ToolbarPartController : ToolbarControllerBase
 {
-    [SerializeField] TextMeshProUGUI _titleText;
+    [SerializeField] ButtonAnimator _header;
 
     [Header("Search Part")]
     [SerializeField] GameObject _searchPart;
@@ -114,7 +113,7 @@ public class ToolbarPartController : ToolbarControllerBase
                         {
                             hidePart.SetActive(false);
                             showPart.SetActive(true);
-                            _titleText.text = title;
+                            _header.SetHeader( title);
 
                         }));
             sequence.Append(

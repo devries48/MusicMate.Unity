@@ -16,8 +16,8 @@ public class ReleaseGridCellController : MusicMateBehavior
 
     [Header("Panel Controls")]
     [SerializeField] RectTransform _panelControls;
-    [SerializeField] Button _playPauseButton;
-    [SerializeField] Button _showReleaseButton;
+    [SerializeField] ButtonInteractable _playPauseButton;
+    [SerializeField] ButtonInteractable _showReleaseButton;
     #endregion
 
     #region Properties
@@ -34,7 +34,7 @@ public class ReleaseGridCellController : MusicMateBehavior
 
     ReleaseResult _releaseModel;
 
-    Button _button;
+    Button _cellButton;
     RectTransform _rectTransform;
     Animator _animator;
     Image _borderImage;
@@ -48,15 +48,19 @@ public class ReleaseGridCellController : MusicMateBehavior
     protected override void RegisterEventHandlers()
     {
         PlayerService.SubscribeToStateChanged(OnPlayerStateChanged);
+
+        _playPauseButton.onClick.AddListener(OnPlayOrPauseClicked);
         _showReleaseButton.onClick.AddListener(OnShowReleaseClicked);
-        _button.onClick.AddListener(OnClicked);
+        _cellButton.onClick.AddListener(OnClicked);
     }
 
     protected override void UnregisterEventHandlers()
     {
         PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
+  
+        _playPauseButton.onClick.AddListener(OnPlayOrPauseClicked);
         _showReleaseButton.onClick.RemoveListener(OnShowReleaseClicked);
-        _button.onClick.AddListener(OnClicked);
+        _cellButton.onClick.RemoveListener(OnClicked);
     }
 
     protected override void InitializeComponents()
@@ -64,7 +68,7 @@ public class ReleaseGridCellController : MusicMateBehavior
         _rectTransform = GetComponent<RectTransform>();
         _animator = GetComponent<Animator>();
         _borderImage = GetComponent<Image>();
-        _button = GetComponent<Button>();
+        _cellButton = GetComponent<Button>();
     }
 
     protected override void InitializeValues()

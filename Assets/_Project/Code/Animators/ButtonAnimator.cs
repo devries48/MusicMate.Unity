@@ -3,8 +3,17 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 #endregion
 
+/// <summary>
+/// The ButtonAnimator class is a custom Unity behavior designed to manage buttons with animations, including hover
+/// effects, expand/collapse states, and icon rotations. It builds upon the ButtonInteractable class.
+/// </summary>
 [RequireComponent(typeof(ButtonInteractable))]
 public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
 {
@@ -12,12 +21,11 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     [SerializeField] bool _interactable;
     [SerializeField] bool _isPrimary;
     [SerializeField] ButtonAnimationType _buttonType;
-
-    [Header("Text Button")]
-    [SerializeField] string _text;
-
-    [Header("Image Button")]
-    [SerializeField] Sprite _icon;
+    [SerializeField] string _text;   // Text Button
+    [SerializeField] Sprite _icon;   // Image Button
+    [SerializeField] bool _isToggle; // Expand/Collapse Button
+    [SerializeField] bool _isExpanded;
+    [SerializeField] string _headerText;
     #endregion
 
     #region Properties
@@ -39,10 +47,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         Button.OnInteractableChanged -= OnInteractableChanged;
     }
 
-    protected override void InitializeComponents()
-    {
-        Button = (ButtonInteractable)GetComponent<Button>();
-    }
+    protected override void InitializeComponents() { Button = (ButtonInteractable)GetComponent<Button>(); }
 
     protected override void InitializeValues()
     {
@@ -53,7 +58,9 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
             if (Button.TextComponent != null)
             {
                 Button.TextComponent.color = _isPrimary ? Button.Colors.AccentTextColor : Button.Colors.TextColor;
-                Button.TextComponent.text = _text;
+                Button.TextComponent.text = _buttonType == ButtonAnimationType.ExpandCollapseButton
+                    ? _headerText
+                    : _text;
             }
 
             if (Button.ImageComponent != null && _icon != null)
@@ -72,18 +79,94 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
                     Button.transform.localScale = new Vector3(scale, scale, scale);
                 }
+                else if (_buttonType == ButtonAnimationType.ExpandCollapseButton)
+                {
+                    InitializeExpandCollapseButton();
+                }
                 else
                     Button.ImageComponent.color = _isPrimary ? Button.Colors.AccentColor : Button.Colors.DefaultColor;
             }
         }
         catch (System.Exception)
         {
-          //  Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name + ")");
+            //  Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name + ")");
+        }
+    }
+
+    void InitializeExpandCollapseButton()
+    {
+        Button.ImageComponent.gameObject.SetActive(_interactable);
+        Button.ImageComponent.color = Button.Colors.TextColor;
+
+        // Initialize rotation based on state
+        RotateIcon(_isExpanded);
+
+        // Adjust PlaceholderTransform anchors based on _headerText
+        if (Button.PlaceholderTransform != null)
+        {
+            if (string.IsNullOrEmpty(_headerText))
+            {
+                // Center the placeholder
+                Button.PlaceholderTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                Button.PlaceholderTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                Button.PlaceholderTransform.pivot = new Vector2(0.5f, 0.5f);
+                Button.PlaceholderTransform.anchoredPosition = Vector2.zero;
+            }
+            else
+            {
+                // Default alignment (e.g., right/middle)
+                Button.PlaceholderTransform.anchorMin = new Vector2(1f, 0.5f);
+                Button.PlaceholderTransform.anchorMax = new Vector2(1f, 0.5f);
+                Button.PlaceholderTransform.pivot = new Vector2(1f, 0.5f);
+                Button.PlaceholderTransform.anchoredPosition = Vector2.zero; // Adjust as necessary
+            }
+
         }
     }
     #endregion
 
+        /// <summary>
+        /// Sets whether the button is interactable. This controls whether the user can interact with the button.
+        /// </summary>
+        /// <param name="interactable">Indicates whether the button should be interactable.</param>
     public void SetInteractable(bool interactable) => Button.interactable = interactable;
+
+    /// <summary>
+    /// Toggles the expanded state of the button and rotates the icon to reflect the new state.
+    /// </summary>
+    /// <param name="isExpanded">Indicates whether the button should be expanded (true) or collapsed (false).</param>
+    public void SetExpanded(bool isExpanded)
+    {
+        if (!_isToggle)
+            return;
+
+        if (_isExpanded != isExpanded)
+        {
+            _isExpanded = isExpanded;
+            RotateIcon(_isExpanded);
+        }
+    }
+
+    public void SetHeader(string title)
+    {
+        _headerText = title;
+        Button.TextComponent.text = title;
+    }
+
+    /// <summary>
+    /// Rotates the button's icon based on the expanded state.
+    /// </summary>
+    /// <notes>
+    /// If isExpanded is true, the icon rotates 180 degrees. If isExpanded is false, the icon resets to 0 degrees.
+    /// </notes>
+    void RotateIcon(bool isExpanded)
+    {
+        if (Button.ImageComponent == null)
+            return;
+
+        float targetRotation = isExpanded ? 180f : 0f;
+        Button.ImageComponent.rectTransform.localRotation = Quaternion.Euler(0, 0, targetRotation);
+    }
 
     void OnButtonClicked()
     {
@@ -107,6 +190,9 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 #if UNITY_EDITOR
     void OnValidate()
     {
+        if (Application.isPlaying) return;
+        if (EditorApplication.isCompiling) return;
+
         Button = (ButtonInteractable)GetComponent<Button>();
         if (Button != null)
             InitializeValues();

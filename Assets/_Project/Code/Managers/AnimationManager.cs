@@ -63,20 +63,25 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void ButtonInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
     {
-        Color32 backgroundColor;
+        Color32 backgroundColor = _manager.DefaultColor;
         Color32 foregroundColor;
 
-        if (isInteractable)
+        if (buttonType == ButtonAnimationType.DefaultImageButton || buttonType == ButtonAnimationType.LargeImageButton)
         {
-            backgroundColor = isPrimary ? _manager.AccentColor : _manager.DefaultColor;
-            foregroundColor = isPrimary ? _manager.AccentTextColor : _manager.TextColor;
+            foregroundColor = isPrimary ? _manager.AccentColor : _manager.TextColor;
         }
         else
         {
-            backgroundColor = _manager.DefaultColor;
-            foregroundColor = _manager.AccentTextColor;
-        }
+            if (isInteractable)
+            {
+                if (isPrimary)
+                    backgroundColor = _manager.AccentColor;
 
+                foregroundColor = isPrimary ? _manager.AccentTextColor : _manager.TextColor;
+            }
+            else
+                foregroundColor = _manager.AccentTextColor;
+        }
         _buttonAnimations.PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
     }
 

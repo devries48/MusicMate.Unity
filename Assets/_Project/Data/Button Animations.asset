@@ -12,9 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6177143d54f56ef4facc13353dada34d, type: 3}
   m_Name: Button Animations
   m_EditorClassIdentifier: 
-  animationDuration: 0.15
-  animationEase: 27
-  textHoverScale: 1.1
-  textClickScale: 0.9
-  imageHoverScale: 1.2
-  imageClickScale: 0.8
+  _animationTime: 0.2
+  _animationEase: 27
+  _textHoverScale: 1.1
+  _textClickScale: 0.9
+  _imageScale: 0.6
+  _imageHoverScale: 0.8
+  _imageClickScale: 0.4
+  _imageLargeScale: 1
+  _imageLargeHoverScale: 1.2
+  _imageLargeClickScale: 0.8
+  _toolbarHoverScale: 1.2
+  _toolbarClickScale: 0.8
+  _toolbarToggleScale: 0.7
+  _toolbarTooltipPopupTime: 0.1
+  _toolbarSpinnerScale: 0.7
+  _toolbarSpinTime: 0.4
+  _iconAnimationTime: 0.6

@@ -24,14 +24,14 @@ public class AudioPlayerController : MusicMateBehavior
     [SerializeField] ButtonAnimator[] _previousButtons;
 
     [Header("Elements Expanded")]
-    [SerializeField] Button _collapseButton;
+    [SerializeField] ButtonAnimator _collapseButton;
     [SerializeField] Marquee _artistMarquee;
     [SerializeField] Marquee _titleMarquee;
     [SerializeField] TextMeshProUGUI _trackTotalText;
     [SerializeField] Slider _volumeSlider1;
 
     [Header("Elements Collapsed")]
-    [SerializeField] Button _expandButton;
+    [SerializeField] ButtonAnimator _expandButton;
     [SerializeField] Marquee _artistAndTitleMarquee;
     [SerializeField] ButtonAnimator _volumeToggle;
     [SerializeField] CloseOnContextLoss _volumeDropdown;
@@ -85,7 +85,6 @@ public class AudioPlayerController : MusicMateBehavior
 
     void InitElements()
     {
-        print("INIT ELMENTS");
         _volumeDropdown.gameObject.SetActive(false);
         _artistMarquee.ClearText();
         _titleMarquee.ClearText();
@@ -93,8 +92,8 @@ public class AudioPlayerController : MusicMateBehavior
         _volumeSlider1.value = _volume;
         _volumeSlider2.value = _volume;
 
-        _collapseButton.onClick.AddListener(OnCollapseClicked);
-        _expandButton.onClick.AddListener(OnExpandClicked);
+        _collapseButton.OnButtonClick.AddListener(OnCollapseClicked);
+        _expandButton.OnButtonClick.AddListener(OnExpandClicked);
 
         foreach (var button in _playPauseButtons)
             button.OnButtonClick.AddListener(OnPlayPauseClicked);
