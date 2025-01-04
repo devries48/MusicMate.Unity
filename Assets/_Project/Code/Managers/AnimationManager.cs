@@ -9,13 +9,16 @@ public class AnimationManager : SceneSingleton<AnimationManager>
     [SerializeField] PanelAndWindowsAnimations _panelAndWindowAnimations;
     [SerializeField] ButtonAnimations _buttonAnimations;
     [SerializeField] InputAnimations _inputAnimations;
+    [SerializeField] GridAnimations _gridAnimations;
 
     [Header("Tooltip Settings")]
+    [SerializeField] float _tooltipDelay = .05f;
     [SerializeField] float _tooltipPadding = 10f;
     [SerializeField] float _tooltipPanelWidth = 150f;
 
     IMusicMateManager _manager;
 
+    public float TooltipDelay { get => _tooltipDelay; }
     public float TooltipPadding { get => _tooltipPadding; }
     public float TooltipPanelWidth { get => _tooltipPanelWidth; }
 
@@ -141,5 +144,15 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _panelAndWindowAnimations.PlayHideErrorWindow(errorWindow);
     }
 
+    public void CellHoverEnter(CellReleaseAnimator cell)
+    {
+        _gridAnimations.PlayHover(cell);
+
+    }
+
+    public void CellHoverExit(CellReleaseAnimator cell)
+    {
+        _gridAnimations.PlayNormal(cell);
+    }
 
 }

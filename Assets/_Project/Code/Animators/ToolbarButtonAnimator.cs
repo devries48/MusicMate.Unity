@@ -60,7 +60,6 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     bool _isInitialized = false;
 
-    readonly float _tooltipDelay = .05f;
     readonly float _speed = 1.5f;
 
     readonly ButtonAnimationType _buttonType = ButtonAnimationType.ToolbarButton;
@@ -189,7 +188,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         }
 
         if (m_button.interactable && !string.IsNullOrEmpty(_tooltip) && !m_tooltipVisible)
-            _tooltipShowCoroutine = StartCoroutine(ShowTooltipWithDelay(_tooltipDelay));
+            _tooltipShowCoroutine = StartCoroutine(ShowTooltipWithDelay(Animations.TooltipDelay));
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -203,7 +202,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         }
 
         if (m_tooltipVisible)
-            _tooltipHideCoroutine = StartCoroutine(HideTooltipWithDelay(_tooltipDelay));
+            _tooltipHideCoroutine = StartCoroutine(HideTooltipWithDelay(Animations.TooltipDelay));
     }
 
     IEnumerator ShowTooltipWithDelay(float delay)

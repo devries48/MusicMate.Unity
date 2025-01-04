@@ -3,7 +3,7 @@ using DG.Tweening;
 using System;
 using System.Threading.Tasks;
 
-[CreateAssetMenu(menuName = "MusicMate/Logo Animation Settings", fileName = "Logo Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Logo Animations", fileName = "Logo Animations")]
 public class LogoAnimations : ScriptableObject
 {
     [Header("Fade")]

@@ -2,7 +2,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/Button Animation Settings", fileName = "Button Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Button Animations", fileName = "Button Animations")]
 public class ButtonAnimations : ScriptableObject
 {
     [Header("General Settings")]

@@ -21,7 +21,7 @@ public class ReleaseResultController : MonoBehaviour
     RectTransform _parentTrans;
 
     GridLayoutGroup _releaseGrid;
-    ReleaseGridCellController _selectedCell;
+    CellReleaseAnimator _selectedCell;
 
     const float _margin = 10f;
 
@@ -49,7 +49,7 @@ public class ReleaseResultController : MonoBehaviour
         DOTween.To(() => _parentTrans.offsetMax, x => _parentTrans.offsetMax = x, endval, .5f);
     }
 
-    public void ChangeSelection(ReleaseGridCellController cell)
+    public void ChangeSelection(CellReleaseAnimator cell)
     {
         if (!cell.IsSelected) return;
 
@@ -77,7 +77,7 @@ public class ReleaseResultController : MonoBehaviour
         {
             var release = result[i];
             var cell = Instantiate(_prefabReleaseTemplate, trans);
-            var controller = cell.GetComponent<ReleaseGridCellController>();
+            var controller = cell.GetComponent<CellReleaseAnimator>();
             controller.Initialize(release, this);
 
             cell.name = $"{i}_release";

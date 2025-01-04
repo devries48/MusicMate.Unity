@@ -3,42 +3,42 @@ using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 #endregion
 
-public class ReleaseGridCellController : MusicMateBehavior
+public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
 {
-    #region Serialized Fields
-    [SerializeField] TextMeshProUGUI _artistText;
-    [SerializeField] TextMeshProUGUI _titleText;
-    [SerializeField] Image _releaseImage;
-    [SerializeField] Color _selectionColor;
-
-    [Header("Panel Controls")]
-    [SerializeField] RectTransform _panelControls;
-    [SerializeField] ButtonInteractable _playPauseButton;
-    [SerializeField] ButtonInteractable _showReleaseButton;
-    #endregion
-
     #region Properties
     public bool IsSelected
     {
         get => _isSelected; set
         {
             _isSelected = value;
-            _animator.SetBool("IsSelected", IsSelected);
+            //_animator.SetBool("IsSelected", IsSelected);
         }
     }
     bool _isSelected = false;
     #endregion
 
     ReleaseResult _releaseModel;
-
-    Button _cellButton;
-    RectTransform _rectTransform;
-    Animator _animator;
-    Image _borderImage;
     ReleaseResultController _parentController;
+
+    internal ButtonInteractable m_cellButton;
+    ButtonAnimator _playPauseButton;
+    ButtonAnimator _showReleaseButton;
+    ButtonAnimator _playlistButton;
+
+    RectTransform _rectTransform;
+    RectTransform _panelTransform;
+
+    Image _borderImage;
+    Image _releaseImage;
+
+   TextMeshProUGUI _artistText;
+   TextMeshProUGUI _titleText;
+ 
+    Color32 _selectionColor;
 
     bool _showText = false;
     readonly float _maxPanelScale = 2;
@@ -49,30 +49,39 @@ public class ReleaseGridCellController : MusicMateBehavior
     {
         PlayerService.SubscribeToStateChanged(OnPlayerStateChanged);
 
-        _playPauseButton.onClick.AddListener(OnPlayOrPauseClicked);
-        _showReleaseButton.onClick.AddListener(OnShowReleaseClicked);
-        _cellButton.onClick.AddListener(OnClicked);
+        _playPauseButton.OnButtonClick.AddListener(OnPlayOrPauseClicked);
+        _showReleaseButton.OnButtonClick.AddListener(OnShowReleaseClicked);
+        m_cellButton.onClick.AddListener(OnClicked);
     }
 
     protected override void UnregisterEventHandlers()
     {
         PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
   
-        _playPauseButton.onClick.AddListener(OnPlayOrPauseClicked);
-        _showReleaseButton.onClick.RemoveListener(OnShowReleaseClicked);
-        _cellButton.onClick.RemoveListener(OnClicked);
+        _playPauseButton.OnButtonClick.AddListener(OnPlayOrPauseClicked);
+        _showReleaseButton.OnButtonClick.RemoveListener(OnShowReleaseClicked);
+        m_cellButton.onClick.RemoveListener(OnClicked);
     }
 
     protected override void InitializeComponents()
     {
         _rectTransform = GetComponent<RectTransform>();
-        _animator = GetComponent<Animator>();
         _borderImage = GetComponent<Image>();
-        _cellButton = GetComponent<Button>();
+        m_cellButton = GetComponent<ButtonInteractable>();
+        
+        transform.Find("Image").TryGetComponent(out _releaseImage);
+        transform.Find("Artist").TryGetComponent(out _artistText);
+        transform.Find("Title").TryGetComponent(out _titleText);
+
+        transform.Find("Panel Controls").TryGetComponent(out _panelTransform);
+        transform.Find("Panel Controls/Show Release").TryGetComponent(out _showReleaseButton);
+        transform.Find("Panel Controls/Play or Pause").TryGetComponent(out _playPauseButton);
+        transform.Find("Panel Controls/Playlist").TryGetComponent(out _playlistButton);
     }
 
     protected override void InitializeValues()
     {
+        _selectionColor=m_cellButton.Colors.AccentColor;
         _selectionColor.a = 0;
          _borderImage.color = _selectionColor;
     }
@@ -110,7 +119,7 @@ public class ReleaseGridCellController : MusicMateBehavior
         _borderImage.DOFade(IsSelected ? 1 : 0, .25f);
         //.SetEase(IsSelected ? Ease.InSine : Ease.OutQuint);
 
-        _panelControls.DOPivotY(IsSelected ? 0 : 1, _slideTime)
+        _panelTransform.DOPivotY(IsSelected ? 0 : 1, _slideTime)
             .SetEase(IsSelected ? Ease.InBack : Ease.OutBack)
             .SetDelay(.25f);
     }
@@ -129,8 +138,8 @@ public class ReleaseGridCellController : MusicMateBehavior
         if (scale > _maxPanelScale)
             scale = _maxPanelScale;
 
-        if (_panelControls.localScale.x != scale)
-            _panelControls.localScale = new Vector3(scale, scale, 0);
+        if (_panelTransform.localScale.x != scale)
+            _panelTransform.localScale = new Vector3(scale, scale, 0);
 
         if (showText != _showText)
         {
@@ -152,4 +161,12 @@ public class ReleaseGridCellController : MusicMateBehavior
 
         yield return null;
     }
+
+    #region Pointer Event Handlers (Handles pointer hover events)
+    public void OnPointerEnter(PointerEventData eventData) => Animations.CellHoverEnter(this);
+
+    public void OnPointerExit(PointerEventData eventData) => Animations.CellHoverExit(this);
+    #endregion
+
+
 }
