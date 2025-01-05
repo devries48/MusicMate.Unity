@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Grid Animations
   m_EditorClassIdentifier: 
   _animationTime: 0.2
-  _cellHoverScale: 1.1
-  _cellHoverEnterTime: 0.05
-  _cellHoverEnterEase: 27
-  _cellHoverExitTime: 0.15
-  _cellHoverExitEase: 8
   _cellClickScale: 0.9
+  _cellHidePanelEase: 21
+  _cellHidePanelTime: 0.25
+  _cellHoverEnterEase: 27
+  _cellHoverEnterTime: 0.1
+  _cellHoverExitEase: 8
+  _cellHoverExitTime: 0.2
+  _cellHoverScale: 1.1
+  _cellShowPanelEase: 27
+  _cellShowPanelTime: 0.15

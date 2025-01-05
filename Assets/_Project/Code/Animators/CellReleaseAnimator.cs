@@ -5,22 +5,23 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-#endregion
 
+#endregion
 public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
 {
     #region Properties
     public bool IsSelected
     {
-        get => _isSelected; set
+        get => _isSelected;
+        set
         {
             _isSelected = value;
             //_animator.SetBool("IsSelected", IsSelected);
         }
     }
+
     bool _isSelected = false;
     #endregion
-
     ReleaseResult _releaseModel;
     ReleaseResultController _parentController;
 
@@ -30,19 +31,16 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     ButtonAnimator _playlistButton;
 
     RectTransform _rectTransform;
-    RectTransform _panelTransform;
+    internal RectTransform m_panelControls;
 
     Image _borderImage;
     Image _releaseImage;
 
-   TextMeshProUGUI _artistText;
-   TextMeshProUGUI _titleText;
- 
-    Color32 _selectionColor;
+    TextMeshProUGUI _artistText;
+    TextMeshProUGUI _titleText;
 
     bool _showText = false;
     readonly float _maxPanelScale = 2;
-    readonly float _slideTime = .25f;
 
     #region Base Class Methods
     protected override void RegisterEventHandlers()
@@ -57,7 +55,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     protected override void UnregisterEventHandlers()
     {
         PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
-  
+
         _playPauseButton.OnButtonClick.AddListener(OnPlayOrPauseClicked);
         _showReleaseButton.OnButtonClick.RemoveListener(OnShowReleaseClicked);
         m_cellButton.onClick.RemoveListener(OnClicked);
@@ -66,14 +64,14 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     protected override void InitializeComponents()
     {
         _rectTransform = GetComponent<RectTransform>();
-        _borderImage = GetComponent<Image>();
         m_cellButton = GetComponent<ButtonInteractable>();
-        
+
+        transform.Find("Border").TryGetComponent(out _borderImage);
         transform.Find("Image").TryGetComponent(out _releaseImage);
         transform.Find("Artist").TryGetComponent(out _artistText);
         transform.Find("Title").TryGetComponent(out _titleText);
 
-        transform.Find("Panel Controls").TryGetComponent(out _panelTransform);
+        transform.Find("Panel Controls").TryGetComponent(out m_panelControls);
         transform.Find("Panel Controls/Show Release").TryGetComponent(out _showReleaseButton);
         transform.Find("Panel Controls/Play or Pause").TryGetComponent(out _playPauseButton);
         transform.Find("Panel Controls/Playlist").TryGetComponent(out _playlistButton);
@@ -81,9 +79,12 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     protected override void InitializeValues()
     {
-        _selectionColor=m_cellButton.Colors.AccentColor;
-        _selectionColor.a = 0;
-         _borderImage.color = _selectionColor;
+        m_panelControls.pivot = new Vector2(m_panelControls.pivot.x, 1);
+        m_panelControls.gameObject.SetActive(false);
+        _borderImage.gameObject.SetActive(false);
+        //_selectionColor = m_cellButton.Colors.AccentColor;
+        //_selectionColor.a = 0;
+        //_borderImage.color = _selectionColor;
     }
     #endregion
 
@@ -98,11 +99,15 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         _titleText.text = model.Title;
     }
 
-    public void OnClicked() => ChangeSelectedState();
+    public void OnClicked()
+    {
+        Animations.CellClick(this);
+        ChangeSelectedState();
+    }
 
     public void OnPlayOrPauseClicked()
     {
-        if (!PlayerService.IsPlaying)
+        if(!PlayerService.IsPlaying)
             PlayerService.Play(_releaseModel);
         else
             PlayerService.Pause();
@@ -116,36 +121,40 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
         _parentController.ChangeSelection(this); // Notify parent
 
-        _borderImage.DOFade(IsSelected ? 1 : 0, .25f);
+        //_borderImage.DOFade(IsSelected ? 1 : 0, .25f);
         //.SetEase(IsSelected ? Ease.InSine : Ease.OutQuint);
-
-        _panelTransform.DOPivotY(IsSelected ? 0 : 1, _slideTime)
-            .SetEase(IsSelected ? Ease.InBack : Ease.OutBack)
-            .SetDelay(.25f);
+        Animations.CellSelect(IsSelected, this);
     }
 
     void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
 
     void OnRectTransformDimensionsChange()
     {
-        if (_rectTransform == null)
+        if(_rectTransform == null)
             return;
 
         var width = _rectTransform.rect.width;
+        if(width == 0)
+            return;
+
         var showText = width > 350;
         var scale = width / 100;
 
-        if (scale > _maxPanelScale)
+        if(scale > _maxPanelScale)
             scale = _maxPanelScale;
 
-        if (_panelTransform.localScale.x != scale)
-            _panelTransform.localScale = new Vector3(scale, scale, 0);
+        if(m_panelControls.localScale.x != scale)
+            m_panelControls.localScale = new Vector3(scale, scale, 0);
 
-        if (showText != _showText)
+        if(showText != _showText)
         {
             _artistText.gameObject.SetActive(showText);
             _titleText.gameObject.SetActive(showText);
             _showText = showText;
+
+            // Set anchors image to show or hide border
+            _releaseImage.rectTransform.anchorMin = showText ? new Vector2(.05f, .05f) : Vector2.zero;
+            _releaseImage.rectTransform.anchorMax = showText ? new Vector2(.95f, .95f) : Vector2.one;
         }
     }
 
@@ -167,6 +176,4 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     public void OnPointerExit(PointerEventData eventData) => Animations.CellHoverExit(this);
     #endregion
-
-
 }

@@ -146,13 +146,21 @@ public class AnimationManager : SceneSingleton<AnimationManager>
 
     public void CellHoverEnter(CellReleaseAnimator cell)
     {
-        _gridAnimations.PlayHover(cell);
-
+        _gridAnimations.PlayCellHoverEnter(cell);
     }
 
     public void CellHoverExit(CellReleaseAnimator cell)
     {
-        _gridAnimations.PlayNormal(cell);
+        _gridAnimations.PlayCellHoverExit(cell);
     }
 
+    public void CellClick(CellReleaseAnimator cell)
+    {
+        _gridAnimations.PlayCellClick(cell);
+    }
+
+    public void CellSelect(bool isSelected, CellReleaseAnimator cell)
+    {
+        _gridAnimations.PlayCellSelect(isSelected, cell);
+    }
 }
