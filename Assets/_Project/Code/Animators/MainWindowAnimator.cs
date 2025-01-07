@@ -1,52 +1,35 @@
-using DG.Tweening;
 using UnityEngine;
 
-public class MainWindowAnimator : MonoBehaviour
+public class MainWindowAnimator : MusicMateBehavior
 {
     [Header("Controllers")]
     [SerializeField] AudioPlayerController _audioPlayer;
     [SerializeField] ReleaseResultController _releaseResult;
-    [SerializeField] ReleaseDetailsController _releaseDetails;
-    [SerializeField] ArtistDetailsController _artistDetails;
+    [SerializeField] ShowDetailsAnimator _showDetails;
 
     [Header("Toolbar Controllers")]
     [SerializeField] ToolbarApplicationController _applicationToolbar;
     [SerializeField] ToolbarPartController _searchToolbar;
     [SerializeField] ToolbarImportController _importToolbar;
 
-    #region Field Declarations
-    IMusicMateApiService _service;
-    IAudioPlayerService _playerService;
-    IMusicMateManager _manager;
-    AnimationManager _animations;
     State _state;
-
     float _fadeTime = 0;
-    readonly float _popupTime = .5f;
-    #endregion
 
-    #region Unity Events
-    void Awake()
+    #region Base Class Methods
+    protected override void InitializeComponents() => _state = new State();
+
+    protected override void InitializeValues() => ActivatePanels(false);
+
+    protected override void RegisterEventHandlers()
     {
-        _state = new State();
-        _service = MusicMateApiService.Instance.GetClient();
-        _playerService = AudioPlayerService.Instance;
-        _manager = MusicMateManager.Instance;
-        _animations = AnimationManager.Instance;
-
-        InitPanels();
+        PlayerService.SubscribeToExpandedChanged(OnAudioPlayerExpandedChanged);
+        Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
     }
 
-    void OnEnable()
+    protected override void UnregisterEventHandlers()
     {
-        _playerService.SubscribeToExpandedChanged(OnAudioPlayerExpandedChanged);
-        _manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
-    }
-
-    void OnDisable()
-    {
-        _playerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
-        _manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+        PlayerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
+        Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
     }
     #endregion
 
@@ -58,27 +41,28 @@ public class MainWindowAnimator : MonoBehaviour
             ActivatePanels(true);
         }
 
-        _animations.PanelVisible(connected, _fadeTime, 0f,
+        Animations.PanelVisible(connected, _fadeTime, 0f,
             _audioPlayer.m_canvasGroupExpanded,
             _applicationToolbar.m_canvasGroup,
             _searchToolbar.m_CanvasGroup,
             _importToolbar.m_CanvasGroup);
 
-        _animations.PanelVisible(connected, _fadeTime, 2f, _releaseResult.m_canvasGroup);
+        // Delay the display of the result for a better experience.
+        Animations.PanelVisible(connected, _fadeTime, 1.5f, _releaseResult.m_canvasGroup);
 
         if (connected)
-            _service.GetInitialReleases(GetInitialReleasesCallback);
+            ApiService.GetInitialReleases(GetInitialReleasesCallback);
     }
 
-    public void ShowRelease(ReleaseResult release) => _releaseDetails.GetRelease(release);
-
-    /// <summary>
-    /// Hide all elements
-    /// </summary>
-    void InitPanels()
+    public void ShowRelease(ReleaseResult release)
     {
-        ActivatePanels(false);
-        //ConnectionChanged(false);
+        if (!_showDetails.isActiveAndEnabled)
+        {
+            Animations.PanelShowDetailsVisible(true, _showDetails);
+            _state.ReleaseDetails = State.States.visible;
+        }
+
+        _showDetails.SetRelease(release);
     }
 
     void ActivatePanels(bool activate)
@@ -92,111 +76,39 @@ public class MainWindowAnimator : MonoBehaviour
 
     void VisibleReleaseResult(bool show)
     {
-        var scaleTo = show ? 1f : .5f;
-        var fadeTo = show ? 1f : .01f;
-        var easing = show ? Ease.InQuint : Ease.OutQuint;
-
-        _releaseResult.transform.DOScale(scaleTo, _popupTime).SetEase(easing);
-        _releaseResult.m_canvasGroup.DOFade(fadeTo, _popupTime).SetEase(easing);
-
-        _animations.PanelReleaseResultVisible(_releaseResult, show);
+        Animations.GridReleaseVisible(show, _releaseResult);
         _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
     }
 
-    void VisibleReleaseDetails(bool show)
-    {
-        if (show)
-            ScaleIn(_releaseDetails.transform);
-        else
-            ScaleOut(_releaseDetails.transform);
-
-        _state.ReleaseDetails = show ? State.States.visible : State.States.hidden;
-    }
-
-    void MoveReleaseDetails(bool show, float delay = 0)
-    {
-        var pivotTo = show ? .5f : 2f;
-        var easing = show ? Ease.OutBack : Ease.InBack;
-        var rect = _releaseDetails.gameObject.GetComponent<RectTransform>();
-
-        rect.DOPivotY(pivotTo, _popupTime).SetEase(easing).SetDelay(delay);
-
-        _state.ReleaseDetails = show ? State.States.visible : State.States.moved;
-    }
-
-    void VisibleArtistDetails(bool show, float delay = 0)
-    {
-        if (show)
-            ScaleIn(_artistDetails.transform, delay);
-        else
-            ScaleOut(_artistDetails.transform);
-
-        _state.ReleaseDetailsArtist = show ? State.States.visible : State.States.hidden;
-    }
-
-    void ScaleIn(Transform trans, float delay = 0)
-    {
-        trans.localScale = Vector3.zero;
-        trans.gameObject.SetActive(true);
-        trans.DOScale(1, _popupTime).SetEase(Ease.OutBack).SetDelay(delay);
-    }
-
-    void ScaleOut(Transform trans)
-    {
-        trans.DOScale(0, _popupTime).SetEase(Ease.InBack)
-            .OnComplete(() => trans.gameObject.SetActive(false));
-    }
-
+    /// <summary>
+    /// Initial result on startup.
+    /// </summary>
     void GetInitialReleasesCallback(PagedResult<ReleaseResult> result)
     {
         _releaseResult.SetResult(result);
-        _manager.HideSpinner();
+        Manager.HideSpinner();
     }
 
-    void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e)
-    {
-        _releaseResult.SetRightMargin(e.IsExpanded);
-    }
+    /// <summary>
+    /// Change the right margin of the result when the audio players expanded/collapsed state changes.
+    /// </summary>
+    void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e) => _releaseResult.SetRightMargin(e.IsExpanded);
 
+    /// <summary>
+    /// Show or hide the result when a visible part has changed.
+    /// </summary>
     void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)
     {
-        var p = e.Part;
-        if (p == VisiblePart.Previous)
-        {
-            if (_state.ReleaseDetailsArtist == State.States.visible)
-            {
-                p = VisiblePart.ReleaseDetails;
-                VisibleArtistDetails(false);
-            }
-        }
-
-        switch (p)
+        switch (e.Part)
         {
             case VisiblePart.ReleaseResult:
                 VisibleReleaseResult(true);
-
-                if (_state.ReleaseDetails == State.States.visible)
-                    VisibleReleaseDetails(false);
-
                 break;
 
             case VisiblePart.ReleaseDetails:
-                if (_state.ReleaseDetails == State.States.moved)
-                    MoveReleaseDetails(true, _popupTime);
-                else
-                    VisibleReleaseDetails(true);
-
-                if (_state.ReleaseDetailsArtist == State.States.visible)
-                    VisibleArtistDetails(false);
-
+            case VisiblePart.ArtistDetails:
                 if (_state.ReleaseResult == State.States.visible)
                     VisibleReleaseResult(false);
-
-                break;
-
-            case VisiblePart.ArtistDetails:
-                VisibleArtistDetails(true, _popupTime);
-                MoveReleaseDetails(false);
                 break;
 
             default:

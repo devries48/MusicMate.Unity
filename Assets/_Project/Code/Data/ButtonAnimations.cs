@@ -5,36 +5,36 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "MusicMate/Button Animations", fileName = "Button Animations")]
 public class ButtonAnimations : ScriptableObject
 {
-    [Header("General Settings")]
+    //[Header("General Settings")]
     [SerializeField, Tooltip("Default animation duration")] float _animationTime = 0.2f;
     [SerializeField] Ease _animationEase = Ease.OutBack;
 
-    [Header("Text Button")]
+    //[Header("Text Button")]
     [SerializeField] float _textHoverScale = 1.1f;
     [SerializeField] float _textClickScale = 0.9f;
 
-    [Header("Default Image Button")]
+    //[Header("Default Image Button")]
     [SerializeField] float _imageScale = .6f;
     [SerializeField] float _imageHoverScale = .8f;
     [SerializeField] float _imageClickScale = 0.4f;
 
-    [Header("Large Image Button")]
+    //[Header("Large Image Button")]
     [SerializeField] float _imageLargeScale = 1f;
     [SerializeField] float _imageLargeHoverScale = 1.2f;
     [SerializeField] float _imageLargeClickScale = 0.8f;
 
-    [Header("Toolbar Button")]
+    //[Header("Toolbar Button")]
     [SerializeField] float _toolbarHoverScale = 1.2f;
     [SerializeField] float _toolbarClickScale = 0.8f;
     [SerializeField] float _toolbarToggleScale = 0.7f;
     [SerializeField] float _toolbarTooltipPopupTime = 0.1f;
 
-    [Header("Toolbar Spinner")]
+    //[Header("Expand/Collapse Button")]
+    [SerializeField] float _iconAnimationTime = .6f;
+
+    //[Header("Toolbar Spinner")]
     [SerializeField, Tooltip("Resize the icon when the spinner is active")] float _toolbarSpinnerScale = 0.7f;
     [SerializeField, Tooltip("Animation duration when spinner is (de)activated")] float _toolbarSpinTime = 0.4f;
-
-    [Header("Expand/Collapse")]
-    [SerializeField] float _iconAnimationTime = .6f;
 
     public float ImageButtonScale => _imageScale;
 

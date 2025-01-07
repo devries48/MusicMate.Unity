@@ -13,7 +13,7 @@ public class LoginWindow : MusicMateBehavior
     [SerializeField] TextMeshProUGUI _titleText;
     [SerializeField] Image _loginImage;
     [SerializeField] ButtonInteractable _acceptButton;
-    [SerializeField] Button _cancelButton;
+    [SerializeField] ButtonInteractable _cancelButton;
 
     static readonly string encryptionKey = "YourEncryptionKeyHere";
 

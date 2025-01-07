@@ -123,11 +123,6 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _panelAndWindowAnimations.PlayCollapseAudioPlayer(expandedPlayer, collapsedPlayer, onComplete);
     }
 
-    public void PanelReleaseResultVisible(ReleaseResultController releaseResultController, bool show)
-    {
-
-    }
-
     public void WindowLoginVisible(GameObject loginWindow, bool show, float delay = 0f)
     {
         if (show)
@@ -142,6 +137,11 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _panelAndWindowAnimations.PlayShowErrorWindow(errorWindow);
         else
             _panelAndWindowAnimations.PlayHideErrorWindow(errorWindow);
+    }
+
+    public void GridReleaseVisible(bool isVisible, ReleaseResultController release)
+    {
+        _panelAndWindowAnimations.PlayGridReleaseVisible(isVisible, release);
     }
 
     public void CellHoverEnter(CellReleaseAnimator cell)
@@ -162,5 +162,10 @@ public class AnimationManager : SceneSingleton<AnimationManager>
     public void CellSelect(bool isSelected, CellReleaseAnimator cell)
     {
         _gridAnimations.PlayCellSelect(isSelected, cell);
+    }
+
+    public void PanelShowDetailsVisible(bool isVisible, ShowDetailsAnimator showDetails)
+    {
+        _panelAndWindowAnimations.PlayDetailsPanelVisible(isVisible, showDetails);
     }
 }

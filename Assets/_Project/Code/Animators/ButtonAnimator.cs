@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -63,21 +62,24 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                     : _text;
             }
 
-            if (Button.ImageComponent != null && _icon != null)
+            if (Button.ImageComponent != null)
             {
                 if (_buttonType == ButtonAnimationType.DefaultImageButton ||
                     _buttonType == ButtonAnimationType.LargeImageButton)
                 {
-                    Button.ImageComponent.sprite = _icon;
-                    Button.ImageComponent.color = !Button.interactable
-                        ? Button.Colors.DisabledIconColor
-                        : _isPrimary ? Button.Colors.AccentColor : Button.Colors.IconColor;
+                    if (_icon != null)
+                    {
+                        Button.ImageComponent.sprite = _icon;
+                        Button.ImageComponent.color = !Button.interactable
+                            ? Button.Colors.DisabledIconColor
+                            : _isPrimary ? Button.Colors.AccentColor : Button.Colors.IconColor;
 
-                    var scale = _buttonType == ButtonAnimationType.DefaultImageButton
-                        ? Animations.ImageButtonScale
-                        : Animations.ImageButtonLargeScale;
+                        var scale = _buttonType == ButtonAnimationType.DefaultImageButton
+                            ? Animations.ImageButtonScale
+                            : Animations.ImageButtonLargeScale;
 
-                    Button.transform.localScale = new Vector3(scale, scale, scale);
+                        Button.transform.localScale = new Vector3(scale, scale, scale);
+                    }
                 }
                 else if (_buttonType == ButtonAnimationType.ExpandCollapseButton)
                 {

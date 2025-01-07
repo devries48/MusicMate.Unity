@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ArtistDetailsController : MonoBehaviour
 {
     [Header("Reference")]
-    [SerializeField] ReleaseDetailsController _releaseDetails;
+    [SerializeField] ShowReleaseController _releaseDetails;
 
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _artistText;

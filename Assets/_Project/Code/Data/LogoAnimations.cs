@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 [CreateAssetMenu(menuName = "MusicMate/Logo Animations", fileName = "Logo Animations")]
 public class LogoAnimations : ScriptableObject
@@ -14,7 +15,7 @@ public class LogoAnimations : ScriptableObject
 
     public async void PlayLogoFade(GameObject logo, Action onComplete = null)
     {
-        var spriteRenderer = logo.GetComponent<SpriteRenderer>();
+        var spriteRenderer = logo.GetComponent<Image>();
         var particleSystem = logo.GetComponentInChildren<ParticleSystem>();
 
         if (!spriteRenderer)

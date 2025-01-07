@@ -22,10 +22,16 @@ MonoBehaviour:
   _loginShowPivot: 0.5
   _errorHidePivot: 3
   _errorShowPivot: 0.5
+  _resultShowTime: 0.2
+  _resultShowEase: 14
+  _resultHideTime: 0.2
   _resultHideScaleTo: 0.5
   _resultHideFadeTo: 0.01
-  _resultShowEase: 14
-  _resultHideEase: 15
+  _resultHideEase: 21
+  _detailsShowTime: 0.1
+  _detailsShowEase: 1
+  _detailsHideTime: 0.2
+  _detailsHideEase: 1
   _playerCollapseTime: 0.4
   _playerSmallShowDelay: 0.2
   _playerLargeShrinkEase: 5

@@ -3,86 +3,47 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ReleaseDetailsController : MonoBehaviour
+public class ShowReleaseController : MusicMateBehavior
 {
-    [Header("Elements")]
-    [SerializeField] Marquee _artistMarquee;
-    [SerializeField] Marquee _titleMarquee;
-    [SerializeField] Image _releaseImage;
+    [Header("Parent")]
+    [SerializeField] ShowDetailsAnimator _showDetails;
 
-    [Header("Spinner")]
-    [SerializeField] Image _scanSpinnerBackground;
-    [SerializeField] Image _scanSpinner;
+    [Header("Elements")]
+    [SerializeField] Marquee _artist;
+    [SerializeField] Marquee _title;
+    [SerializeField] Image _releaseImage;
 
     public ReleaseResult CurrentRelease { get; private set; } = null;
 
     internal CanvasGroup m_canvasGroup;
 
-    IMusicMateManager _manager;
-    IMusicMateApiService _apiService;
-    bool _loading;
-
-    readonly float _speed = 1.5f;
     readonly Color32 _initialBackgroundColor = new(255, 255, 255, 3);
 
-    void Awake()
-    {
-        _manager = MusicMateManager.Instance;
-        _apiService = MusicMateApiService.Instance.GetClient();
-    }
-
-    void OnEnable()
-    {
-        if (_loading)
-            StartCoroutine(GetReleaseCore());
-    }
-
-    void Update()
-    {
-        if (_loading)
-            _scanSpinner.transform.Rotate(new Vector3(0, 0, -1 * _speed));
-    }
-
-    public void GetRelease(ReleaseResult release)
+    public void SetRelease(ReleaseResult release)
     {
         if (release != CurrentRelease)
         {
-            _loading = true;
+            _showDetails.StartSpinner();
             CurrentRelease = release;
+            StartCoroutine(GetReleaseCore());
         }
-    }
-
-    public void CloseDetails()
-    {
-        _manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseResult);
     }
 
     IEnumerator GetReleaseCore()
     {
-        _scanSpinner.DOFade(1, .1f);
-        _scanSpinnerBackground.DOFade(1, .1f);
-
-        _loading = true;
-
-        yield return null;
-
         _releaseImage.overrideSprite = null;
         _releaseImage.color = _initialBackgroundColor;
-        _artistMarquee.SetText(CurrentRelease.Artist.Text);
-        _titleMarquee.SetText(CurrentRelease.Title);
+        _artist.SetText(CurrentRelease.Artist.Text);
+        _title.SetText(CurrentRelease.Title);
 
         yield return null;
 
-        _apiService.GetRelease(CurrentRelease.Id, (model) =>
+        ApiService.GetRelease(CurrentRelease.Id, (model) =>
         {
             print("Show release: " + CurrentRelease.Title);
 
-            _apiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
-
-            _scanSpinner.DOFade(0, .25f);
-            _scanSpinnerBackground.DOFade(0, .25f);
-
-            _loading = false;
+            ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
+            _showDetails.StopSpinner();
 
         });
         // get complete release

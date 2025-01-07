@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5872957549695147298}
   - component: {fileID: 1230806244028234041}
   m_Layer: 5
-  m_Name: ReleaseGridCell Template
+  m_Name: prefab cell_release_template
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

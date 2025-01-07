@@ -3,27 +3,40 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// The central manager for the MusicMate application. Handles configuration, animations,
+/// and high-level application events such as connecting to the API or showing panels.
+/// </summary>
 public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateManager
 {
     #region Serialized Fields
-    [Header("Configuration")]
+    //[Header("Configuration")]
     [SerializeField] AppConfiguration _appConfig;
 
-    [Header("Windows & Animators")]
+    //[Header("Windows")]
     [SerializeField] ErrorWindow _errorController;
     [SerializeField] LoginWindow _loginController;
+    
+    //[Header("Animators")]
     [SerializeField] MainWindowAnimator _mainPage;
     [SerializeField] LogoAnimator _logoAnimator;
 
-    [Header("Elements")]
+    //[Header("Elements")]
     [SerializeField] GameObject _connectionSpinner;
     [SerializeField] GameObject[] _activateOnStart;
     [SerializeField] GameObject[] _inactivateOnStart;
     #endregion
 
     #region Properties
+
+    /// <summary>
+    /// Gets the application's configuration settings.
+    /// </summary>
     public AppConfiguration AppConfiguration => _appConfig;
 
+    /// <summary>
+    /// The state of the application, including the current visible part and other runtime information.
+    /// </summary>
     public IAppState AppState
     {
         get
@@ -49,8 +62,8 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     #region Unity Events
     void Awake()
     {
-        ActivateGameObjects();
         InactivateGameObjects();
+        ActivateGameObjects();
 
         _service = MusicMateApiService.Instance.GetClient();
         _animations = AnimationManager.Instance;
@@ -62,8 +75,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     void Start() => StartCoroutine(DelayAndConnect(.5f));
     #endregion
-
-    public IMusicMateManager GetClient() => this;
 
     public void Connect()
     {
@@ -164,8 +175,8 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     /// </summary>
     void ActivateGameObjects()
     {
-        for (int i = 0; i < _inactivateOnStart?.Length; i++)
-            _inactivateOnStart[i].SetActive(false);
+        for (int i = 0; i < _activateOnStart?.Length; i++)
+            _activateOnStart[i].SetActive(true);
     }
 
 

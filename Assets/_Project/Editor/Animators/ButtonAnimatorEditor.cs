@@ -4,33 +4,18 @@ using UnityEngine;
 [CustomEditor(typeof(ButtonAnimator))]
 public class ButtonAnimatorEditor : MusicMateEditorBase
 {
-    // Serialized properties
-    private SerializedProperty _buttonType;
-    private SerializedProperty _interactable;
-    private SerializedProperty _isPrimary;
-    private SerializedProperty _text;
-    private SerializedProperty _icon;
-    private SerializedProperty _isToggle;
-    private SerializedProperty _isExpanded;
-    private SerializedProperty _headerText;
-
-    protected override void OnEnable()
-    {
-        base.OnEnable();
-
-        // Cache serialized properties
-        _buttonType = serializedObject.FindProperty("_buttonType");
-        _interactable = serializedObject.FindProperty("_interactable");
-        _isPrimary = serializedObject.FindProperty("_isPrimary");
-        _text = serializedObject.FindProperty("_text");
-        _icon = serializedObject.FindProperty("_icon");
-        _isToggle = serializedObject.FindProperty("_isToggle");
-        _isExpanded = serializedObject.FindProperty("_isExpanded");
-        _headerText = serializedObject.FindProperty("_headerText");
-    }
-
     public override void OnInspectorGUI()
     {
+        // Cache serialized properties
+        var _buttonType = serializedObject.FindProperty("_buttonType");
+        var _interactable = serializedObject.FindProperty("_interactable");
+        var _isPrimary = serializedObject.FindProperty("_isPrimary");
+        var _text = serializedObject.FindProperty("_text");
+        var _icon = serializedObject.FindProperty("_icon");
+        var _isToggle = serializedObject.FindProperty("_isToggle");
+        var _isExpanded = serializedObject.FindProperty("_isExpanded");
+        var _headerText = serializedObject.FindProperty("_headerText");
+        
         serializedObject.Update();
 
         DrawLogo();

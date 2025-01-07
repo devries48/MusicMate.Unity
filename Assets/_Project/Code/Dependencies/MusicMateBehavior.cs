@@ -2,11 +2,10 @@ using UnityEngine;
 
 public abstract class MusicMateBehavior : MonoBehaviour
 {
-    private AnimationManager _animations;
-    private IMusicMateManager _musicMateManager;
-    private IAudioPlayerService _playerService;
-    private IMusicMateApiService _apiService;
-
+    AnimationManager _animations;
+    IMusicMateManager _musicMateManager;
+    IAudioPlayerService _playerService;
+    IMusicMateApiService _apiService;
 
     /// <summary>
     /// Access the AnimationManager instance.
@@ -60,6 +59,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
             return _apiService;
         }
     }
+
     protected virtual void OnEnable() => RegisterEventHandlers();
     protected virtual void OnDisable() => UnregisterEventHandlers();
     protected virtual void Awake() => InitializeComponents();

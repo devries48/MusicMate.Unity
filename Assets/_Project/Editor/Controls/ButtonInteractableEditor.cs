@@ -8,13 +8,11 @@ public class ButtonInteractableEditor : MusicMateEditorBase
         serializedObject.Update();
 
         var button = (ButtonInteractable)target;
-        var interactableProperty = serializedObject.FindProperty("m_Interactable");
+        //var interactableProperty = serializedObject.FindProperty("m_Interactable");
 
-        DrawLogo();
-        DrawSectionHeader("Button Interactable");
-        DrawSectionField(interactableProperty, "Is Interactable");
+        //DrawSectionField(interactableProperty, "Interactable");
 
-        EditorGUILayout.PropertyField(interactableProperty);
+        //EditorGUILayout.PropertyField(interactableProperty);
         button.Colors = (ColorSettings)EditorGUILayout.ObjectField("Colors", button.Colors, typeof(ColorSettings), false);
 
         if (button.Colors != null)
