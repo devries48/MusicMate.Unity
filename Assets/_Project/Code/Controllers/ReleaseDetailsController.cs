@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ShowReleaseController : MusicMateBehavior
 {
     [Header("Parent")]
-    [SerializeField] ShowDetailsAnimator _showDetails;
+    [SerializeField] DetailsAnimator _showDetails;
 
     [Header("Elements")]
     [SerializeField] Marquee _artist;

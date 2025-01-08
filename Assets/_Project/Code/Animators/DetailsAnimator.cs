@@ -1,9 +1,8 @@
 using DG.Tweening;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShowDetailsAnimator : MusicMateBehavior
+public class DetailsAnimator : MusicMateBehavior
 {
     [Header("Show Details Controllers")]
     [SerializeField] ShowReleaseController _releaseDetails;

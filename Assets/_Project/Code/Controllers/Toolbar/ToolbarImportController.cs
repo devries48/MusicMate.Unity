@@ -8,15 +8,25 @@ public class ToolbarImportController : ToolbarControllerBase
 
     readonly float _checkRunningInterval = 10f;
 
-    private void OnEnable() => _scanFolderButton.OnButtonClick.AddListener(OnScanFolderClicked);
-
-    void OnDisable()
+    #region MusicMate Base Class Methods
+    protected override void RegisterEventHandlers()
     {
-        _scanFolderButton.OnButtonClick.RemoveListener(OnScanFolderClicked);
+        base.RegisterEventHandlers();
 
-        CancelInvoke();
+        _scanFolderButton.OnButtonClick.AddListener(OnScanFolderClicked);
     }
 
+    protected override void UnregisterEventHandlers()
+    {
+        base.UnregisterEventHandlers();
+
+        CancelInvoke();
+
+        _scanFolderButton.OnButtonClick.RemoveListener(OnScanFolderClicked);
+    }
+    #endregion
+
+    #region ToolbarController Base Class Methods
     protected override void InitElements() => _scanFolderButton.SetInteractable(true);
 
     protected override IEnumerator SetElementStates()
@@ -24,7 +34,7 @@ public class ToolbarImportController : ToolbarControllerBase
         if (_scanFolderButton.CanShowSpinner)
         {
             _scanFolderButton.ShowSpinner();
-            m_ApiService.FolderImportStart((callback) => FolderImportCallback(callback));
+            ApiService.FolderImportStart((callback) => FolderImportCallback(callback));
             InvokeRepeating(nameof(CheckImportRunning), _checkRunningInterval, _checkRunningInterval);
         }
         else if (_scanFolderButton.CanHideSpinner)
@@ -35,6 +45,7 @@ public class ToolbarImportController : ToolbarControllerBase
 
         yield return null;
     }
+    #endregion
 
     void OnScanFolderClicked()
     {
@@ -44,7 +55,7 @@ public class ToolbarImportController : ToolbarControllerBase
 
     void CheckImportRunning()
     {
-        m_ApiService.IsFolderImportRunning((isRunning) =>
+        ApiService.IsFolderImportRunning((isRunning) =>
         {
             if (_scanFolderButton.IsSpinning != isRunning)
             {
@@ -58,5 +69,4 @@ public class ToolbarImportController : ToolbarControllerBase
     {
         print("Folder import: " + result);
     }
-
 }

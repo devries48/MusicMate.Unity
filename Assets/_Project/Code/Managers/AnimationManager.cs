@@ -164,8 +164,13 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _gridAnimations.PlayCellSelect(isSelected, cell);
     }
 
-    public void PanelShowDetailsVisible(bool isVisible, ShowDetailsAnimator showDetails)
+    public void PanelShowDetailsVisible(bool isVisible, DetailsAnimator showDetails)
     {
         _panelAndWindowAnimations.PlayDetailsPanelVisible(isVisible, showDetails);
+    }
+
+    internal void ToolbarPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart)
+    {
+        _buttonAnimations.PlayToolbarPartRotate(controller, title, showPart, hidePart);
     }
 }

@@ -28,6 +28,7 @@ public abstract class MusicMateEditorBase : Editor
         GUILayout.Label(title, CustomEditorStyles.titleStyle, GUILayout.Width(EditorGUIUtility.currentViewWidth - 40));
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
+        DrawSpace();
     }
 
     protected virtual void DrawDescription(string description)
@@ -37,8 +38,17 @@ public abstract class MusicMateEditorBase : Editor
         GUILayout.Label(description, CustomEditorStyles.descriptionStyle, GUILayout.Width(EditorGUIUtility.currentViewWidth - 32));
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
+        DrawSpace();
     }
 
+    protected virtual void DrawWarningIfNotInRoot(Transform transform)
+    {
+        if (transform.parent != null)
+        {
+            EditorGUILayout.HelpBox("Warning: This manager should be at the root level of the hierarchy.", MessageType.Warning);
+        }
+
+    }
 
     protected virtual void DrawSpace() => EditorGUILayout.Space();
 
@@ -47,6 +57,17 @@ public abstract class MusicMateEditorBase : Editor
     protected virtual void DrawSectionField(SerializedProperty property, string label, bool condition = true)
     {
         if (!condition) return;
+        GUILayout.BeginVertical();
+        EditorGUILayout.PropertyField(property, new GUIContent(label));
+        GUILayout.EndVertical();
+    }
+
+    protected virtual void DrawSectionField(string propertyName, string label, bool condition = true)
+    {
+        if (!condition) return;
+
+        var property = Find(propertyName);
+
         GUILayout.BeginVertical();
         EditorGUILayout.PropertyField(property, new GUIContent(label));
         GUILayout.EndVertical();
@@ -67,6 +88,8 @@ public abstract class MusicMateEditorBase : Editor
         EditorPrefs.SetBool(GetFoldoutKey(label), _foldoutStates[label]);
         return _foldoutStates[label];
     }
+
+    private SerializedProperty Find(string name) => serializedObject.FindProperty(name);
 
     private string GetFoldoutKey(string sectionName) => $"{target.GetType().Name}_{sectionName}_Foldout";
 }
@@ -119,7 +142,7 @@ public static class CustomEditorStyles
         descriptionStyle = new GUIStyle
         {
             fontSize = 12,
-            fontStyle = FontStyle.Italic,
+            fontStyle = FontStyle.Normal,
             alignment = TextAnchor.LowerLeft,
             wordWrap = true,
             normal = new GUIStyleState { textColor = descriptionColor }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The central manager for the MusicMate application. Handles configuration, animations,
+/// The central manager for the MusicMate application. Handles configuration, initialization,
 /// and high-level application events such as connecting to the API or showing panels.
 /// </summary>
 public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateManager

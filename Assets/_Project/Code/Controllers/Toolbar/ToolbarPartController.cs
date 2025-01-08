@@ -17,40 +17,54 @@ public class ToolbarPartController : ToolbarControllerBase
     [SerializeField] ToolbarButtonAnimator _releaseToggle;
     [SerializeField] ToolbarButtonAnimator _artistToggle;
 
+    internal RectTransform m_rectTransform;
+    internal GameObject m_activePart;
+
     DetailsToggle _toggled;
-    RectTransform _rectTransform;
-    GameObject _activePart;
     VisiblePart _currentPart;
 
     enum DetailsToggle { release, artist }
 
-    void OnEnable()
+    #region MusicMate Base Class Methods
+    protected override void InitializeComponents()
     {
-        m_Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
+        base.InitializeComponents();
+
+        m_rectTransform = GetComponent<RectTransform>();
+    }
+
+    protected override void InitializeValues()
+    {
+        base.InitializeValues();
+
+        _searchPart.SetActive(true);
+        _releasePart.SetActive(false);
+        m_activePart = _searchPart;
+        _currentPart = VisiblePart.ReleaseResult;
+    }
+
+    protected override void RegisterEventHandlers()
+    {
+        base.RegisterEventHandlers();
+
+        Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
 
         _releaseToggle.OnButtonClick.AddListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.AddListener(OnArtistToggleClicked);
     }
 
-    void OnDisable()
+    protected override void UnregisterEventHandlers()
     {
-        m_Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+        base.UnregisterEventHandlers();
+
+        Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
 
         _releaseToggle.OnButtonClick.RemoveListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.RemoveListener(OnArtistToggleClicked);
     }
+    #endregion
 
-    protected override void Start()
-    {
-        _rectTransform = GetComponent<RectTransform>();
-        _searchPart.SetActive(true);
-        _releasePart.SetActive(false);
-        _activePart = _searchPart;
-        _currentPart = VisiblePart.ReleaseResult;
-
-        base.Start();
-    }
-
+    #region ToolbarController Base Class Methods
     protected override IEnumerator SetElementStates()
     {
         _releaseToggle.SetToggle(_toggled == DetailsToggle.release);
@@ -58,13 +72,16 @@ public class ToolbarPartController : ToolbarControllerBase
 
         yield return null;
     }
+    #endregion
+
+    public void SetHeader(string title) => _header.SetHeader(title);
 
     void OnReleaseToggleClicked()
     {
         _toggled = DetailsToggle.release;
         ChangeElementStates();
 
-        m_Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
+        Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
     }
 
     void OnArtistToggleClicked()
@@ -72,7 +89,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.artist;
         ChangeElementStates();
 
-        m_Manager.AppState.ChangeVisiblePart(VisiblePart.ArtistDetails);
+        Manager.AppState.ChangeVisiblePart(VisiblePart.ArtistDetails);
     }
 
     void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)
@@ -83,7 +100,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _currentPart = e.Part;
 
         string title = default;
-        GameObject hidePart = _activePart;
+        GameObject hidePart = m_activePart;
         GameObject showPart = default;
 
         if (e.Part == VisiblePart.ReleaseResult)
@@ -103,28 +120,6 @@ public class ToolbarPartController : ToolbarControllerBase
         }
 
         if (title != default)
-        {
-            Sequence sequence = DOTween.Sequence();
-            sequence.Append(
-                _rectTransform.DORotate(new Vector3(90, 0, 0), .25f)
-                    .SetEase(Ease.Linear)
-                    .OnComplete(
-                        () =>
-                        {
-                            hidePart.SetActive(false);
-                            showPart.SetActive(true);
-                            _header.SetHeader( title);
-
-                        }));
-            sequence.Append(
-                _rectTransform.DORotate(new Vector3(0, 0, 0), .25f)
-                .SetDelay(.1f)
-                .SetEase(Ease.Linear)
-                    .OnComplete(
-                        () =>
-                        {
-                            _activePart = showPart;
-                        }));
-        }
+            Animations.ToolbarPartRotate(this, title, showPart, hidePart);
     }
 }

@@ -87,7 +87,7 @@ public class PanelAndWindowsAnimations : ScriptableObject
             .OnComplete(
                 () => largePlayer.DOPivotX(-.1f, _playerCollapseTime / 2)
                     .SetEase(_playerLargeHideEase)
-                    .OnComplete(() => onComplete.Invoke()));
+                    .OnComplete(() => onComplete?.Invoke()));
 
         smallPlayer.DOPivotY(1, _playerCollapseTime).SetEase(_playerSmallShowEase).SetDelay(_playerSmallShowDelay);
     }
@@ -106,21 +106,21 @@ public class PanelAndWindowsAnimations : ScriptableObject
                 () =>
                 {
                     expandedPlayer.DOScale(1, _playerExpandTime / 2).SetEase(_playerLargeGrowEase);
-                    onComplete.Invoke();
+                    onComplete?.Invoke();
                 });
     }
 
     public void PlayPanelFade(bool fadeIn, float duration, float delay = 0, params CanvasGroup[] canvases)
     {
-        if(canvases == null || canvases.Length == 0)
+        if (canvases == null || canvases.Length == 0)
             return;
 
-        if(duration == 0f)
+        if (duration == 0f)
             duration = _fadeDuration;
 
-        foreach(var canvas in canvases)
+        foreach (var canvas in canvases)
         {
-            if(canvas == null)
+            if (canvas == null)
                 continue;
 
             canvas.alpha = fadeIn ? 0f : 1f;
@@ -139,9 +139,9 @@ public class PanelAndWindowsAnimations : ScriptableObject
         release.m_canvasGroup.DOFade(fadeTo, time).SetEase(easing);
     }
 
-    public void PlayDetailsPanelVisible(bool isVisible, ShowDetailsAnimator showDetails)
+    public void PlayDetailsPanelVisible(bool isVisible, DetailsAnimator showDetails)
     {
-        if(isVisible)
+        if (isVisible)
             showDetails.gameObject.SetActive(true);
 
         var scaleTo = isVisible ? 1f : 0f;
@@ -154,14 +154,14 @@ public class PanelAndWindowsAnimations : ScriptableObject
             .OnComplete(
                 () =>
                 {
-                    if(!isVisible)
+                    if (!isVisible)
                         showDetails.gameObject.SetActive(false);
                 });
     }
 
     void MoveVertical(bool show, GameObject obj, float hidePivot, float showPivot, float delay = 0f)
     {
-        if(show)
+        if (show)
             obj.SetActive(true);
 
         var pivotTo = show ? showPivot : hidePivot;
@@ -174,7 +174,7 @@ public class PanelAndWindowsAnimations : ScriptableObject
             .OnComplete(
                 () =>
                 {
-                    if(!show)
+                    if (!show)
                         obj.SetActive(false);
                 });
     }

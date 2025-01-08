@@ -17,37 +17,31 @@ public class MusicMateManagerEditor : MusicMateEditorBase
 
         DrawLogo();
         DrawTitle("MusicMate Manager");
-        DrawSpace();
-        DrawDescription("Handles application-wide configuration and high-level events.");
+        DrawDescription("The central manager for the MusicMate application.Handles configuration, initialization and high-level application events such as connecting to the API or showing windows.");
         DrawSpace();
 
-        // Display a warning if the object is not in the root
-        var manager = (MusicMateManager)target;
-        if (manager.transform.parent != null)
-        {
-            EditorGUILayout.HelpBox("Warning: This manager should be at the root level of the hierarchy.", MessageType.Warning);
-        }
+        DrawWarningIfNotInRoot(((MusicMateManager)target).transform);
 
-        DrawSectionField(serializedObject.FindProperty("_appConfig"), "App Configuration");
+        DrawSectionField("_appConfig", "App Configuration");
         DrawSpace();
 
         if (DrawFoldout("Windows"))
         {
-            DrawSectionField(serializedObject.FindProperty("_errorController"), "Error Window");
-            DrawSectionField(serializedObject.FindProperty("_loginController"), "Login Window");
+            DrawSectionField("_errorController", "Error Window");
+            DrawSectionField("_loginController", "Login Window");
         }
 
         if (DrawFoldout("Animators"))
         {
-            DrawSectionField(serializedObject.FindProperty("_mainPage"), "Main Page Animator");
-            DrawSectionField(serializedObject.FindProperty("_logoAnimator"), "Logo Animator");
+            DrawSectionField("_mainPage", "Main Page Animator");
+            DrawSectionField("_logoAnimator", "Logo Animator");
         }
 
         if (DrawFoldout("Elements"))
         {
-            DrawSectionField(serializedObject.FindProperty("_connectionSpinner"), "Connection Spinner");
-            DrawSectionField(serializedObject.FindProperty("_activateOnStart"), "Activate On Start");
-            DrawSectionField(serializedObject.FindProperty("_inactivateOnStart"), "Inactivate On Start");
+            DrawSectionField("_connectionSpinner", "Connection Spinner");
+            DrawSectionField("_activateOnStart", "Activate On Start");
+            DrawSectionField("_inactivateOnStart", "Inactivate On Start");
         }
 
         serializedObject.ApplyModifiedProperties();

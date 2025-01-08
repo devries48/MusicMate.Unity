@@ -26,6 +26,8 @@ MonoBehaviour:
   _toolbarClickScale: 0.8
   _toolbarToggleScale: 0.7
   _toolbarTooltipPopupTime: 0.1
+  _iconAnimationTime: 0.6
   _toolbarSpinnerScale: 0.7
   _toolbarSpinTime: 0.4
-  _iconAnimationTime: 0.6
+  _toolbarPartRotateTime: 0.2
+  _toolbarPartDelayTime: 0.1

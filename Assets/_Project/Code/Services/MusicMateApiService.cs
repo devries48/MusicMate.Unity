@@ -7,6 +7,44 @@ using Newtonsoft.Json.Serialization;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Provides an implementation of the <see cref="IMusicMateApiService"/> interface, 
+/// managing communication with the MusicMate API. 
+/// This service handles user authentication, data retrieval, image downloads, 
+/// and folder import operations.
+/// 
+/// Features include:
+/// - API connection management with an event-driven connection status system.
+/// - Retrieval of releases and specific album details.
+/// - Support for downloading images as Unity Sprites.
+/// - Folder import process management, including checks for running imports.
+/// 
+/// **Design Patterns:**
+/// - **Singleton Pattern:** Inherits from <see cref="SceneSingleton{T}"/> to ensure only 
+///   one instance of the service exists in the scene.
+/// - **Observer Pattern:** Implements a connection status event mechanism to notify 
+///   subscribers of changes in API connectivity.
+///
+/// **Best Practices:**
+/// - **Encapsulation of API Logic:** The class centralizes API communication logic, 
+///   making it easier to maintain and test.
+/// - **Async Operations with Coroutines:** Uses Unity coroutines for asynchronous 
+///   operations, ensuring compatibility with Unity's main thread.
+/// - **Error Handling:** Implements basic error handling for network requests, 
+///   logging errors and invoking callbacks with appropriate responses.
+/// - **Separation of Concerns:** Keeps HTTP request creation and API-specific logic 
+///   (e.g., parsing JSON) distinct from UI logic.
+/// 
+/// **Extensibility:**
+/// - Supports dynamic extension through interfaces, enabling flexible testing and 
+///   future service replacements.
+/// - Leverages event-driven architecture for modular integration with other systems.
+/// 
+/// **Usage:**
+/// This service is designed to be a central hub for API interactions, providing methods 
+/// to sign in, retrieve album data, and manage media-related operations. It can be used 
+/// as a dependency in other components requiring API access.
+/// </summary>
 public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMateApiService
 {
     string _apiUrl;
@@ -92,7 +130,6 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         }
     }
 
-
     IEnumerator GetReleaseCore(Guid id, Action<ReleaseModel> callback)
     {
         using UnityWebRequest wr = CreateGetRequest($"releases/{id}");
@@ -104,7 +141,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         }
         else
         {
-            //Debug.Log(wr.downloadHandler.text);
+            Debug.Log(wr.downloadHandler.text);
             try
             {
                 var result = JsonConvert.DeserializeObject<SingleResult<ReleaseModel>>(wr.downloadHandler.text, _jsonSettings);
@@ -117,7 +154,6 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
         }
     }
-
 
     //TODO Cache images
     IEnumerator GetImage(string url, Action<Sprite> callback)

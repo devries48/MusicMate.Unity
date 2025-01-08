@@ -5,7 +5,7 @@ public class MainWindowAnimator : MusicMateBehavior
     [Header("Controllers")]
     [SerializeField] AudioPlayerController _audioPlayer;
     [SerializeField] ReleaseResultController _releaseResult;
-    [SerializeField] ShowDetailsAnimator _showDetails;
+    [SerializeField] DetailsAnimator _showDetails;
 
     [Header("Toolbar Controllers")]
     [SerializeField] ToolbarApplicationController _applicationToolbar;
