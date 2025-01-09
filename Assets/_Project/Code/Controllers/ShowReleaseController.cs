@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,10 +9,19 @@ public class ShowReleaseController : MusicMateBehavior
     [Header("Parent")]
     [SerializeField] DetailsAnimator _showDetails;
 
+    [Header("States")]
+    public PanelReleaseStateData m_normal;
+    public PanelReleaseStateData m_maximized;
+
+    [Header("State Actions")]
+    public TextMeshProUGUI m_hideWhenNormal;
+    public CanvasGroup[] m_hideWhenMaximized;
+
     [Header("Elements")]
+    public Image m_image;
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
-    [SerializeField] Image _releaseImage;
+    public PlaylistController m_tracks;
 
     public ReleaseResult CurrentRelease { get; private set; } = null;
 
@@ -31,8 +41,8 @@ public class ShowReleaseController : MusicMateBehavior
 
     IEnumerator GetReleaseCore()
     {
-        _releaseImage.overrideSprite = null;
-        _releaseImage.color = _initialBackgroundColor;
+        m_image.overrideSprite = null;
+        m_image.color = _initialBackgroundColor;
         _artist.SetText(CurrentRelease.Artist.Text);
         _title.SetText(CurrentRelease.Title);
 
@@ -40,8 +50,6 @@ public class ShowReleaseController : MusicMateBehavior
 
         ApiService.GetRelease(CurrentRelease.Id, (model) =>
         {
-            print("Show release: " + CurrentRelease.Title);
-
             ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
             _showDetails.StopSpinner();
 
@@ -52,8 +60,7 @@ public class ShowReleaseController : MusicMateBehavior
 
     void ProcessImage(Sprite sprite)
     {
-        _releaseImage.overrideSprite = sprite;
-        _releaseImage.DOFade(1f, .5f).SetEase(Ease.InSine);
+        m_image.overrideSprite = sprite;
+        m_image.DOFade(1f, .5f).SetEase(Ease.InSine);
     }
-
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/Button Animations", fileName = "Button Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Animations/Button Animations", fileName = "Button Animations")]
 public class ButtonAnimations : ScriptableObject
 {
     // general settings 

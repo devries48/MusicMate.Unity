@@ -2,7 +2,7 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/Input Animations", fileName = "Input Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Animations/Input Animations", fileName = "Input Animations")]
 public class InputAnimations : ScriptableObject
 {
     [Header("InputText")]

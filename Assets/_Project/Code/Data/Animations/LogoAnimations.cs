@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 
-[CreateAssetMenu(menuName = "MusicMate/Logo Animations", fileName = "Logo Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Animations/Logo Animations", fileName = "Logo Animations")]
 public class LogoAnimations : ScriptableObject
 {
     [Header("Fade")]

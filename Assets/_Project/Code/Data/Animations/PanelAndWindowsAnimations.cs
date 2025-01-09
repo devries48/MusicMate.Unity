@@ -2,7 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 
-[CreateAssetMenu(menuName = "MusicMate/Panel & Window Animations", fileName = "Panel & Window Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Animations/Panel & Window Animations", fileName = "Panel & Window Animations")]
 public class PanelAndWindowsAnimations : ScriptableObject
 {
     [Header("Default Window Visibility")]

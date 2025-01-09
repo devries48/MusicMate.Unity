@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/Grid Animations", fileName = "Grid Animations")]
+[CreateAssetMenu(menuName = "MusicMate/Animations/Grid Animations", fileName = "Grid Animations")]
 public class GridAnimations : ScriptableObject
 {
     [Header("Grid Cell Click")]
