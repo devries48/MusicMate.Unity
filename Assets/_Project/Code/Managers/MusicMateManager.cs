@@ -11,7 +11,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 {
     #region Serialized Fields
     //[Header("Configuration")]
-    [SerializeField] AppConfiguration _appConfig;
+    [SerializeField] AppSetings _appSettings;
 
     //[Header("Windows")]
     [SerializeField] ErrorWindow _errorController;
@@ -32,7 +32,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     /// <summary>
     /// Gets the application's configuration settings.
     /// </summary>
-    public AppConfiguration AppConfiguration => _appConfig;
+    public AppSetings AppConfiguration => _appSettings;
 
     /// <summary>
     /// The state of the application, including the current visible part and other runtime information.
@@ -41,16 +41,16 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     {
         get
         {
-            _appState ??= new AppState(_appConfig);
+            _appState ??= new AppState(_appSettings);
             return _appState;
         }
     }
 
-    public Color32 AccentColor => _appConfig.Colors.AccentColor;
-    public Color32 DefaultColor => _appConfig.Colors.DefaultColor;
-    public Color32 AccentTextColor => _appConfig.Colors.BackgroundColor;
-    public Color32 TextColor => _appConfig.Colors.TextColor;
-    public Color32 BackgroundColor => _appConfig.Colors.BackgroundColor;
+    public Color32 AccentColor => _appSettings.Colors.AccentColor;
+    public Color32 DefaultColor => _appSettings.Colors.DefaultColor;
+    public Color32 AccentTextColor => _appSettings.Colors.BackgroundColor;
+    public Color32 TextColor => _appSettings.Colors.TextColor;
+    public Color32 BackgroundColor => _appSettings.Colors.BackgroundColor;
     #endregion
 
     #region #region Field Declarations
@@ -84,7 +84,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         if (!_connectionSpinner.gameObject.activeInHierarchy)
             ShowSpinner();
 
-        _service.SignIn(_appConfig.ApiServiceUrl, "admin", "123");
+        _service.SignIn(_appSettings.ApiServiceUrl, "admin", "123");
     }
 
     public void ShowError(ErrorType error, string message, string description = "")
@@ -209,7 +209,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
         if (!e.Connected)
         {
-            ShowError(ErrorType.Connection, e.Error, _appConfig.ApiServiceUrl);
+            ShowError(ErrorType.Connection, e.Error, _appSettings.ApiServiceUrl);
             HideSpinner();
         }
         else

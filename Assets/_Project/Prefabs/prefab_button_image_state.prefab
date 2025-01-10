@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 828984619921022639}
   - component: {fileID: 840662412344554482}
   m_Layer: 5
-  m_Name: prefab_button_image
+  m_Name: prefab_button_image_state
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,14 +60,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.25490198, g: 0.33333334, b: 0.3882353, a: 1}
+  m_Color: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 37288b62f822f294b8c35b45c7d61c46, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 95aeddb1c4f22ae41a6960f11f7288f2, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -116,7 +116,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 2067226609188025750}
   m_OnClick:
     m_PersistentCalls:
@@ -134,12 +134,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2268e44929c70dd49a809802a2039c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interactable: 0
+  _interactable: 1
   _isPrimary: 0
-  _buttonType: 1
+  _buttonType: 3
   _text: 
-  _icon: {fileID: 21300000, guid: 37288b62f822f294b8c35b45c7d61c46, type: 3}
-  _stateIcon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 95aeddb1c4f22ae41a6960f11f7288f2, type: 3}
+  _stateIcon: {fileID: 21300000, guid: f6c62e4cf5ad402409d4c229c4ec1524, type: 3}
   _isToggle: 0
   _isExpanded: 0
   _isStateOn: 0

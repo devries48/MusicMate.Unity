@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 174375c57a3b78f47a4ef6923e5a334e, type: 3}
-  m_Name: Colors
+  m_Name: Color Settings
   m_EditorClassIdentifier: 
   AccentColor:
     serializedVersion: 2

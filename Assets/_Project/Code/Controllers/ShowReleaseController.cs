@@ -6,19 +6,20 @@ using UnityEngine.UI;
 
 public class ShowReleaseController : MusicMateBehavior
 {
-    [Header("Parent")]
+    //[Header("Parent")]
     [SerializeField] DetailsAnimator _showDetails;
 
-    [Header("States")]
+    //[Header("States")]
     public PanelReleaseStateData m_normal;
     public PanelReleaseStateData m_maximized;
 
-    [Header("State Actions")]
+    //[Header("State Actions")]
     public TextMeshProUGUI m_hideWhenNormal;
     public CanvasGroup[] m_hideWhenMaximized;
 
-    [Header("Elements")]
-    public Image m_image;
+    //[Header("Elements")]
+    public RectTransform m_imagePanel;
+    [SerializeField] Image _image;
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
     public PlaylistController m_tracks;
@@ -41,8 +42,8 @@ public class ShowReleaseController : MusicMateBehavior
 
     IEnumerator GetReleaseCore()
     {
-        m_image.overrideSprite = null;
-        m_image.color = _initialBackgroundColor;
+        _image.overrideSprite = null;
+        _image.color = _initialBackgroundColor;
         _artist.SetText(CurrentRelease.Artist.Text);
         _title.SetText(CurrentRelease.Title);
 
@@ -60,7 +61,7 @@ public class ShowReleaseController : MusicMateBehavior
 
     void ProcessImage(Sprite sprite)
     {
-        m_image.overrideSprite = sprite;
-        m_image.DOFade(1f, .5f).SetEase(Ease.InSine);
+        _image.overrideSprite = sprite;
+        _image.DOFade(1f, .5f).SetEase(Ease.InSine);
     }
 }

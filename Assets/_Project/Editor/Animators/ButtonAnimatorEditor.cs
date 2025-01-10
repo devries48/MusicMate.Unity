@@ -32,12 +32,16 @@ public class ButtonAnimatorEditor : MusicMateEditorBase
                 DrawSectionHeader("Image Button");
                 DrawSectionField("_icon", "Icon");
                 break;
+            case ButtonAnimationType.StateImageButton:
+                DrawSectionHeader("State Image Button");
+                DrawSectionField("_icon", "State Icon OFF");
+                DrawSectionField("_stateIcon", "State Icon ON");
+                break;
             case ButtonAnimationType.ExpandCollapseButton:
                 DrawSectionHeader("Expand/Collapse Button");
                 DrawSectionField("_isToggle", "Is Toggle");
                 DrawSectionField("_isExpanded", "Is Expanded");
                 DrawSectionField("_headerText", "Header Text");
-
                 break;
             case ButtonAnimationType.ToolbarButton:
                 GUILayout.Label("Toolbar buttons have their own custom behavior.", EditorStyles.boldLabel);

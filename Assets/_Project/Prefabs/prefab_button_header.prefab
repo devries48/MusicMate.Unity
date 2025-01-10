@@ -173,11 +173,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interactable: 1
   _isPrimary: 0
-  _buttonType: 4
+  _buttonType: 5
   _text: 
   _icon: {fileID: 21300000, guid: 37920298828040a4faf8918c397e0252, type: 3}
+  _stateIcon: {fileID: 0}
   _isToggle: 0
   _isExpanded: 1
+  _isStateOn: 0
   _headerText: Music Player
 --- !u!1 &1369086513617285886
 GameObject:

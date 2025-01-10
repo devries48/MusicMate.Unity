@@ -2,7 +2,7 @@
 
 public interface IMusicMateManager
 {
-    AppConfiguration AppConfiguration { get; }
+    AppSetings AppConfiguration { get; }
     IAppState AppState { get; }
 
     Color32 AccentColor { get; }

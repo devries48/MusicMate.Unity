@@ -59,6 +59,7 @@ public class ButtonAnimations : ScriptableObject
             {
                 ButtonAnimationType.ToolbarButton => _toolbarClickScale,
                 ButtonAnimationType.DefaultImageButton => _imageClickScale,
+                ButtonAnimationType.StateImageButton => _imageClickScale,
                 ButtonAnimationType.LargeImageButton => _imageLargeClickScale,
                 _ => _textClickScale
             };
@@ -81,6 +82,7 @@ public class ButtonAnimations : ScriptableObject
             var scale = buttonType switch
             {
                 ButtonAnimationType.DefaultImageButton => _imageHoverScale,
+                ButtonAnimationType.StateImageButton => _imageHoverScale,
                 ButtonAnimationType.LargeImageButton => _imageLargeHoverScale,
                 ButtonAnimationType.ToolbarButton => _toolbarHoverScale,
                 _ => _textHoverScale
@@ -99,6 +101,7 @@ public class ButtonAnimations : ScriptableObject
             var scale = buttonType switch
             {
                 ButtonAnimationType.DefaultImageButton => _imageScale,
+                ButtonAnimationType.StateImageButton => _imageScale,
                 ButtonAnimationType.LargeImageButton => _imageLargeScale,
                 _ => 1.0f
             };

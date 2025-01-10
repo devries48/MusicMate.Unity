@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c2eef3d50d577a439d622ac91850620, type: 3}
-  m_Name: App Configuration
+  m_Name: App Settings
   m_EditorClassIdentifier: 
   ApiServiceUrl: https://localhost:7111
   User: Admin

@@ -22,7 +22,7 @@ public class MusicMateManagerEditor : MusicMateEditorBase
 
         DrawWarningIfNotInRoot(((MusicMateManager)target).transform);
 
-        DrawSectionField("_appConfig", "App Configuration");
+        DrawSectionField("_appSettings", "App Settings");
         DrawSpace();
 
         if (DrawFoldout("Windows"))

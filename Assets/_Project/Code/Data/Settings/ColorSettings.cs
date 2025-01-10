@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/Colors", fileName = "Colors")]
+[CreateAssetMenu(menuName = "MusicMate/Settings/Color Settings", fileName = "Color Settings")]
 public class ColorSettings : ScriptableObject
 {
     public Color32 AccentColor;

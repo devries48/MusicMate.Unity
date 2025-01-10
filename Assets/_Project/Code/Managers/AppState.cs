@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class AppState : IAppState
 {
-    public AppState(AppConfiguration config) => _config = config;
+    public AppState(AppSetings config) => _config = config;
 
-    AppConfiguration _config;
+    AppSetings _config;
     VisiblePart _parentPart, _currentPart;
 
     event VisiblePartChangedEventHandler VisiblePartChanged;

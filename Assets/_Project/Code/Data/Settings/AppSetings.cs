@@ -2,8 +2,8 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "MusicMate/App Configuration", fileName = "Configuration (app)")]
-public class AppConfiguration : ScriptableObject
+[CreateAssetMenu(menuName = "MusicMate/Settings/App Settings", fileName = "App Settings")]
+public class AppSetings : ScriptableObject
 {
 
     [Header("Connection")]

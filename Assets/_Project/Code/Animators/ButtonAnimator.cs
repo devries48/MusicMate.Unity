@@ -22,8 +22,10 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     [SerializeField] ButtonAnimationType _buttonType;
     [SerializeField] string _text;   // Text Button
     [SerializeField] Sprite _icon;   // Image Button
+    [SerializeField] Sprite _stateIcon;   // Image State Button
     [SerializeField] bool _isToggle; // Expand/Collapse Button
     [SerializeField] bool _isExpanded;
+    [SerializeField] bool _isStateOn;
     [SerializeField] string _headerText;
     #endregion
 
@@ -65,18 +67,19 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
             if (Button.ImageComponent != null)
             {
                 if (_buttonType == ButtonAnimationType.DefaultImageButton ||
-                    _buttonType == ButtonAnimationType.LargeImageButton)
+                    _buttonType == ButtonAnimationType.LargeImageButton ||
+                    _buttonType == ButtonAnimationType.StateImageButton)
                 {
                     if (_icon != null)
                     {
-                        Button.ImageComponent.sprite = _icon;
+                        SetIcon();
                         Button.ImageComponent.color = !Button.interactable
                             ? Button.Colors.DisabledIconColor
                             : _isPrimary ? Button.Colors.AccentColor : Button.Colors.IconColor;
 
-                        var scale = _buttonType == ButtonAnimationType.DefaultImageButton
-                            ? Animations.ImageButtonScale
-                            : Animations.ImageButtonLargeScale;
+                        var scale = _buttonType == ButtonAnimationType.LargeImageButton
+                            ? Animations.ImageButtonLargeScale
+                            : Animations.ImageButtonScale;
 
                         Button.transform.localScale = new Vector3(scale, scale, scale);
                     }
@@ -122,15 +125,14 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                 Button.PlaceholderTransform.pivot = new Vector2(1f, 0.5f);
                 Button.PlaceholderTransform.anchoredPosition = Vector2.zero; // Adjust as necessary
             }
-
         }
     }
     #endregion
 
-        /// <summary>
-        /// Sets whether the button is interactable. This controls whether the user can interact with the button.
-        /// </summary>
-        /// <param name="interactable">Indicates whether the button should be interactable.</param>
+    /// <summary>
+    /// Sets whether the button is interactable. This controls whether the user can interact with the button.
+    /// </summary>
+    /// <param name="interactable">Indicates whether the button should be interactable.</param>
     public void SetInteractable(bool interactable) => Button.interactable = interactable;
 
     /// <summary>
@@ -146,6 +148,15 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         {
             _isExpanded = isExpanded;
             RotateIcon(_isExpanded);
+        }
+    }
+
+    public void SetState(bool isOn)
+    {
+        if (_isStateOn != isOn)
+        {
+            _isStateOn = isOn;
+            SetIcon();
         }
     }
 
@@ -170,10 +181,22 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         Button.ImageComponent.rectTransform.localRotation = Quaternion.Euler(0, 0, targetRotation);
     }
 
+    void SetIcon()
+    {
+        var icon = _icon;
+        if (_buttonType == ButtonAnimationType.StateImageButton && _isStateOn)
+            icon = _stateIcon;
+
+        Button.ImageComponent.sprite = icon;
+    }
+
     void OnButtonClicked()
     {
         OnButtonClick?.Invoke();
         Animations.ButtonClicked(Button, _buttonType);
+
+        if (_buttonType== ButtonAnimationType.StateImageButton)
+            SetState(!_isStateOn);
     }
 
     void OnInteractableChanged(bool isInteractable) => Animations.ButtonInteractableChanged(
