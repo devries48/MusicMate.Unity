@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Panel Release Normal
   m_EditorClassIdentifier: 
   IsNormalState: 1
-  _animationDuration: 0.2
+  _animationDuration: 0.1
   _imageData:
     anchoredPosition: {x: 25, y: -25}
-    sizeDelta: {x: 525, y: 450}
+    sizeDelta: {x: 500, y: 450}
   _tracksData:
     anchoredPosition: {x: -25, y: -25}
     sizeDelta: {x: 450, y: 450}

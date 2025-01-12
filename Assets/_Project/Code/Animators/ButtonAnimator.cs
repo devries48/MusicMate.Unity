@@ -31,6 +31,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     #region Properties
     public ButtonInteractable Button { get; private set; }
+    public bool IsStateOn { get { return _isStateOn; } }
 
     public UnityEvent OnButtonClick { get; private set; } = new UnityEvent();
     #endregion
@@ -192,11 +193,12 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     void OnButtonClicked()
     {
-        OnButtonClick?.Invoke();
         Animations.ButtonClicked(Button, _buttonType);
-
-        if (_buttonType== ButtonAnimationType.StateImageButton)
+     
+        if (_buttonType == ButtonAnimationType.StateImageButton)
             SetState(!_isStateOn);
+
+        OnButtonClick?.Invoke();
     }
 
     void OnInteractableChanged(bool isInteractable) => Animations.ButtonInteractableChanged(

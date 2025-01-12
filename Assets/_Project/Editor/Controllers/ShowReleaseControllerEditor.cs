@@ -10,6 +10,8 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
 
         InitializeFoldoutState("State Actions");
         InitializeFoldoutState("Elements");
+        InitializeFoldoutState("Panels");
+        InitializeFoldoutState("Buttons");
     }
 
     public override void OnInspectorGUI()
@@ -31,18 +33,24 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
         DrawSectionHeader("Mappings");
         DrawSpace();
 
-        if (DrawFoldout("State Actions"))
-        {
-            DrawSectionField("m_hideWhenNormal", "Hide in Normal State");
-            DrawSectionField("m_hideWhenMaximized", "Hide in Maximized State");
-        }
         if (DrawFoldout("Elements"))
         {
-            DrawSectionField("m_imagePanel", "Image Panel");
             DrawSectionField("_image", "Release Image");
             DrawSectionField("_artist", "Artist");
             DrawSectionField("_title", "Title");
+            DrawSectionField("m_artist_title", "Artist & Title");
             DrawSectionField("m_tracks", "Tracks");
+        }
+        if (DrawFoldout("Panels"))
+        {
+            DrawSectionField("m_imagePanel", "Image Panel");
+            DrawSectionField("m_mainInfoPanel", "Main Info Panel");
+        }
+        if (DrawFoldout("Buttons"))
+        {
+            DrawSectionField("_stateButton", "State Button");
+            DrawSectionField("_upButton", "Up Button");
+            DrawSectionField("_downButton", "Down Button");
         }
 
         DrawSpace();
@@ -88,10 +96,12 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
             if (controller.m_maximized != null)
             {
                 controller.m_maximized.SaveState(controller);
-                EditorUtility.SetDirty(controller.m_maximized); 
+                EditorUtility.SetDirty(controller.m_maximized);
             }
             else
                 Debug.LogWarning("Maximized State ScriptableObject is not assigned!");
         }
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

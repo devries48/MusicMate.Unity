@@ -34,6 +34,7 @@ public class ButtonAnimatorEditor : MusicMateEditorBase
                 break;
             case ButtonAnimationType.StateImageButton:
                 DrawSectionHeader("State Image Button");
+                DrawSectionField("_isStateOn", "State ON");
                 DrawSectionField("_icon", "State Icon OFF");
                 DrawSectionField("_stateIcon", "State Icon ON");
                 break;

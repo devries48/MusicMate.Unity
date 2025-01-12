@@ -5,58 +5,71 @@ using UnityEngine;
 public class PanelReleaseStateData : ScriptableObject
 {
     [SerializeField] bool IsNormalState;
-    [SerializeField] float _animationDuration = .2f;
+    [SerializeField] float _animationDuration = .1f;
     [SerializeField] RectTransformData _imageData;
     [SerializeField] RectTransformData _tracksData;
 
     public void ApplyTransformData(ShowReleaseController controller)
     {
-        var image = controller.m_imagePanel;
+        var imagePanel = controller.m_imagePanel;
+        var infoCanvas = controller.m_mainInfoPanel.GetComponent<CanvasGroup>();
         var tracks = controller.m_tracks.GetComponent<RectTransform>();
 
-        if (image.anchoredPosition != _imageData.anchoredPosition || image.sizeDelta != _imageData.sizeDelta)
-            image.DOAnchorPos(_imageData.anchoredPosition, _animationDuration);
+        if (imagePanel.anchoredPosition != _imageData.anchoredPosition || imagePanel.sizeDelta != _imageData.sizeDelta)
+        {
+            imagePanel.DOAnchorPos(_imageData.anchoredPosition, _animationDuration);
+            imagePanel.DOSizeDelta(_imageData.sizeDelta, _animationDuration);
+        }
 
         if (tracks.anchoredPosition != _tracksData.anchoredPosition || tracks.sizeDelta != _tracksData.sizeDelta)
-            image.DOSizeDelta(_tracksData.sizeDelta, _animationDuration);
+        {
+            tracks.DOAnchorPos(_tracksData.anchoredPosition, _animationDuration);
+            tracks.DOSizeDelta(_tracksData.sizeDelta, _animationDuration);
+        }
 
         var canvasFadeTo = IsNormalState ? 1 : 0;
         var titleFadeTo = IsNormalState ? 0 : 1;
 
-        foreach (var group in controller.m_hideWhenMaximized)
-            group.DOFade(canvasFadeTo, _animationDuration)
+        infoCanvas.DOFade(canvasFadeTo, _animationDuration)
                 .SetEase(IsNormalState ? Ease.InQuint : Ease.OutQuint)
-                .OnComplete(() => group.interactable = IsNormalState);
+                .OnComplete(() => infoCanvas.interactable = IsNormalState);
 
-        if (controller.m_hideWhenNormal != null)
-            controller.m_hideWhenNormal.DOFade(titleFadeTo, _animationDuration)
-                 .SetEase(IsNormalState ? Ease.OutQuint : Ease.InQuint);
+        controller.m_artist_title.DOFade(titleFadeTo, _animationDuration)
+             .SetEase(IsNormalState ? Ease.OutQuint : Ease.InQuint);
     }
 
     public void ApplyTransformDataInstant(ShowReleaseController controller)
     {
         var image = controller.m_imagePanel;
-        var tracks = controller.m_tracks.GetComponent<RectTransform>();
 
-        // Direct property assignments
-        image.anchoredPosition = _imageData.anchoredPosition;
-        image.sizeDelta = _imageData.sizeDelta;
+        if (image != null)
+        {
+            image.anchoredPosition = _imageData.anchoredPosition;
+            image.sizeDelta = _imageData.sizeDelta;
+        }
 
-        tracks.anchoredPosition = _tracksData.anchoredPosition;
-        tracks.sizeDelta = _tracksData.sizeDelta;
+        if (controller.m_tracks != null)
+        {
+            var tracks = controller.m_tracks.GetComponent<RectTransform>();
+
+            tracks.anchoredPosition = _tracksData.anchoredPosition;
+            tracks.sizeDelta = _tracksData.sizeDelta;
+        }
 
         var canvasAlpha = IsNormalState ? 1 : 0;
         var titleAlpha = IsNormalState ? 0 : 1;
 
-        foreach (var group in controller.m_hideWhenMaximized)
+        if (controller.m_mainInfoPanel != null)
         {
-            group.alpha = canvasAlpha;
-            group.interactable = IsNormalState;
-            group.blocksRaycasts = IsNormalState;
+            var infoCanvas = controller.m_mainInfoPanel.GetComponent<CanvasGroup>();
+
+            infoCanvas.alpha = canvasAlpha;
+            infoCanvas.interactable = IsNormalState;
+            infoCanvas.blocksRaycasts = IsNormalState;
         }
 
-        if (controller.m_hideWhenNormal != null)
-            controller.m_hideWhenNormal.alpha = titleAlpha;
+        if (controller.m_artist_title != null)
+            controller.m_artist_title.alpha = titleAlpha;
     }
 
     public void SaveState(ShowReleaseController controller)
