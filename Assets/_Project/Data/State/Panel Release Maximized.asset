@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Panel Release Maximized
   m_EditorClassIdentifier: 
   IsNormalState: 0
-  _animationDuration: 0.1
+  _animationDuration: 0.05
   _imageData:
     anchoredPosition: {x: 25, y: -40}
     sizeDelta: {x: 785, y: 710}

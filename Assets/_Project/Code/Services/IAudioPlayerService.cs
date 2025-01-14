@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public interface IAudioPlayerService
 {
@@ -19,6 +18,7 @@ public interface IAudioPlayerService
 
     List<TrackResult> GetPlaylist();
     void Play(ReleaseResult release);
+    void Play(TrackResult track);
     void Pause();
     void ChangeExpandedState(bool isExpanded);
     void ChangeState(PlayerState state);

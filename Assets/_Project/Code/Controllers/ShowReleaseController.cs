@@ -1,16 +1,15 @@
-﻿using DG.Tweening;
-using System;
+﻿#region Usings
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#endregion
 
 public class ShowReleaseController : MusicMateBehavior
 {
-    //[Header("Parent")]
+    #region Serialized Fields
     [SerializeField] DetailsAnimator _showDetails;
-
-    //[Header("States")]
     public PanelReleaseStateData m_normal;
     public PanelReleaseStateData m_maximized;
 
@@ -19,7 +18,7 @@ public class ShowReleaseController : MusicMateBehavior
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
     public TextMeshProUGUI m_artist_title;
-    public PlaylistController m_tracks;
+    public TracklistController m_tracks;
 
     // Panels
     public RectTransform m_imagePanel;
@@ -29,6 +28,7 @@ public class ShowReleaseController : MusicMateBehavior
     [SerializeField] ButtonAnimator _stateButton;
     [SerializeField] ButtonAnimator _upButton;
     [SerializeField] ButtonAnimator _downButton;
+    #endregion
 
     public ReleaseResult CurrentRelease { get; private set; } = null;
 
@@ -76,17 +76,17 @@ public class ShowReleaseController : MusicMateBehavior
         _artist.SetText(CurrentRelease.Artist.Text);
         _title.SetText(CurrentRelease.Title);
         m_artist_title.SetText(CurrentRelease.Artist.Text + " - " + CurrentRelease.Title);
-
+        
         yield return null;
 
         ApiService.GetRelease(CurrentRelease.Id, (model) =>
         {
             ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
+            m_tracks.SetRelease(model);
+
             _showDetails.StopSpinner();
 
         });
-        // get complete release
-        //_manager.ChangeState(_releaseImage, false);
     }
 
     void ProcessImage(Sprite sprite)

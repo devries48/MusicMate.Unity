@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0006072268}
-  m_SizeDelta: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 10, y: 0}
+  m_SizeDelta: {x: -20, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1444071937278285344
 MonoBehaviour:
@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 5297113958884245246}
   - component: {fileID: 5346456472531024705}
   m_Layer: 5
-  m_Name: prefab Playlist
+  m_Name: prefab_track_list
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -112,7 +112,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c938622a7aeef449a8e7a091b543d07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefabPlaylistItemTemplate: {fileID: 5472375322817171341, guid: c8617c682b4505a46969949159eafb14,
+  _isPlaylist: 0
+  _prefabTrackTemplate: {fileID: 5472375322817171341, guid: c8617c682b4505a46969949159eafb14,
+    type: 3}
+  _prefabTrackActions: {fileID: 717538261779655713, guid: 3ee05ed66c591af428a1c2de44987c2e,
     type: 3}
   _verticalLayout: {fileID: 1444071937278285344}
 --- !u!1 &1483840820977552447
@@ -152,8 +155,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -23}
-  m_SizeDelta: {x: 0, y: -46}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4346384125124419668
 CanvasRenderer:
@@ -545,7 +548,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8217571207102746439}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999841
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -676,7 +679,7 @@ PrefabInstance:
     - target: {fileID: 5472375322817171341, guid: c8617c682b4505a46969949159eafb14,
         type: 3}
       propertyPath: m_Name
-      value: PlaylistItem Template
+      value: Track template
       objectReference: {fileID: 0}
     - target: {fileID: 8559118141045618200, guid: c8617c682b4505a46969949159eafb14,
         type: 3}

@@ -164,6 +164,16 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _gridAnimations.PlayCellSelect(isSelected, cell);
     }
 
+    public void RowClick(RowTrackAnimator row)
+    {
+        _gridAnimations.PlayRowClick(row);
+    }
+
+    public void RowSelect(bool isSelected, RowTrackAnimator row)
+    {
+        _gridAnimations.PlayRowSelect(isSelected, row);
+    }
+
     public void PanelShowDetailsVisible(bool isVisible, DetailsAnimator showDetails)
     {
         _panelAndWindowAnimations.PlayDetailsPanelVisible(isVisible, showDetails);

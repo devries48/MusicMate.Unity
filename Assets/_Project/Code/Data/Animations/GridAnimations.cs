@@ -1,18 +1,19 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Grid Animations", fileName = "Grid Animations")]
 public class GridAnimations : ScriptableObject
 {
-    [Header("Grid Cell Click")]
-    [SerializeField] float _cellClickScale = 0.8f;
+    [Header("Grid Click")]
+    [SerializeField] float _clickScale = 0.8f;
 
-    [Header("Grid Cell Hover")]
+    [Header("Cell Hover")]
     [SerializeField] float _cellHoverScale = 1.1f;
     [SerializeField] float _cellHoverEnterTime = 0.1f;
     [SerializeField] Ease _cellHoverEnterEase = Ease.OutQuint;
     [SerializeField] float _cellHoverExitTime = 0.2f;
-    [SerializeField] Ease _cellHoverExitEase = Ease.InCubic;
+    [SerializeField] Ease _cellHhoverExitEase = Ease.InCubic;
 
     [Header("Grid Cell Select")]
     [SerializeField] float _cellShowPanelTime = 0.15f;
@@ -20,13 +21,9 @@ public class GridAnimations : ScriptableObject
     [SerializeField] float _cellHidePanelTime = 0.25f;
     [SerializeField] Ease _cellHidePanelEase = Ease.OutCirc;
 
-    public void PlayCellHoverEnter(CellReleaseAnimator cell) => cell.transform
-        .DOScale(_cellHoverScale, _cellHoverEnterTime)
-        .SetEase(_cellHoverEnterEase);
-
-    public void PlayCellHoverExit(CellReleaseAnimator cell) => cell.transform
-        .DOScale(1f, _cellHoverExitTime)
-        .SetEase(_cellHoverExitEase);
+    public void PlayCellHoverEnter(CellReleaseAnimator cell) => Scale(cell.transform, _cellHoverScale, _cellHoverEnterTime, _cellHoverEnterEase);
+    
+    public void PlayCellHoverExit(CellReleaseAnimator cell) => Scale(cell.transform, 1f, _cellHoverExitTime , _cellHhoverExitEase);
 
     public void PlayCellClick(CellReleaseAnimator cell)
     {
@@ -35,11 +32,26 @@ public class GridAnimations : ScriptableObject
 
         var duration = _cellShowPanelTime / 2;
 
-        cell.transform.DOScale(_cellClickScale, duration)
+        cell.transform.DOScale(_clickScale, duration)
             .SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
-                cell.transform.DOScale(_cellHoverScale, duration ).SetEase(Ease.OutBack);
+                cell.transform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
+            });
+    }
+
+    public void PlayRowClick(RowTrackAnimator row)
+    {
+       // if (row.IsSelected)
+       //     return;
+
+        var duration = _cellShowPanelTime / 2;
+
+        row.transform.DOScale(_clickScale, duration)
+            .SetEase(Ease.OutBack)
+            .OnComplete(() =>
+            {
+                row.transform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
             });
     }
 
@@ -57,7 +69,7 @@ public class GridAnimations : ScriptableObject
         if (isSelected)
         {
             cell.transform
-                .DOScale(_cellClickScale, duration / 2)
+                .DOScale(_clickScale, duration / 2)
                 .SetEase(Ease.OutBack)
                 .OnComplete(
                     () => cell.transform
@@ -77,5 +89,13 @@ public class GridAnimations : ScriptableObject
                 .Play();
         }
     }
+
+    internal void PlayRowSelect(bool isSelected, RowTrackAnimator row)
+    {
+        throw new NotImplementedException();
+    }
+
+    void Scale(Transform trans, float scale, float duration, Ease ease) => trans.DOScale(scale, duration).SetEase(ease);
+
 }
 

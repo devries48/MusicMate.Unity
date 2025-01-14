@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 [Serializable]
 public class TrackResult
 {
+    [JsonIgnore]
+    public ReleaseResult Release { get; set; }
+
     public DataResult TrackArtist { get; set; }
 
     [JsonProperty("trackNumber")]

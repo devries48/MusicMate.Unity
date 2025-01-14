@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ReleaseResult
 {
@@ -17,4 +18,16 @@ public class ReleaseResult
     public string ThumbnailUrl { get; set; }
     public short? Rating { get; set; }
     public List<MediaResult> Media { get; set; }
+
+    public List<TrackResult> GetAllTracks()
+    {
+        var tracks= Media?.Where(media => media.Tracks != null)
+                     .SelectMany(media => media.Tracks)
+                     .ToList() ?? new List<TrackResult>();
+
+        foreach (var track in tracks)
+            track.Release = this;
+
+        return tracks;
+    }
 }

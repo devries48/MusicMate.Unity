@@ -24,3 +24,6 @@ MonoBehaviour:
   BackgroundColor:
     serializedVersion: 2
     rgba: 4280622092
+  AccentTextColor:
+    serializedVersion: 2
+    rgba: 4278190080

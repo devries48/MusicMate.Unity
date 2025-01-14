@@ -141,7 +141,6 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         }
         else
         {
-            Debug.Log(wr.downloadHandler.text);
             try
             {
                 var result = JsonConvert.DeserializeObject<SingleResult<ReleaseModel>>(wr.downloadHandler.text, _jsonSettings);

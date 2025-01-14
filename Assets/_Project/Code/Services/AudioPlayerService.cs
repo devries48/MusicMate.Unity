@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class AudioPlayerService : SceneSingleton<AudioPlayerService>, IAudioPlayerService
 {
@@ -21,7 +19,6 @@ public class AudioPlayerService : SceneSingleton<AudioPlayerService>, IAudioPlay
     public int CurrentIndex { get; private set; } = -1;
     public ReleaseResult CurrentRelease { get; private set; }
     public TrackResult CurrentTrack { get; private set; }
-
     public List<TrackResult> GetPlaylist() => _playlist;
     public void ChangeExpandedState(bool isExpanded) => ExpandedChanged?.Invoke(this, new ExpandedChangedEventArgs(isExpanded));
     public void ChangeState(PlayerState state) => RaiseChangeStateEvent(state);
@@ -39,24 +36,31 @@ public class AudioPlayerService : SceneSingleton<AudioPlayerService>, IAudioPlay
         CurrentRelease = release;
         CurrentTrack = null;
 
-        if (release.Media != null && release.Media.Any())
+        var allTracks = release.GetAllTracks();
+
+        if (allTracks.Any())
         {
-            var allTracks = release.Media
-                .Where(media => media.Tracks != null)
-                .SelectMany(media => media.Tracks)
-                .ToList();
+            CurrentTrack = allTracks.First();
 
-            if (allTracks.Any())
-            {
-                CurrentTrack = allTracks.First();
+            _playlist.Clear();
+            _playlist.AddRange(allTracks);
 
-                _playlist.Clear();
-                _playlist.AddRange(allTracks);
-
-                RaiseChangeActionEvent(PlayerAction.PlaylistChanged, PlaylistAction.NewList);
-                RaiseChangeActionEvent(PlayerAction.PlayRelease);
-            }
+            RaiseChangeActionEvent(PlayerAction.PlaylistChanged, PlaylistAction.NewList);
+            RaiseChangeActionEvent(PlayerAction.PlayRelease);
         }
+    }
+
+    public void Play(TrackResult track)
+    {
+        CurrentIndex = 0;
+        CurrentRelease = track.Release;
+        CurrentTrack = track;
+
+        _playlist.Clear();
+        _playlist.AddRange(new List<TrackResult> { track });
+
+        RaiseChangeActionEvent(PlayerAction.PlaylistChanged, PlaylistAction.NewList);
+        RaiseChangeActionEvent(PlayerAction.PlayRelease);
     }
 
     public void Pause()
