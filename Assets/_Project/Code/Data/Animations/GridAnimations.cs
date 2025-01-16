@@ -6,7 +6,8 @@ using UnityEngine;
 public class GridAnimations : ScriptableObject
 {
     [Header("Grid Click")]
-    [SerializeField] float _clickScale = 0.8f;
+    [SerializeField] float _clickScale = 0.9f;
+    [SerializeField] float _clickDuration = 0.2f;
 
     [Header("Cell Hover")]
     [SerializeField] float _cellHoverScale = 1.1f;
@@ -21,52 +22,64 @@ public class GridAnimations : ScriptableObject
     [SerializeField] float _cellHidePanelTime = 0.25f;
     [SerializeField] Ease _cellHidePanelEase = Ease.OutCirc;
 
-    public void PlayCellHoverEnter(CellReleaseAnimator cell) => Scale(cell.transform, _cellHoverScale, _cellHoverEnterTime, _cellHoverEnterEase);
-    
-    public void PlayCellHoverExit(CellReleaseAnimator cell) => Scale(cell.transform, 1f, _cellHoverExitTime , _cellHhoverExitEase);
+    [Header("Grid Row Select")]
+    [SerializeField] float _rowShowPanelTime = 0.1f;
+    [SerializeField] Ease _rowShowPanelEase = Ease.OutBack;
+    [SerializeField] float _rowHidePanelTime = 0.2f;
+    [SerializeField] Ease _rowHidePanelEase = Ease.OutCirc;
+
+    public void PlayCellHoverEnter(CellReleaseAnimator cell) => Scale(
+        cell.transform,
+        _cellHoverScale,
+        _cellHoverEnterTime,
+        _cellHoverEnterEase);
+
+    public void PlayCellHoverExit(CellReleaseAnimator cell) => Scale(
+        cell.transform,
+        1f,
+        _cellHoverExitTime,
+        _cellHhoverExitEase);
 
     public void PlayCellClick(CellReleaseAnimator cell)
     {
-        if (cell.IsSelected)
+        if(cell.IsSelected)
             return;
 
         var duration = _cellShowPanelTime / 2;
 
-        cell.transform.DOScale(_clickScale, duration)
+        cell.transform
+            .DOScale(_clickScale, duration)
             .SetEase(Ease.OutBack)
-            .OnComplete(() =>
-            {
-                cell.transform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
-            });
+            .OnComplete(
+                () =>
+                {
+                    cell.transform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
+                });
     }
 
     public void PlayRowClick(RowTrackAnimator row)
     {
-       // if (row.IsSelected)
-       //     return;
-
-        var duration = _cellShowPanelTime / 2;
-
-        row.transform.DOScale(_clickScale, duration)
-            .SetEase(Ease.OutBack)
-            .OnComplete(() =>
-            {
-                row.transform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
-            });
+        row.transform
+             .DOScale(_clickScale, _clickDuration / 2)
+             .SetEase(Ease.OutBack)
+             .OnComplete(
+                 () => row.transform
+                     .DOScale(1, _clickDuration / 2)
+                     .SetEase(Ease.OutBack));
     }
 
     public void PlayCellSelect(bool isSelected, CellReleaseAnimator cell)
     {
-        if (isSelected)
-            cell.m_panelControls.gameObject.SetActive(true);
+        if(isSelected)
+            cell.m_actionPanel.gameObject.SetActive(true);
 
         var duration = isSelected ? _cellShowPanelTime : _cellHidePanelTime;
-        var showPanel = cell.m_panelControls
+        var showPanel = cell.m_actionPanel
             .DOPivotY(isSelected ? 0 : 1, duration)
             .SetEase(isSelected ? _cellShowPanelEase : _cellHidePanelEase)
             .Pause();
 
-        if (isSelected)
+        if(isSelected)
         {
             cell.transform
                 .DOScale(_clickScale, duration / 2)
@@ -76,26 +89,34 @@ public class GridAnimations : ScriptableObject
                         .DOScale(_cellHoverScale, duration / 2)
                         .SetEase(Ease.OutBack)
                         .OnComplete(() => showPanel.Play()));
-        }
-        else
+        } else
         {
             PlayCellHoverExit(cell);
 
             showPanel.OnComplete(
                 () =>
                 {
-                    cell.m_panelControls.gameObject.SetActive(false);
+                    cell.m_actionPanel.gameObject.SetActive(false);
                 })
                 .Play();
         }
     }
 
-    internal void PlayRowSelect(bool isSelected, RowTrackAnimator row)
+    public void PlayShowActionPanel(RectTransform panel, RowTrackAnimator row)
     {
-        throw new NotImplementedException();
+        panel.gameObject.SetActive(true);
+        panel.DOScale(1, _rowShowPanelTime).SetEase(_rowShowPanelEase);
+
+        PlayRowClick(row);
+     }
+
+    public void PlayHideActionPanel(RectTransform panel)
+    {
+        panel.DOScale(1, _rowHidePanelTime)
+            .SetEase(_rowHidePanelEase)
+            .OnComplete(() => panel.gameObject.SetActive(false));
     }
 
     void Scale(Transform trans, float scale, float duration, Ease ease) => trans.DOScale(scale, duration).SetEase(ease);
-
 }
 

@@ -10,20 +10,11 @@ using UnityEngine.UI;
 public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
 {
     #region Properties
-    public bool IsSelected
-    {
-        get => _isSelected;
-        set
-        {
-            _isSelected = value;
-            //_animator.SetBool("IsSelected", IsSelected);
-        }
-    }
-
-    bool _isSelected = false;
+    public bool IsSelected { get; set; } = false;
     #endregion
+
     ReleaseResult _releaseModel;
-    ReleaseResultController _parentController;
+    GridReleaseController _parentController;
 
     internal ButtonInteractable m_cellButton;
     ButtonAnimator _playPauseButton;
@@ -31,7 +22,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     ButtonAnimator _playlistButton;
 
     RectTransform _rectTransform;
-    internal RectTransform m_panelControls;
+    internal RectTransform m_actionPanel;
 
     Image _borderImage;
     Image _releaseImage;
@@ -71,7 +62,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         transform.Find("Artist").TryGetComponent(out _artistText);
         transform.Find("Title").TryGetComponent(out _titleText);
 
-        transform.Find("Panel Controls").TryGetComponent(out m_panelControls);
+        transform.Find("Panel Controls").TryGetComponent(out m_actionPanel);
         transform.Find("Panel Controls/Show Release").TryGetComponent(out _showReleaseButton);
         transform.Find("Panel Controls/Play or Pause").TryGetComponent(out _playPauseButton);
         transform.Find("Panel Controls/Playlist").TryGetComponent(out _playlistButton);
@@ -79,8 +70,8 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     protected override void InitializeValues()
     {
-        m_panelControls.pivot = new Vector2(m_panelControls.pivot.x, 1);
-        m_panelControls.gameObject.SetActive(false);
+        m_actionPanel.pivot = new Vector2(m_actionPanel.pivot.x, 1);
+        m_actionPanel.gameObject.SetActive(false);
         _borderImage.gameObject.SetActive(false);
         //_selectionColor = m_cellButton.Colors.AccentColor;
         //_selectionColor.a = 0;
@@ -88,7 +79,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     }
     #endregion
 
-    public void Initialize(ReleaseResult model, ReleaseResultController controller)
+    public void Initialize(ReleaseResult model, GridReleaseController controller)
     {
         _releaseModel = model;
         _parentController = controller;
@@ -143,8 +134,8 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         if(scale > _maxPanelScale)
             scale = _maxPanelScale;
 
-        if(m_panelControls.localScale.x != scale)
-            m_panelControls.localScale = new Vector3(scale, scale, 0);
+        if(m_actionPanel.localScale.x != scale)
+            m_actionPanel.localScale = new Vector3(scale, scale, 0);
 
         if(showText != _showText)
         {

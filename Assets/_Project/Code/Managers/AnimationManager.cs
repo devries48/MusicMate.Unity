@@ -139,7 +139,7 @@ public class AnimationManager : SceneSingleton<AnimationManager>
             _panelAndWindowAnimations.PlayHideErrorWindow(errorWindow);
     }
 
-    public void GridReleaseVisible(bool isVisible, ReleaseResultController release)
+    public void GridReleaseVisible(bool isVisible, GridReleaseController release)
     {
         _panelAndWindowAnimations.PlayGridReleaseVisible(isVisible, release);
     }
@@ -169,9 +169,14 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _gridAnimations.PlayRowClick(row);
     }
 
-    public void RowSelect(bool isSelected, RowTrackAnimator row)
+    public void ShowActionPanel(RectTransform panelRect, RowTrackAnimator row)
     {
-        _gridAnimations.PlayRowSelect(isSelected, row);
+        _gridAnimations.PlayShowActionPanel(panelRect, row);
+    }
+
+    public void HideActionPanel(RectTransform panelRect)
+    {
+        _gridAnimations.PlayHideActionPanel(panelRect);
     }
 
     public void PanelShowDetailsVisible(bool isVisible, DetailsAnimator showDetails)

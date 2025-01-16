@@ -40,3 +40,6 @@ public enum ButtonAnimationType
     ToolbarButton,
     ExpandCollapseButton
 }
+
+public enum ThumbnailSize { Tiny, Small, Medium, Large };
+

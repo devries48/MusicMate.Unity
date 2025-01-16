@@ -4,7 +4,7 @@ public class MainWindowAnimator : MusicMateBehavior
 {
     [Header("Controllers")]
     [SerializeField] AudioPlayerController _audioPlayer;
-    [SerializeField] ReleaseResultController _releaseResult;
+    [SerializeField] GridReleaseController _releaseResult;
     [SerializeField] DetailsAnimator _showDetails;
 
     [Header("Toolbar Controllers")]

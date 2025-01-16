@@ -18,7 +18,7 @@ public class ShowReleaseController : MusicMateBehavior
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
     public TextMeshProUGUI m_artist_title;
-    public TracklistController m_tracks;
+    public GridTrackController m_tracks;
 
     // Panels
     public RectTransform m_imagePanel;
@@ -67,6 +67,8 @@ public class ShowReleaseController : MusicMateBehavior
             CurrentRelease = release;
             StartCoroutine(GetReleaseCore());
         }
+        else
+            m_tracks.ClearSelection();
     }
 
     IEnumerator GetReleaseCore()

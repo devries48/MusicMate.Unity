@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e0e1c3264aa16e4aa0b52ea1d023382, type: 3}
   m_Name: Grid Animations
   m_EditorClassIdentifier: 
-  _animationTime: 0.2
-  _cellClickScale: 0.9
-  _cellHidePanelEase: 21
-  _cellHidePanelTime: 0.25
-  _cellHoverEnterEase: 27
-  _cellHoverEnterTime: 0.1
-  _cellHoverExitEase: 8
-  _cellHoverExitTime: 0.2
+  _clickScale: 0.9
+  _clickDuration: 0.15
   _cellHoverScale: 1.1
-  _cellShowPanelEase: 27
+  _cellHoverEnterTime: 0.1
+  _cellHoverEnterEase: 27
+  _cellHoverExitTime: 0.2
+  _cellHhoverExitEase: 8
   _cellShowPanelTime: 0.15
+  _cellShowPanelEase: 27
+  _cellHidePanelTime: 0.25
+  _cellHidePanelEase: 21
+  _rowShowPanelTime: 0.01
+  _rowShowPanelEase: 27
+  _rowHidePanelTime: 0.01
+  _rowHidePanelEase: 21

@@ -6,7 +6,7 @@ using System;
 using DG.Tweening;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class ReleaseResultController : MonoBehaviour
+public class GridReleaseController : MusicMateBehavior
 {
     [SerializeField] GameObject _prefabReleaseTemplate;
     
@@ -18,22 +18,26 @@ public class ReleaseResultController : MonoBehaviour
     [SerializeField, Range(350, 449)] int _large = 350;
 
     internal CanvasGroup m_canvasGroup;
+    
     RectTransform _parentTrans;
-
     GridLayoutGroup _releaseGrid;
     CellReleaseAnimator _selectedCell;
 
     const float _margin = 10f;
 
-    public enum ThumbnailSize { Tiny, Small, Medium, Large };
-
-    void Awake()
+    #region Base Class Methods
+    protected override void InitializeComponents()
     {
         _parentTrans = transform.parent.GetComponent<RectTransform>();
         _releaseGrid = GetComponent<GridLayoutGroup>();
         m_canvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    protected override void InitializeValues()
+    {
         m_canvasGroup.alpha = 0f;
     }
+    #endregion
 
     public void SetResult(PagedResult<ReleaseResult> result) => StartCoroutine(ProcessResult(result?.Rows));
 

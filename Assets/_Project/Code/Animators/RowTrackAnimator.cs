@@ -10,27 +10,30 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     [SerializeField] Marquee _titleMarque;
     [SerializeField] TextMeshProUGUI _durationText;
 
-    public delegate void TrackClickHandler(TrackResult track, int position);
-    public event TrackClickHandler OnTrackClicked;
-    public event TrackClickHandler OnTrackDoubleClicked;
+    //public delegate void TrackClickHandler(TrackResult track, int position);
+    //public event TrackClickHandler OnTrackClicked;
+    //public event TrackClickHandler OnTrackDoubleClicked;
+
+    public TrackResult m_track;
 
     Image _backgroundImage;
-    bool _isSelected;
+    bool _isActive;
     bool _isHover;
 
-    TrackResult _track;
+    GridTrackController _parent;
     Coroutine _clickCoroutine;
-
 
     const float DoubleClickThreshold = 0.3f; // Time in seconds to detect a double-click
 
-    public bool IsSelected { get { return _isSelected; } set { _isSelected = value; SetColors(); } }
+    public bool IsActive { get { return _isActive; } set { _isActive = value; SetColors(); } }
+    public bool IsSelected { get; set; } = false;
 
     protected override void InitializeComponents() => _backgroundImage = GetComponent<Image>();
 
-    public void Initialize(TrackResult track, int pos)
+    public void Initialize(TrackResult track, int pos, GridTrackController parent)
     {
-        _track = track;
+        m_track = track;
+        _parent = parent;
 
         _nrText.text = pos.ToString();
         _titleMarque.SetText(track.Title);
@@ -39,18 +42,17 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
 
     void SetColors()
     {
-        var textcolor = _isHover ? Manager.AccentTextColor : IsSelected ? Manager.AccentColor : Manager.TextColor;
+        var textcolor = _isHover ? Manager.AccentTextColor : IsActive ? Manager.AccentColor : Manager.TextColor;
 
         _nrText.color = textcolor;
         _titleMarque.SetColor(textcolor);
         _durationText.color = textcolor;
     }
 
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         _isHover = true;
-        _backgroundImage.color = IsSelected ? Manager.AccentColor : Manager.TextColor;
+        _backgroundImage.color = IsActive ? Manager.AccentColor : Manager.TextColor;
         _backgroundImage.enabled = true;
 
         SetColors();
@@ -68,7 +70,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     {
         if (eventData.clickCount == 2)
         {
-            if (_clickCoroutine  != null)
+            if (_clickCoroutine != null)
                 StopCoroutine(_clickCoroutine);
 
             HandleDoubleClick();
@@ -80,11 +82,18 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     IEnumerator HandleSingleClick()
     {
         yield return new WaitForSeconds(DoubleClickThreshold);
-        Debug.Log("SINGLE");
+
+        IsSelected = !IsSelected;
+
+        Animations.RowClick(this);
+        _parent.ChangeSelection(this); 
     }
 
     void HandleDoubleClick()
     {
-        PlayerService.Play(_track);
+        _parent.ClearSelection();
+
+        Animations.RowClick(this);
+        PlayerService.Play(m_track);
     }
 }
