@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1291232308593788113}
   - component: {fileID: 4416985475953177210}
   m_Layer: 5
-  m_Name: prefab_track_action_panel
+  m_Name: prefab_action_panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

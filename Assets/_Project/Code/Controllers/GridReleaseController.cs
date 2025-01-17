@@ -8,7 +8,8 @@ using DG.Tweening;
 [RequireComponent(typeof(CanvasGroup))]
 public class GridReleaseController : MusicMateBehavior
 {
-    [SerializeField] GameObject _prefabReleaseTemplate;
+    [SerializeField] GameObject _prefabReleaseCell;
+    [SerializeField] GameObject _prefabActionPanel;
     
     [Header("Thumbnail Size")]
     [SerializeField] ThumbnailSize _selectedSize;
@@ -63,6 +64,12 @@ public class GridReleaseController : MusicMateBehavior
         _selectedCell = cell;
     }
 
+    public void ClearSelection()
+    {
+        if (_selectedCell != null)
+            ChangeSelection(_selectedCell);
+    }
+
     IEnumerator ProcessResult(List<ReleaseResult> result)
     {
         CalculateGridColums();
@@ -80,7 +87,7 @@ public class GridReleaseController : MusicMateBehavior
         for (int i = 0; i < result.Count; i++)
         {
             var release = result[i];
-            var cell = Instantiate(_prefabReleaseTemplate, trans);
+            var cell = Instantiate(_prefabReleaseCell, trans);
             var controller = cell.GetComponent<CellReleaseAnimator>();
             controller.Initialize(release, this);
 

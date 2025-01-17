@@ -7,6 +7,9 @@ public class ActionPanelController : MusicMateBehavior
 
     TrackResult _trackModel;
 
+    public delegate void ActionClickHandler(TrackResult track, int position);
+    public event ActionClickHandler OnActionClicked;
+
     #region Base Class Methods
     protected override void RegisterEventHandlers()
     {

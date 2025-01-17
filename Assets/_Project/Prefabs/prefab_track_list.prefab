@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10, y: 0}
+  m_AnchoredPosition: {x: 10, y: 155.0004}
   m_SizeDelta: {x: -20, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1444071937278285344
@@ -113,9 +113,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isPlaylist: 0
-  _prefabTrackTemplate: {fileID: 5472375322817171341, guid: c8617c682b4505a46969949159eafb14,
+  _prefabTrackRow: {fileID: 5472375322817171341, guid: c8617c682b4505a46969949159eafb14,
     type: 3}
-  _prefabTrackActions: {fileID: 717538261779655713, guid: 3ee05ed66c591af428a1c2de44987c2e,
+  _prefabActionPanel: {fileID: 717538261779655713, guid: 3ee05ed66c591af428a1c2de44987c2e,
     type: 3}
   _verticalLayout: {fileID: 1444071937278285344}
 --- !u!1 &1483840820977552447
@@ -547,8 +547,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8592256333985089099}
   m_HandleRect: {fileID: 8217571207102746439}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: -0.0000023626512
+  m_Size: 0.48298097
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

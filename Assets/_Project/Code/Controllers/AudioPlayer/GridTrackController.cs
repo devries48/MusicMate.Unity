@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class GridTrackController : MusicMateBehavior
 {
     [SerializeField] bool _isPlaylist = true;
-    [SerializeField] GameObject _prefabTrackTemplate;
-    [SerializeField] GameObject _prefabTrackActions;
+    [SerializeField] GameObject _prefabTrackRow;
+    [SerializeField] GameObject _prefabActionPanel;
     [SerializeField] VerticalLayoutGroup _verticalLayout;
 
     Transform _trans;
@@ -39,7 +39,7 @@ public class GridTrackController : MusicMateBehavior
 
         _tracklist = new List<TrackResult>();
 
-        _actionPanel = Instantiate(_prefabTrackActions, transform).GetComponent<RectTransform>();
+        _actionPanel = Instantiate(_prefabActionPanel, transform).GetComponent<RectTransform>();
         _actionPanelController = _actionPanel.GetComponent<ActionPanelController>();
         _actionPanel.gameObject.SetActive(false);
     }
@@ -144,7 +144,7 @@ public class GridTrackController : MusicMateBehavior
         for(int i = 0; i < list.Count; i++)
         {
             var track = list[i];
-            var item = Instantiate(_prefabTrackTemplate, _verticalLayout.transform);
+            var item = Instantiate(_prefabTrackRow, _verticalLayout.transform);
             var controller = item.GetComponent<RowTrackAnimator>();
             controller.Initialize(track, i + 1, this);
 

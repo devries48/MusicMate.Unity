@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 6745663169590246838}
   - component: {fileID: 1683647945873092389}
   m_Layer: 5
-  m_Name: prefab_track_template
+  m_Name: prefab_track_row
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

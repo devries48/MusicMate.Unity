@@ -10,10 +10,10 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     [SerializeField] Marquee _titleMarque;
     [SerializeField] TextMeshProUGUI _durationText;
 
-    //public delegate void TrackClickHandler(TrackResult track, int position);
-    //public event TrackClickHandler OnTrackClicked;
-    //public event TrackClickHandler OnTrackDoubleClicked;
+    public bool IsActive { get { return _isActive; } set { _isActive = value; SetColors(); } }
+    public bool IsSelected { get; set; } = false;
 
+    #region Fields
     public TrackResult m_track;
 
     Image _backgroundImage;
@@ -22,12 +22,8 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
 
     GridTrackController _parent;
     Coroutine _clickCoroutine;
-
-    const float DoubleClickThreshold = 0.3f; // Time in seconds to detect a double-click
-
-    public bool IsActive { get { return _isActive; } set { _isActive = value; SetColors(); } }
-    public bool IsSelected { get; set; } = false;
-
+    #endregion
+  
     protected override void InitializeComponents() => _backgroundImage = GetComponent<Image>();
 
     public void Initialize(TrackResult track, int pos, GridTrackController parent)
@@ -48,6 +44,8 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
         _titleMarque.SetColor(textcolor);
         _durationText.color = textcolor;
     }
+
+    #region Pointer Event Handlers (Handles pointer hover and click events)
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -81,7 +79,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
 
     IEnumerator HandleSingleClick()
     {
-        yield return new WaitForSeconds(DoubleClickThreshold);
+        yield return new WaitForSeconds(Constants.DoubleClickThreshold);
 
         IsSelected = !IsSelected;
 
@@ -96,4 +94,5 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
         Animations.RowClick(this);
         PlayerService.Play(m_track);
     }
+    #endregion
 }

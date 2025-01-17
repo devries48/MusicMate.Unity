@@ -7,22 +7,20 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 #endregion
-public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
+public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    #region Properties
     public bool IsSelected { get; set; } = false;
-    #endregion
 
+    #region Fields
     ReleaseResult _releaseModel;
-    GridReleaseController _parentController;
+    GridReleaseController _parent;
 
-    internal ButtonInteractable m_cellButton;
     ButtonAnimator _playPauseButton;
     ButtonAnimator _showReleaseButton;
     ButtonAnimator _playlistButton;
 
     RectTransform _rectTransform;
-    internal RectTransform m_actionPanel;
+    Coroutine _clickCoroutine;
 
     Image _borderImage;
     Image _releaseImage;
@@ -33,6 +31,9 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     bool _showText = false;
     readonly float _maxPanelScale = 2;
 
+    internal RectTransform m_actionPanel;
+    #endregion
+
     #region Base Class Methods
     protected override void RegisterEventHandlers()
     {
@@ -40,7 +41,6 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
         _playPauseButton.OnButtonClick.AddListener(OnPlayOrPauseClicked);
         _showReleaseButton.OnButtonClick.AddListener(OnShowReleaseClicked);
-        m_cellButton.onClick.AddListener(OnClicked);
     }
 
     protected override void UnregisterEventHandlers()
@@ -49,13 +49,11 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
         _playPauseButton.OnButtonClick.AddListener(OnPlayOrPauseClicked);
         _showReleaseButton.OnButtonClick.RemoveListener(OnShowReleaseClicked);
-        m_cellButton.onClick.RemoveListener(OnClicked);
     }
 
     protected override void InitializeComponents()
     {
         _rectTransform = GetComponent<RectTransform>();
-        m_cellButton = GetComponent<ButtonInteractable>();
 
         transform.Find("Border").TryGetComponent(out _borderImage);
         transform.Find("Image").TryGetComponent(out _releaseImage);
@@ -82,18 +80,12 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     public void Initialize(ReleaseResult model, GridReleaseController controller)
     {
         _releaseModel = model;
-        _parentController = controller;
+        _parent = controller;
 
         ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
 
         _artistText.text = model.Artist.Text;
         _titleText.text = model.Title;
-    }
-
-    public void OnClicked()
-    {
-        Animations.CellClick(this);
-        ChangeSelectedState();
     }
 
     public void OnPlayOrPauseClicked()
@@ -110,10 +102,8 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     {
         IsSelected = !IsSelected;
 
-        _parentController.ChangeSelection(this); // Notify parent
+        _parent.ChangeSelection(this); // Notify parent
 
-        //_borderImage.DOFade(IsSelected ? 1 : 0, .25f);
-        //.SetEase(IsSelected ? Ease.InSine : Ease.OutQuint);
         Animations.CellSelect(IsSelected, this);
     }
 
@@ -162,9 +152,36 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         yield return null;
     }
 
-    #region Pointer Event Handlers (Handles pointer hover events)
+    #region Pointer Event Handlers (Handles pointer hover and click events)
     public void OnPointerEnter(PointerEventData eventData) => Animations.CellHoverEnter(this);
 
     public void OnPointerExit(PointerEventData eventData) => Animations.CellHoverExit(this);
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.clickCount == 2)
+        {
+            if (_clickCoroutine != null)
+                StopCoroutine(_clickCoroutine);
+
+            HandleDoubleClick();
+        }
+        else
+            _clickCoroutine = StartCoroutine(HandleSingleClick());
+    }
+
+    IEnumerator HandleSingleClick()
+    {
+        yield return new WaitForSeconds(Constants.DoubleClickThreshold);
+        ChangeSelectedState();
+    }
+
+    void HandleDoubleClick()
+    {
+        _parent.ClearSelection();
+
+        Animations.CellClick(this);
+
+    }
     #endregion
 }
