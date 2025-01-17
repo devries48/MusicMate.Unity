@@ -43,6 +43,12 @@ public enum ButtonAnimationType
 
 public enum ThumbnailSize { Tiny, Small, Medium, Large };
 
+public enum ActionPanelType
+{
+    Release,
+    Track,
+}
+
 public enum ActionPanelButton
 {
     Show,

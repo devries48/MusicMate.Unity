@@ -18,11 +18,11 @@ public class GridReleaseController : MusicMateBehavior
     [SerializeField, Range(250, 349)] int _medium = 250;
     [SerializeField, Range(350, 449)] int _large = 350;
 
-    internal CanvasGroup m_canvasGroup;
-    
     RectTransform _parentTrans;
     GridLayoutGroup _releaseGrid;
     CellReleaseAnimator _selectedCell;
+
+    internal CanvasGroup m_canvasGroup;
 
     const float _margin = 10f;
 

@@ -12,7 +12,6 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     public bool IsSelected { get; set; } = false;
 
     #region Fields
-    ReleaseResult _releaseModel;
     GridReleaseController _parent;
 
     ButtonAnimator _playPauseButton;
@@ -32,6 +31,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     readonly float _maxPanelScale = 2;
 
     internal RectTransform m_actionPanel;
+    internal ReleaseResult m_release;
     #endregion
 
     #region Base Class Methods
@@ -79,7 +79,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     public void Initialize(ReleaseResult model, GridReleaseController controller)
     {
-        _releaseModel = model;
+        m_release = model;
         _parent = controller;
 
         ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
@@ -91,12 +91,12 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     public void OnPlayOrPauseClicked()
     {
         if(!PlayerService.IsPlaying)
-            PlayerService.Play(_releaseModel);
+            PlayerService.Play(m_release);
         else
             PlayerService.Pause();
     }
 
-    public void OnShowReleaseClicked() => Manager.ShowRelease(_releaseModel);
+    public void OnShowReleaseClicked() => Manager.ShowRelease(m_release);
 
     public void ChangeSelectedState()
     {

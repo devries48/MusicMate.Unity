@@ -3,11 +3,15 @@ using UnityEngine;
 
 public class ActionPanelController : MusicMateBehavior
 {
+    [SerializeField] ActionPanelType _type;
     [SerializeField] ButtonAnimator _playPauseButton;
+    [SerializeField] ButtonAnimator _playlistButton;
+    [SerializeField] ButtonAnimator _showReleaseButton;
 
     TrackResult _trackModel;
+    ReleaseResult _releaseModel;
 
-    public delegate void ActionClickHandler(TrackResult track, int position);
+    public delegate void ActionClickHandler(ActionPanelButton buttonClicked);
     public event ActionClickHandler OnActionClicked;
 
     #region Base Class Methods
@@ -29,18 +33,36 @@ public class ActionPanelController : MusicMateBehavior
     public void Initialize(RowTrackAnimator track)
     {
         _trackModel = track.m_track;
-        Manager.AppState.ChangeState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
+        InitializePlayState();
     }
+
+    public void Initialize(CellReleaseAnimator release)
+    {
+        _releaseModel = release.m_release;
+        InitializePlayState();
+    }
+
+    void InitializePlayState() => Manager.AppState.ChangeState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
+
+    void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
 
     void OnPlayOrPauseClicked()
     {
         if (!PlayerService.IsPlaying)
-            PlayerService.Play(_trackModel);
-        else
-            PlayerService.Pause();
-    }
+        {
+            if (_type == ActionPanelType.Release)
+                PlayerService.Play(_releaseModel);
+            else
+                PlayerService.Play(_trackModel);
 
-    void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
+            OnActionClicked?.Invoke(ActionPanelButton.Play);
+        }
+        else
+        {
+            PlayerService.Pause();
+            OnActionClicked?.Invoke(ActionPanelButton.Pause);
+        }
+    }
 
     IEnumerator SetPlayerState()
     {

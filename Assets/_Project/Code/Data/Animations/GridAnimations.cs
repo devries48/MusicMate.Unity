@@ -42,7 +42,7 @@ public class GridAnimations : ScriptableObject
 
     public void PlayCellClick(CellReleaseAnimator cell)
     {
-        if(cell.IsSelected)
+        if (cell.IsSelected)
             return;
 
         var duration = _cellShowPanelTime / 2;
@@ -68,18 +68,23 @@ public class GridAnimations : ScriptableObject
                      .SetEase(Ease.OutBack));
     }
 
-    public void PlayCellSelect(bool isSelected, CellReleaseAnimator cell)
+    public void PlayCellSelect(bool isSelected, CellReleaseAnimator cell, bool isAbort = false, Action onComplete = null)
     {
-        if(isSelected)
+        if (isSelected)
             cell.m_actionPanel.gameObject.SetActive(true);
 
         var duration = isSelected ? _cellShowPanelTime : _cellHidePanelTime;
-        var showPanel = cell.m_actionPanel
-            .DOPivotY(isSelected ? 0 : 1, duration)
-            .SetEase(isSelected ? _cellShowPanelEase : _cellHidePanelEase)
-            .Pause();
 
-        if(isSelected)
+        if (isAbort)
+            duration = 0;
+
+        var showPanel = cell.m_actionPanel
+        .DOPivotY(isSelected ? 0 : 1, duration)
+        .SetEase(isSelected ? _cellShowPanelEase : _cellHidePanelEase)
+        .OnComplete(() => onComplete?.Invoke())
+        .Pause();
+
+        if (isSelected)
         {
             cell.transform
                 .DOScale(_clickScale, duration / 2)
@@ -89,7 +94,8 @@ public class GridAnimations : ScriptableObject
                         .DOScale(_cellHoverScale, duration / 2)
                         .SetEase(Ease.OutBack)
                         .OnComplete(() => showPanel.Play()));
-        } else
+        }
+        else
         {
             PlayCellHoverExit(cell);
 
@@ -97,6 +103,7 @@ public class GridAnimations : ScriptableObject
                 () =>
                 {
                     cell.m_actionPanel.gameObject.SetActive(false);
+                    onComplete?.Invoke();
                 })
                 .Play();
         }
@@ -108,7 +115,7 @@ public class GridAnimations : ScriptableObject
         panel.DOScale(1, _rowShowPanelTime).SetEase(_rowShowPanelEase);
 
         PlayRowClick(row);
-     }
+    }
 
     public void PlayHideActionPanel(RectTransform panel)
     {

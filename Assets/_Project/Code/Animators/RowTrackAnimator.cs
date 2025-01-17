@@ -14,16 +14,16 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     public bool IsSelected { get; set; } = false;
 
     #region Fields
-    public TrackResult m_track;
-
     Image _backgroundImage;
     bool _isActive;
     bool _isHover;
 
     GridTrackController _parent;
     Coroutine _clickCoroutine;
+
+    internal TrackResult m_track;
     #endregion
-  
+
     protected override void InitializeComponents() => _backgroundImage = GetComponent<Image>();
 
     public void Initialize(TrackResult track, int pos, GridTrackController parent)

@@ -164,6 +164,15 @@ public class AnimationManager : SceneSingleton<AnimationManager>
         _gridAnimations.PlayCellSelect(isSelected, cell);
     }
 
+    public void CellSelectAbort(CellReleaseAnimator cell)
+    {
+        _gridAnimations.PlayCellSelect(false, cell, true, () =>
+        {
+            cell.IsSelected = false;
+        });
+    }
+
+
     public void RowClick(RowTrackAnimator row)
     {
         _gridAnimations.PlayRowClick(row);
