@@ -18,6 +18,7 @@ public class ShowReleaseController : MusicMateBehavior
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
     public TextMeshProUGUI m_artist_title;
+    public TextMeshProUGUI m_total_length;
     public GridTrackController m_tracks;
 
     // Panels

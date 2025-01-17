@@ -26,6 +26,7 @@ public class ActionPanelController : MusicMateBehavior
     public void Initialize(RowTrackAnimator track)
     {
         _trackModel = track.m_track;
+        Manager.AppState.ChangeState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
     }
 
     void OnPlayOrPauseClicked()

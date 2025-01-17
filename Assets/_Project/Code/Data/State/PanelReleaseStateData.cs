@@ -6,6 +6,7 @@ public class PanelReleaseStateData : ScriptableObject
 {
     [SerializeField] bool IsNormalState;
     [SerializeField] float _animationDuration = .1f;
+    [SerializeField] RectTransformData _lengthData;
     [SerializeField] RectTransformData _imageData;
     [SerializeField] RectTransformData _tracksData;
 
@@ -14,6 +15,7 @@ public class PanelReleaseStateData : ScriptableObject
         var imagePanel = controller.m_imagePanel;
         var infoCanvas = controller.m_mainInfoPanel.GetComponent<CanvasGroup>();
         var tracks = controller.m_tracks.GetComponent<RectTransform>();
+        var length = controller.m_total_length.GetComponent<RectTransform>();
 
         if (imagePanel.anchoredPosition != _imageData.anchoredPosition || imagePanel.sizeDelta != _imageData.sizeDelta)
         {
@@ -25,6 +27,12 @@ public class PanelReleaseStateData : ScriptableObject
         {
             tracks.DOAnchorPos(_tracksData.anchoredPosition, _animationDuration);
             tracks.DOSizeDelta(_tracksData.sizeDelta, _animationDuration);
+        }
+
+        if (length.anchoredPosition != _lengthData.anchoredPosition || length.sizeDelta != _lengthData.sizeDelta)
+        {
+            length.DOAnchorPos(_lengthData.anchoredPosition, _animationDuration);
+            length.DOSizeDelta(_lengthData.sizeDelta, _animationDuration);
         }
 
         var canvasFadeTo = IsNormalState ? 1 : 0;
@@ -56,6 +64,14 @@ public class PanelReleaseStateData : ScriptableObject
             tracks.sizeDelta = _tracksData.sizeDelta;
         }
 
+        if (controller.m_total_length != null)
+        {
+            var length = controller.m_total_length.GetComponent<RectTransform>();
+
+            length.anchoredPosition = _lengthData.anchoredPosition;
+            length.sizeDelta = _lengthData.sizeDelta;
+        }
+
         var canvasAlpha = IsNormalState ? 1 : 0;
         var titleAlpha = IsNormalState ? 0 : 1;
 
@@ -76,6 +92,7 @@ public class PanelReleaseStateData : ScriptableObject
     {
         _imageData = GetData(controller.m_imagePanel);
         _tracksData = GetData(controller.m_tracks.GetComponent<RectTransform>());
+        _lengthData = GetData(controller.m_total_length.GetComponent<RectTransform>());
     }
 
     RectTransformData GetData(RectTransform rect)

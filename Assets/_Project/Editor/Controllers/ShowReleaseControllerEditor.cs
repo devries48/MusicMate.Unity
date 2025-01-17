@@ -23,7 +23,6 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
         DrawLogo();
         DrawTitle("Show Release Controller");
 
-        //DrawDefaultInspector();
         DrawSectionHeader("Parent & State Objects");
         DrawSectionField("_showDetails", "Parent");
         DrawSectionField("m_normal", "Normal State");
@@ -39,6 +38,7 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
             DrawSectionField("_artist", "Artist");
             DrawSectionField("_title", "Title");
             DrawSectionField("m_artist_title", "Artist & Title");
+            DrawSectionField("m_total_length", "Total Length");
             DrawSectionField("m_tracks", "Tracks");
         }
         if (DrawFoldout("Panels"))

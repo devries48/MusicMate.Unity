@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsNormalState: 0
   _animationDuration: 0.05
+  _lengthData:
+    anchoredPosition: {x: 847, y: 50}
+    sizeDelta: {x: 200, y: 0}
   _imageData:
     anchoredPosition: {x: 25, y: -40}
     sizeDelta: {x: 785, y: 710}
   _tracksData:
-    anchoredPosition: {x: -25, y: -40}
-    sizeDelta: {x: 380, y: 660}
+    anchoredPosition: {x: 1232, y: 740}
+    sizeDelta: {x: 389.88, y: 660.06}
