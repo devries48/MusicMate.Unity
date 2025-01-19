@@ -44,9 +44,6 @@ public class ButtonAnimatorEditor : MusicMateEditorBase
                 DrawSectionField("_isExpanded", "Is Expanded");
                 DrawSectionField("_headerText", "Header Text");
                 break;
-            case ButtonAnimationType.ToolbarButton:
-                GUILayout.Label("Toolbar buttons have their own custom behavior.", EditorStyles.boldLabel);
-                break;
             default:
                 break;
         }

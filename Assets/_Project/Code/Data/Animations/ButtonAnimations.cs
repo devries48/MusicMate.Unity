@@ -1,10 +1,9 @@
 using DG.Tweening;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Button Animations", fileName = "Button Animations")]
-public class ButtonAnimations : ScriptableObject
+public class ButtonAnimations : ScriptableObject, IButtonAnimations
 {
     // general settings 
     [SerializeField, Tooltip("Default animation duration")] float _animationTime = 0.2f;
@@ -24,22 +23,13 @@ public class ButtonAnimations : ScriptableObject
     [SerializeField] float _imageLargeHoverScale = 1.2f;
     [SerializeField] float _imageLargeClickScale = 0.8f;
 
-    // toolbar button
-    [SerializeField] float _toolbarHoverScale = 1.2f;
-    [SerializeField] float _toolbarClickScale = 0.8f;
-    [SerializeField] float _toolbarToggleScale = 0.7f;
-    [SerializeField] float _toolbarTooltipPopupTime = 0.1f;
-
+ 
     // expand/collapse button
     [SerializeField] float _iconAnimationTime = .6f;
 
-    // toolbar spinner
-    [SerializeField, Tooltip("Resize the icon when the spinner is active")] float _toolbarSpinnerScale = 0.7f;
-    [SerializeField, Tooltip("Animation duration when spinner is (de)activated")] float _toolbarSpinTime = 0.4f;
+    IMusicMateManager _manager;
 
-    // toolbar part rotation
-    [SerializeField] float _toolbarPartRotateTime = 0.5f;
-    [SerializeField, Tooltip("Delay before rotating the new part into view")] float _toolbarPartDelayTime = 0.1f;
+    public void Initialize(IMusicMateManager manager) => _manager = manager;
 
     public float ImageButtonScale => _imageScale;
 
@@ -57,7 +47,6 @@ public class ButtonAnimations : ScriptableObject
             var duration = _animationTime / 2;
             var scaleClick = buttonType switch
             {
-                ButtonAnimationType.ToolbarButton => _toolbarClickScale,
                 ButtonAnimationType.DefaultImageButton => _imageClickScale,
                 ButtonAnimationType.StateImageButton => _imageClickScale,
                 ButtonAnimationType.LargeImageButton => _imageLargeClickScale,
@@ -66,12 +55,15 @@ public class ButtonAnimations : ScriptableObject
             button.transform
                 .DOScale(scaleClick, duration)
                 .SetEase(_animationEase)
-                .OnComplete(() => PlayHover(button, buttonType, duration));
+                .OnComplete(() => PlayHoverEnter(button, buttonType, duration));
         }
     }
 
-    public void PlayHover(ButtonInteractable button, ButtonAnimationType buttonType, float duration = 0)
+    public void PlayHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType, float duration = 0)
     {
+        if (!button.interactable)
+            return;
+
         if (duration == 0)
             duration = _animationTime;
 
@@ -84,7 +76,6 @@ public class ButtonAnimations : ScriptableObject
                 ButtonAnimationType.DefaultImageButton => _imageHoverScale,
                 ButtonAnimationType.StateImageButton => _imageHoverScale,
                 ButtonAnimationType.LargeImageButton => _imageLargeHoverScale,
-                ButtonAnimationType.ToolbarButton => _toolbarHoverScale,
                 _ => _textHoverScale
             };
 
@@ -92,7 +83,7 @@ public class ButtonAnimations : ScriptableObject
         }
     }
 
-    public void PlayNormal(ButtonInteractable button, ButtonAnimationType buttonType)
+    public void PlayHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
     {
         if (buttonType == ButtonAnimationType.ExpandCollapseButton)
             StopExpandOrCollapseAnimation(button);
@@ -109,6 +100,31 @@ public class ButtonAnimations : ScriptableObject
             button.transform.DOScale(scale, _animationTime).SetEase(_animationEase);
         }
     }
+
+    public void PlayInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
+    {
+        Color32 backgroundColor = _manager.DefaultColor;
+        Color32 foregroundColor;
+
+        if (buttonType == ButtonAnimationType.DefaultImageButton || buttonType == ButtonAnimationType.LargeImageButton)
+        {
+            foregroundColor = isPrimary ? _manager.AccentColor : _manager.TextColor;
+        }
+        else
+        {
+            if (isInteractable)
+            {
+                if (isPrimary)
+                    backgroundColor = _manager.AccentColor;
+
+                foregroundColor = isPrimary ? _manager.AccentTextColor : _manager.TextColor;
+            }
+            else
+                foregroundColor = _manager.AccentTextColor;
+        }
+        PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
+    }
+
 
     void StartExpandOrCollapseAnimation(ButtonInteractable button)
     {
@@ -162,158 +178,61 @@ public class ButtonAnimations : ScriptableObject
         _expandTweens[target] = initialMove;
     }
 
-void StopExpandOrCollapseAnimation(ButtonInteractable button)
-{
-    button.TextComponent.DOColor(button.Colors.TextColor, _animationTime);
-    button.ImageComponent.DOColor(button.Colors.TextColor, _animationTime);
-
-    var target = button.ImageComponent.rectTransform;
-    var resetPosition = new Vector2(0f, 0f);
-
-    // Kill any active tween for this target
-    if (_expandTweens.ContainsKey(target) && _expandTweens[target] != null)
+    void StopExpandOrCollapseAnimation(ButtonInteractable button)
     {
-        _expandTweens[target].Kill();
-        _expandTweens.Remove(target);
+        button.TextComponent.DOColor(button.Colors.TextColor, _animationTime);
+        button.ImageComponent.DOColor(button.Colors.TextColor, _animationTime);
+
+        var target = button.ImageComponent.rectTransform;
+        var resetPosition = new Vector2(0f, 0f);
+
+        // Kill any active tween for this target
+        if (_expandTweens.ContainsKey(target) && _expandTweens[target] != null)
+        {
+            _expandTweens[target].Kill();
+            _expandTweens.Remove(target);
+        }
+
+        // Reset to the original center position
+        target.anchoredPosition = resetPosition;
     }
 
-    // Reset to the original center position
-    target.anchoredPosition = resetPosition;
-}
-
-void ExpandOrCollapsClickAnimation(ButtonInteractable button)
-{
-    var buttonTransform = button.transform;
-    var text = button.TextComponent; // Reference to button text
-    buttonTransform.DOKill();
-    text.DOKill();
-
-    // Pop button
-    buttonTransform.DOScale(1.1f, 0.1f).OnComplete(() =>
+    void ExpandOrCollapsClickAnimation(ButtonInteractable button)
     {
-        buttonTransform.DOScale(1f, 0.1f);
-    });
+        var buttonTransform = button.transform;
+        var text = button.TextComponent; // Reference to button text
+        buttonTransform.DOKill();
+        text.DOKill();
 
-    // Flash text color
-    Color originalColor = text.color;
-    text.DOColor(button.Colors.TextColor, 0.1f).OnComplete(() =>
-    {
-        text.DOColor(originalColor, 0.1f);
-    });
-}
+        // Pop button
+        buttonTransform.DOScale(1.1f, 0.1f).OnComplete(() =>
+        {
+            buttonTransform.DOScale(1f, 0.1f);
+        });
 
-public void PlayInteractable(
-    ButtonInteractable button,
-    Color32 backgroundColor,
-    Color32 foreGroundColor,
-    ButtonAnimationType buttonType)
-{
-    if (buttonType == ButtonAnimationType.TextButton)
-    {
-        button.TextComponent.DOColor(foreGroundColor, _animationTime);
-        button.ImageComponent.DOColor(backgroundColor, _animationTime);
+        // Flash text color
+        Color originalColor = text.color;
+        text.DOColor(button.Colors.TextColor, 0.1f).OnComplete(() =>
+        {
+            text.DOColor(originalColor, 0.1f);
+        });
     }
-    else
-        button.ImageComponent.DOColor(foreGroundColor, _animationTime);
-}
-#endregion
 
-public void PlayToolbarShowSpinner(ToolbarButtonAnimator button)
-{
-    button.m_icon.transform
-        .DOScale(_toolbarSpinnerScale, _toolbarSpinTime)
-        .SetEase(Ease.OutBack)
-        .OnComplete(
-            () =>
-            {
-                button.m_spinnerBackground.gameObject.SetActive(true);
-                button.m_spinner.gameObject.SetActive(true);
-                button.SetInteractable(false);
-            });
-}
+    void PlayInteractable(
+        ButtonInteractable button,
+        Color32 backgroundColor,
+        Color32 foregroundColor,
+        ButtonAnimationType buttonType)
+    {
+        if (buttonType == ButtonAnimationType.TextButton)
+        {
+            button.TextComponent.DOColor(foregroundColor, _animationTime);
+            button.ImageComponent.DOColor(backgroundColor, _animationTime);
+        }
+        else
+            button.ImageComponent.DOColor(foregroundColor, _animationTime);
+    }
+    #endregion
 
-public void PlayToolbarHideSpinner(ToolbarButtonAnimator button)
-{
-    button.m_spinnerBackground.gameObject.SetActive(false);
-    button.m_spinner.gameObject.SetActive(false);
-
-    button.m_icon.transform
-        .DOScale(1f, _toolbarSpinTime)
-        .SetEase(Ease.InBack)
-        .OnComplete(() => button.SetInteractable(true));
-}
-
-public void PlayToolbarToggleOn(ToolbarButtonAnimator button)
-{
-    button.m_icon.transform
-        .DOScale(_toolbarToggleScale, .25f)
-        .SetEase(Ease.InBack)
-        .OnComplete(
-            () =>
-            {
-                button.m_toggleIcon.gameObject.SetActive(true);
-                button.m_button.interactable = false;
-                //button.m_icon.color = MusicMateManager.Instance.AccentColor;
-            });
-}
-
-public void PlayToolbarToggleOff(ToolbarButtonAnimator button)
-{
-    button.m_icon.transform
-        .DOScale(1f, .25f)
-        .SetEase(Ease.OutBack)
-        .OnComplete(
-            () =>
-            {
-                button.m_toggleIcon.gameObject.SetActive(false);
-                button.m_button.interactable = true;
-            });
-}
-
-public void PlayToolbarShowTooltip(ToolbarButtonAnimator button)
-{
-    //button.m_tooltipText.color = button.m_button.interactable || button.IsToggleOn
-    //    ? MusicMateManager.Instance.AccentColor
-    //    : MusicMateManager.Instance.TextColor;
-    button.m_tooltipPanel.localScale = Vector3.zero;
-    button.m_tooltipPanel.gameObject.SetActive(true);
-    button.m_tooltipPanel.DOScale(1, _toolbarTooltipPopupTime);
-    button.m_tooltipVisible = true;
-}
-
-public void PlayToolbarHideTooltip(ToolbarButtonAnimator button)
-{
-    button.m_tooltipPanel
-        .DOScale(0, _toolbarTooltipPopupTime / 2)
-        .OnComplete(() => button.m_tooltipPanel.gameObject.SetActive(false));
-    button.m_tooltipVisible = false;
-}
-
-public void PlayToolbarPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart)
-{
-    var duration = _toolbarPartRotateTime / 2;
-
-    Sequence sequence = DOTween.Sequence();
-    sequence.Append(
-        controller.m_rectTransform.DORotate(new Vector3(90, 0, 0), duration)
-            .SetEase(Ease.Linear)
-            .OnComplete(
-                () =>
-                {
-                    hidePart.SetActive(false);
-                    showPart.SetActive(true);
-                    controller.SetHeader(title);
-
-                }));
-    sequence.Append(
-        controller.m_rectTransform.DORotate(new Vector3(0, 0, 0), duration)
-        .SetDelay(_toolbarPartDelayTime)
-        .SetEase(Ease.Linear)
-            .OnComplete(
-                () =>
-                {
-                    controller.m_activePart = showPart;
-                }));
-}
 }
 

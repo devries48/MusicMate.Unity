@@ -83,7 +83,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
 
         IsSelected = !IsSelected;
 
-        Animations.RowClick(this);
+        Animations.Grid.PlayRowClick(this);
         _parent.ChangeSelection(this); 
     }
 
@@ -91,7 +91,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     {
         _parent.ClearSelection();
 
-        Animations.RowClick(this);
+        Animations.Grid.PlayRowClick(this);
         PlayerService.Play(m_track);
     }
     #endregion

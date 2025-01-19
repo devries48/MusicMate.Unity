@@ -22,7 +22,7 @@ public class InputController : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         _label.text = _labelText;
         _inputTextField.onValueChanged.AddListener(delegate { OnValueTextChanged(); });
-        _animations.InputTextNormal(_inputTextField);
+        _animations.Input.PlayTextNormal(_inputTextField);
     }
 
     void OnEnable()
@@ -47,13 +47,13 @@ public class InputController : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     // Animations 
     // ==========
-    void OnSelect(string _) => _animations.InputTextSelect(_inputTextField);
+    void OnSelect(string _) => _animations.Input.PlayTextSelect(_inputTextField);
 
-    void OnDeselect(string _) => _animations.InputTextNormal(_inputTextField);
+    void OnDeselect(string _) => _animations.Input.PlayTextNormal(_inputTextField);
 
-    public void OnPointerEnter(PointerEventData eventData) => _animations.InputTextHighlight(_inputTextField);
+    public void OnPointerEnter(PointerEventData eventData) => _animations.Input.PlayTextHighlight(_inputTextField);
 
-    public void OnPointerExit(PointerEventData eventData) => _animations.InputTextNormal(_inputTextField);
+    public void OnPointerExit(PointerEventData eventData) => _animations.Input.PlayTextNormal(_inputTextField);
     // ==========
 
 #if UNITY_EDITOR

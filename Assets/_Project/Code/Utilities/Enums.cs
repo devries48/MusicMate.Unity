@@ -37,7 +37,6 @@ public enum ButtonAnimationType
     DefaultImageButton,
     LargeImageButton,
     StateImageButton,
-    ToolbarButton,
     ExpandCollapseButton
 }
 

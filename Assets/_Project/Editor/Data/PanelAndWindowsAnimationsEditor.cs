@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(PanelAndWindowsAnimations))]
+[CustomEditor(typeof(PanelAnimations))]
 public class PanelAndWindowsAnimationsEditor : MusicMateEditorBase
 {
     protected override void OnEnable()

@@ -10,7 +10,7 @@ using UnityEditor;
 #endif
 #endregion
 
-public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
+public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     #region Serialized Fields
     [SerializeField] bool _interactable;
@@ -33,8 +33,15 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     public bool IsInteractable
     {
-        get => m_button.interactable;
-        private set => m_button.interactable = value;
+        get => _interactable;
+        set
+        {
+            if (value == _interactable)
+            {
+                _interactable = value;
+                OnInteractableChanged(value);
+            }
+        }
     }
 
     public bool IsToggleOn { get => _isToggleOn; private set { _isToggleOn = value; } }
@@ -45,7 +52,6 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     #endregion
 
     #region Field Declarations
-    internal ButtonInteractable m_button;
     internal Image m_icon;
     internal Image m_toggleIcon;
     internal Image m_spinnerBackground;
@@ -61,33 +67,15 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     bool _isInitialized = false;
 
     readonly float _speed = 1.5f;
-
-    readonly ButtonAnimationType _buttonType = ButtonAnimationType.ToolbarButton;
     #endregion
 
     #region Base Class Methods
-    protected override void RegisterEventHandlers()
-    {
-        base.RegisterEventHandlers();
-
-        m_button.onClick.AddListener(OnButtonClicked);
-        m_button.OnInteractableChanged += OnInteractableChanged;
-    }
-
-    protected override void UnregisterEventHandlers()
-    {
-        base.UnregisterEventHandlers();
-
-        m_button.onClick.RemoveListener(OnButtonClicked);
-        m_button.OnInteractableChanged -= OnInteractableChanged;
-    }
 
     protected override void InitializeComponents()
     {
         if (_isInitialized) return;
         _isInitialized = true;
 
-        transform.Find("Button").TryGetComponent(out m_button);
         transform.Find("Button/Icon").TryGetComponent(out m_icon);
         transform.Find("Button/Background").TryGetComponent(out m_spinnerBackground);
         transform.Find("Button/Spinner").TryGetComponent(out m_spinner);
@@ -103,7 +91,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (m_icon != null)
         {
             m_icon.sprite = _icon;
-            m_icon.color = _interactable ? m_button.Colors.IconColor : m_button.Colors.DisabledIconColor;
+            m_icon.color = _interactable ? Manager.IconColor : Manager.DisabledIconColor;
         }
 
         m_tooltipText.text = _tooltip;
@@ -116,7 +104,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
         m_tooltipPanel.sizeDelta = new Vector2(Animations.TooltipPanelWidth, newHeight);
 
-        SetInteractable(_interactable);
+        IsInteractable = _interactable;
 
         if (_isToggleButton && _isToggleOn)
             SetToggle();
@@ -129,9 +117,9 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
             m_spinner.transform.Rotate(new Vector3(0, 0, -1 * _speed));
     }
 
-    public void ShowSpinner() => Animations.ToolbarButtonSpinner(this, true);
+    public void ShowSpinner() => Animations.Toolbar.PlayToolbarShowSpinner(this);
 
-    public void HideSpinner() => Animations.ToolbarButtonSpinner(this, false);
+    public void HideSpinner() => Animations.Toolbar.PlayToolbarHideSpinner(this);
 
     public void SetToggle(bool toggle)
     {
@@ -142,8 +130,6 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         }
     }
 
-    public void SetInteractable(bool interactable) => m_button.interactable = interactable;
-
     void OnButtonClicked()
     {
         if (_isToggleButton)
@@ -153,7 +139,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         }
 
         if (!_isToggleButton && !_isSpinnerButton)
-            Animations.ButtonClicked(m_button, _buttonType);
+            Animations.Toolbar.PlayButtonClicked(this);
 
         OnButtonClick?.Invoke();
     }
@@ -161,7 +147,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     void OnInteractableChanged(bool isInteractable)
     {
         if (!IsToggleOn && !IsSpinning)
-            Animations.ButtonInteractableChanged(m_button, isInteractable, false, _buttonType);
+            Animations.Toolbar.PlayButtonInteractableChanged(this, isInteractable);
     }
 
     /// <summary>
@@ -173,13 +159,22 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (!_isInitialized)
             InitializeComponents();
 
-        Animations.ToolbarButtonToggle(this, IsToggleOn);
+        if (IsToggleOn)
+            Animations.Toolbar.PlayToolbarToggleOn(this);
+        else
+            Animations.Toolbar.PlayToolbarToggleOff(this);
     }
 
     #region Pointer Event Handlers (Handles pointer hover events)
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        OnButtonClicked();
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Animations.ButtonHoverEnter(m_button, _buttonType);
+        Animations.Toolbar.PlayButtonHoverEnter(this);
 
         if (_tooltipHideCoroutine != null)
         {
@@ -187,13 +182,13 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
             _tooltipHideCoroutine = null;
         }
 
-        if (m_button.interactable && !string.IsNullOrEmpty(_tooltip) && !m_tooltipVisible)
+        if (IsInteractable && !string.IsNullOrEmpty(_tooltip) && !m_tooltipVisible)
             _tooltipShowCoroutine = StartCoroutine(ShowTooltipWithDelay(Animations.TooltipDelay));
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Animations.ButtonHoverExit(m_button, _buttonType);
+        Animations.Toolbar.PlayButtonHoverExit(this);
 
         if (_tooltipShowCoroutine != null)
         {
@@ -209,14 +204,14 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     {
         yield return new WaitForSeconds(delay);
 
-        Animations.ToolbarButtonTooltip(this, true);
+        Animations.Toolbar.PlayToolbarShowTooltip(this);
     }
 
     IEnumerator HideTooltipWithDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        Animations.ToolbarButtonTooltip(this, false);
+        Animations.Toolbar.PlayToolbarHideTooltip(this);
     }
     #endregion
 
@@ -227,30 +222,27 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (Application.isPlaying) return;
         if (EditorApplication.isCompiling) return;
 
-        transform.Find("Button").TryGetComponent(out m_button);
         transform.Find("Button/Icon").TryGetComponent(out m_icon);
 
         // Buttons cannot be toggled when disabled
-        if (m_button != null)
-        {
-            if (!_interactable && _isToggleOn)
-                _isToggleOn = false;
+        if (!_interactable && _isToggleOn)
+            _isToggleOn = false;
 
-            if (!_isToggleButton)
-            {
-                _isToggleOn = false;
-                _isToggleGroup = false;
-            }
-            else
-                _isSpinnerButton = false;
+        if (!_isToggleButton)
+        {
+            _isToggleOn = false;
+            _isToggleGroup = false;
         }
+        else
+            _isSpinnerButton = false;
 
         if (m_icon != null)
         {
             m_icon.sprite = _icon;
-            m_icon.color = _interactable ? m_button.Colors.IconColor : m_button.Colors.DisabledIconColor;
+            m_icon.color = _interactable ? Manager.IconColor : Manager.DisabledIconColor;
         }
     }
+
 #endif
     #endregion
 }

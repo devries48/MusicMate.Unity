@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Grid Animations", fileName = "Grid Animations")]
-public class GridAnimations : ScriptableObject
+public class GridAnimations : ScriptableObject,IGridAnimations
 {
     [Header("Grid Click")]
     [SerializeField] float _clickScale = 0.9f;
@@ -67,8 +67,12 @@ public class GridAnimations : ScriptableObject
                      .DOScale(1, _clickDuration / 2)
                      .SetEase(Ease.OutBack));
     }
+    public void  PlayCellSelect(bool isSelected, CellReleaseAnimator cell)
+    {
+        CellSelect(isSelected, cell, false);
+    }
 
-    public void PlayCellSelect(bool isSelected, CellReleaseAnimator cell, bool isAbort = false, Action onComplete = null)
+     void CellSelect(bool isSelected, CellReleaseAnimator cell, bool isAbort = false, Action onComplete = null)
     {
         if (isSelected)
             cell.m_actionPanel.gameObject.SetActive(true);
@@ -108,6 +112,15 @@ public class GridAnimations : ScriptableObject
                 .Play();
         }
     }
+
+    public void AbortCellSelect(CellReleaseAnimator cell)
+    {
+        CellSelect(false, cell, true, () =>
+        {
+            cell.IsSelected = false;
+        });
+    }
+
 
     public void PlayShowActionPanel(RectTransform panel, RowTrackAnimator row)
     {

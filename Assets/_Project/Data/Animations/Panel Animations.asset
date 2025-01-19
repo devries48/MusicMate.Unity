@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 959b5238e228b8e4aaa207ed8f92abfa, type: 3}
-  m_Name: Panel & Window Animations
+  m_Name: Panel Animations
   m_EditorClassIdentifier: 
   _showAndHideDuration: 0.5
   _hideDelay: 0.2

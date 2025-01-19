@@ -27,7 +27,7 @@ public class ToolbarImportController : ToolbarControllerBase
     #endregion
 
     #region ToolbarController Base Class Methods
-    protected override void InitElements() => _scanFolderButton.SetInteractable(true);
+    protected override void InitElements() => _scanFolderButton.IsInteractable=true;
 
     protected override IEnumerator SetElementStates()
     {

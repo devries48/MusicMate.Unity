@@ -79,8 +79,8 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                             : _isPrimary ? Button.Colors.AccentColor : Button.Colors.IconColor;
 
                         var scale = _buttonType == ButtonAnimationType.LargeImageButton
-                            ? Animations.ImageButtonLargeScale
-                            : Animations.ImageButtonScale;
+                            ? Animations.Button.ImageButtonLargeScale
+                            : Animations.Button.ImageButtonScale;
 
                         Button.transform.localScale = new Vector3(scale, scale, scale);
                     }
@@ -193,24 +193,24 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     void OnButtonClicked()
     {
-        Animations.ButtonClicked(Button, _buttonType);
-     
+        Animations.Button.PlayClicked(Button, _buttonType);
+
         if (_buttonType == ButtonAnimationType.StateImageButton)
             SetState(!_isStateOn);
 
         OnButtonClick?.Invoke();
     }
 
-    void OnInteractableChanged(bool isInteractable) => Animations.ButtonInteractableChanged(
+    void OnInteractableChanged(bool isInteractable) => Animations.Button.PlayInteractableChanged(
         Button,
         isInteractable,
         _isPrimary,
         _buttonType);
 
     #region Pointer Event Handlers (Handles pointer hover events)
-    public void OnPointerEnter(PointerEventData eventData) => Animations.ButtonHoverEnter(Button, _buttonType);
+    public void OnPointerEnter(PointerEventData eventData) => Animations.Button.PlayHoverEnter(Button, _buttonType);
 
-    public void OnPointerExit(PointerEventData eventData) => Animations.ButtonHoverExit(Button, _buttonType);
+    public void OnPointerExit(PointerEventData eventData) => Animations.Button.PlayHoverExit(Button, _buttonType);
     #endregion
 
     #region Editor-Specific Code

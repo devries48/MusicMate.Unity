@@ -41,14 +41,14 @@ public class MainWindowAnimator : MusicMateBehavior
             ActivatePanels(true);
         }
 
-        Animations.PanelVisible(connected, _fadeTime, 0f,
+        Animations.Panel.PlayPanelVisibility(connected, _fadeTime, 0f,
             _audioPlayer.m_canvasGroupExpanded,
             _applicationToolbar.m_canvasGroup,
             _searchToolbar.m_CanvasGroup,
             _importToolbar.m_CanvasGroup);
 
         // Delay the display of the result for a better experience.
-        Animations.PanelVisible(connected, _fadeTime, 1.5f, _releaseResult.m_canvasGroup);
+        Animations.Panel.PlayPanelVisibility(connected, _fadeTime, 1.5f, _releaseResult.m_canvasGroup);
 
         if (connected)
             ApiService.GetInitialReleases(GetInitialReleasesCallback);
@@ -58,7 +58,7 @@ public class MainWindowAnimator : MusicMateBehavior
     {
         if (!_showDetails.isActiveAndEnabled)
         {
-            Animations.PanelShowDetailsVisible(true, _showDetails);
+            Animations.Panel.PlayDetailsVisibility(true, _showDetails);
             _state.ReleaseDetails = State.States.visible;
         }
 
@@ -76,7 +76,7 @@ public class MainWindowAnimator : MusicMateBehavior
 
     void VisibleReleaseResult(bool show)
     {
-        Animations.GridReleaseVisible(show, _releaseResult);
+        Animations.Panel.PlayGridReleaseVisiblity(show, _releaseResult);
         _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
     }
 

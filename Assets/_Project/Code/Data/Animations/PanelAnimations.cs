@@ -2,8 +2,8 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 
-[CreateAssetMenu(menuName = "MusicMate/Animations/Panel & Window Animations", fileName = "Panel & Window Animations")]
-public class PanelAndWindowsAnimations : ScriptableObject
+[CreateAssetMenu(menuName = "MusicMate/Animations/Panel Animations", fileName = "Panel Animations")]
+public class PanelAnimations : ScriptableObject,IPanelAnimations
 {
     [Header("Default Window Visibility")]
     [SerializeField] float _showAndHideDuration = 0.5f;
@@ -110,7 +110,7 @@ public class PanelAndWindowsAnimations : ScriptableObject
                 });
     }
 
-    public void PlayPanelFade(bool fadeIn, float duration, float delay = 0, params CanvasGroup[] canvases)
+    public void PlayPanelVisibility(bool fadeIn, float duration, float delay = 0, params CanvasGroup[] canvases)
     {
         if (canvases == null || canvases.Length == 0)
             return;
@@ -128,7 +128,7 @@ public class PanelAndWindowsAnimations : ScriptableObject
         }
     }
 
-    public void PlayGridReleaseVisible(bool isVisible, GridReleaseController release)
+    public void PlayGridReleaseVisiblity(bool isVisible, GridReleaseController release)
     {
         var scaleTo = isVisible ? 1f : _resultHideScaleTo;
         var fadeTo = isVisible ? 1f : _resultHideFadeTo;
@@ -139,7 +139,7 @@ public class PanelAndWindowsAnimations : ScriptableObject
         release.m_canvasGroup.DOFade(fadeTo, time).SetEase(easing);
     }
 
-    public void PlayDetailsPanelVisible(bool isVisible, DetailsAnimator showDetails)
+    public void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails)
     {
         if (isVisible)
             showDetails.gameObject.SetActive(true);

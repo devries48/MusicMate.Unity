@@ -8,5 +8,5 @@ public class LogoAnimator : MusicMateBehavior
 
     public bool IsLogoActive() => _logo.activeInHierarchy;
 
-    public void HideLogo(Action onComplete = null) => Animations.LogoHide(_logo, () => onComplete?.Invoke());
+    public void HideLogo(Action onComplete = null) => Animations.PlayLogoHide(_logo, () => onComplete?.Invoke());
 }

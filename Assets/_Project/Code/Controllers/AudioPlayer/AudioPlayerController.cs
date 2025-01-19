@@ -154,7 +154,7 @@ public class AudioPlayerController : MusicMateBehavior
         _collapseButton.gameObject.SetActive(false);
         _expandButton.gameObject.SetActive(true);
 
-        Animations.PanelAudioPlayerState(false, _expandedPlayer, _collapsedPlayer, () =>
+        Animations.Panel.PlayCollapseAudioPlayer( _expandedPlayer, _collapsedPlayer, () =>
         {
             _playerService.ChangeExpandedState(false);
         });
@@ -169,7 +169,7 @@ public class AudioPlayerController : MusicMateBehavior
         _expandButton.gameObject.SetActive(false);
         _playerService.ChangeExpandedState(true);
 
-        Animations.PanelAudioPlayerState(true, _expandedPlayer, _collapsedPlayer);
+        Animations.Panel.PlayExpandAudioPlayer(_expandedPlayer, _collapsedPlayer);
     }
 
     void OnPlayPauseClicked()

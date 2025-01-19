@@ -10,18 +10,11 @@ using UnityEngine.UI;
 public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateManager
 {
     #region Serialized Fields
-    //[Header("Configuration")]
     [SerializeField] AppSetings _appSettings;
-
-    //[Header("Windows")]
     [SerializeField] ErrorWindow _errorController;
     [SerializeField] LoginWindow _loginController;
-    
-    //[Header("Animators")]
     [SerializeField] MainWindowAnimator _mainPage;
     [SerializeField] LogoAnimator _logoAnimator;
-
-    //[Header("Elements")]
     [SerializeField] GameObject _connectionSpinner;
     [SerializeField] GameObject[] _activateOnStart;
     [SerializeField] GameObject[] _inactivateOnStart;
@@ -51,6 +44,9 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public Color32 AccentTextColor => _appSettings.Colors.BackgroundColor;
     public Color32 TextColor => _appSettings.Colors.TextColor;
     public Color32 BackgroundColor => _appSettings.Colors.BackgroundColor;
+    public Color32 IconColor => _appSettings.Colors.IconColor;
+    public Color32 DisabledIconColor => _appSettings.Colors.DisabledIconColor;
+    
     #endregion
 
     #region #region Field Declarations
@@ -81,7 +77,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         if (_loginController.gameObject.activeInHierarchy)
             ShowOrHideLoginPanel(false);
 
-        if (!_connectionSpinner.gameObject.activeInHierarchy)
+        if (!_connectionSpinner.activeInHierarchy)
             ShowSpinner();
 
         _service.SignIn(_appSettings.ApiServiceUrl, "admin", "123");
@@ -111,20 +107,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
     }
 
-    void ShowSpinner()
-    {
-        _connectionSpinner.SetActive(true);
-
-        var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
-        var seq = DOTween.Sequence();
-
-        for (int i = 0; i < images.Length; ++i)
-        {
-            var img = images[i];
-            seq.Join(img.DOFade(1f, .2f));
-        }
-    }
-
     public void HideSpinner()
     {
         var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
@@ -137,14 +119,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         }
         seq.OnComplete(()=>_connectionSpinner.SetActive(false));
     }
-
-    void HideLogo(bool quit = false) => _logoAnimator.HideLogo(() =>
-    {
-        if (quit)
-            QuitApp();
-
-    });
-
 
     public void QuitApplication()
     {
@@ -159,6 +133,26 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             QuitApp();
     }
 
+    void HideLogo(bool quit = false) => _logoAnimator.HideLogo(() =>
+    {
+        if (quit)
+            QuitApp();
+
+    });
+
+    void ShowSpinner()
+    {
+        _connectionSpinner.SetActive(true);
+
+        var images = _connectionSpinner.GetComponentsInChildren<Image>(true);
+        var seq = DOTween.Sequence();
+
+        for (int i = 0; i < images.Length; ++i)
+        {
+            var img = images[i];
+            seq.Join(img.DOFade(1f, .2f));
+        }
+    }
 
     /// <summary>
     /// Hide GameObjects initially not shown.
@@ -180,9 +174,21 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     }
 
 
-    void ShowOrHideErrorPanel(bool show) => _animations.WindowErrorVisible(_errorController.gameObject, show);
+    void ShowOrHideErrorPanel(bool show)
+    {
+        if (show)
+        _animations.Panel.PlayShowErrorWindow(_errorController.gameObject);
+        else
+        _animations.Panel.PlayHideErrorWindow(_errorController.gameObject);
+    }
 
-    void ShowOrHideLoginPanel(bool show, float delay = 0f) => _animations.WindowLoginVisible(_loginController.gameObject, show, delay);
+    void ShowOrHideLoginPanel(bool show, float delay = 0f)
+    {
+        if (show)
+            _animations.Panel.PlayShowLoginWindow(_errorController.gameObject,delay);
+        else
+            _animations.Panel.PlayHideLoginWindow(_errorController.gameObject);
+    }
 
     IEnumerator DelayAndConnect(float seconds)
     {

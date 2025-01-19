@@ -57,7 +57,7 @@ public class DetailsAnimator : MusicMateBehavior
 
     public void CloseDetails()
     {
-        Animations.PanelShowDetailsVisible(false, this);
+        Animations.Panel.PlayDetailsVisibility(false, this);
         Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseResult);
     }
 

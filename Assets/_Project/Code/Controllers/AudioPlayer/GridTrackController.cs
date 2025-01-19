@@ -81,7 +81,7 @@ public class GridTrackController : MusicMateBehavior
 
     void HideActionPanel()
     {
-        Animations.HideActionPanel(_actionPanel);
+        Animations.Grid.PlayHideActionPanel(_actionPanel);
     }
 
     void ShowActionPanel(RowTrackAnimator track)
@@ -92,7 +92,7 @@ public class GridTrackController : MusicMateBehavior
 
         _actionPanelController.Initialize(track);
 
-        Animations.ShowActionPanel(_actionPanel, track);
+        Animations.Grid.PlayShowActionPanel(_actionPanel, track);
     }
 
     /// <summary>

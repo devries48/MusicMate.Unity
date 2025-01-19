@@ -7,10 +7,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 #endregion
+
 public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    public bool IsSelected { get; set; } = false;
-
     #region Fields
     GridReleaseController _parent;
 
@@ -26,6 +25,8 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     TextMeshProUGUI _artistText;
     TextMeshProUGUI _titleText;
+
+    public bool IsSelected { get; set; } = false;
 
     bool _showText = false;
     readonly float _maxPanelScale = 2;
@@ -104,7 +105,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
         _parent.ChangeSelection(this); // Notify parent
 
-        Animations.CellSelect(IsSelected, this);
+        Animations.Grid.PlayCellSelect(IsSelected, this);
     }
 
     void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
@@ -153,9 +154,9 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     }
 
     #region Pointer Event Handlers (Handles pointer hover and click events)
-    public void OnPointerEnter(PointerEventData eventData) => Animations.CellHoverEnter(this);
+    public void OnPointerEnter(PointerEventData eventData) => Animations.Grid.PlayCellHoverEnter(this);
 
-    public void OnPointerExit(PointerEventData eventData) => Animations.CellHoverExit(this);
+    public void OnPointerExit(PointerEventData eventData) => Animations.Grid.PlayCellHoverExit(this);
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -180,7 +181,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     {
         _parent.ClearSelection();
 
-        Animations.CellClick(this);
+        Animations.Grid.PlayCellClick(this);
 
     }
     #endregion
