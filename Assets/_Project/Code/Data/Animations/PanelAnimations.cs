@@ -128,7 +128,7 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
         }
     }
 
-    public void PlayGridReleaseVisiblity(bool isVisible, GridReleaseController release)
+    public void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release)
     {
         var scaleTo = isVisible ? 1f : _resultHideScaleTo;
         var fadeTo = isVisible ? 1f : _resultHideFadeTo;

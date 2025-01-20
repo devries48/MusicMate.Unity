@@ -117,9 +117,9 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
             m_spinner.transform.Rotate(new Vector3(0, 0, -1 * _speed));
     }
 
-    public void ShowSpinner() => Animations.Toolbar.PlayToolbarShowSpinner(this);
+    public void ShowSpinner() => Animations.Toolbar.PlayShowSpinner(this);
 
-    public void HideSpinner() => Animations.Toolbar.PlayToolbarHideSpinner(this);
+    public void HideSpinner() => Animations.Toolbar.PlayHideSpinner(this);
 
     public void SetToggle(bool toggle)
     {
@@ -139,7 +139,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         }
 
         if (!_isToggleButton && !_isSpinnerButton)
-            Animations.Toolbar.PlayButtonClicked(this);
+            Animations.Toolbar.PlayClicked(this);
 
         OnButtonClick?.Invoke();
     }
@@ -147,7 +147,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     void OnInteractableChanged(bool isInteractable)
     {
         if (!IsToggleOn && !IsSpinning)
-            Animations.Toolbar.PlayButtonInteractableChanged(this, isInteractable);
+            Animations.Toolbar.PlayInteractableChanged(this, isInteractable);
     }
 
     /// <summary>
@@ -160,9 +160,9 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
             InitializeComponents();
 
         if (IsToggleOn)
-            Animations.Toolbar.PlayToolbarToggleOn(this);
+            Animations.Toolbar.PlayToggleOn(this);
         else
-            Animations.Toolbar.PlayToolbarToggleOff(this);
+            Animations.Toolbar.PlayToggleOff(this);
     }
 
     #region Pointer Event Handlers (Handles pointer hover events)
@@ -174,7 +174,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Animations.Toolbar.PlayButtonHoverEnter(this);
+        Animations.Toolbar.PlayHoverEnter(this);
 
         if (_tooltipHideCoroutine != null)
         {
@@ -188,7 +188,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Animations.Toolbar.PlayButtonHoverExit(this);
+        Animations.Toolbar.PlayHoverExit(this);
 
         if (_tooltipShowCoroutine != null)
         {
@@ -204,20 +204,23 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     {
         yield return new WaitForSeconds(delay);
 
-        Animations.Toolbar.PlayToolbarShowTooltip(this);
+        Animations.Toolbar.PlayShowTooltip(this);
     }
 
     IEnumerator HideTooltipWithDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        Animations.Toolbar.PlayToolbarHideTooltip(this);
+        Animations.Toolbar.PlayHideTooltip(this);
     }
     #endregion
 
     #region Editor-Specific Code
 #if UNITY_EDITOR
-    void OnValidate()
+    void OnValidate() { EditorApplication.delayCall += OnValidateDelayed; }
+
+    // Suppress message: "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate”  
+    void OnValidateDelayed()
     {
         if (Application.isPlaying) return;
         if (EditorApplication.isCompiling) return;
@@ -236,7 +239,8 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         else
             _isSpinnerButton = false;
 
-        if (m_icon != null)
+        // Prevent Object Reference error when loading the project and the colors scriptable is not loaded yet.
+        if (m_icon != null && Manager.AppConfiguration != null)
         {
             m_icon.sprite = _icon;
             m_icon.color = _interactable ? Manager.IconColor : Manager.DisabledIconColor;

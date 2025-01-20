@@ -2,16 +2,38 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// The Animation Manager serves as the central hub for managing and orchestrating animations across various UI elements and components in the application. 
+/// </summary>
 public interface IAnimationManager
 {
     float TooltipDelay { get; }
     float TooltipPadding { get; }
     float TooltipPanelWidth { get; }
 
+    /// <summary>
+    /// Handles animations for buttons, including hover effects, click feedback, and interactable state changes.
+    /// </summary>
     IButtonAnimations Button { get; }
+  
+    /// <summary>
+    /// Handles animations for grid elements, such as cell and row interactions, hover effects, and action panel transitions.
+    /// </summary>
     IGridAnimations Grid { get; }
+
+    /// <summary>
+    /// Handles animations for input fields, including text highlighting and focus effects.
+    /// </summary>
     IInputAnimations Input { get; }
+ 
+    /// <summary>
+    /// Handles animations for panels and windows, including visibility transitions, audio player state changes, login windows, error messages, and release grids.
+    /// </summary>
     IPanelAnimations Panel { get; }
+ 
+    /// <summary>
+    /// Provides animations for toolbar elements, including button interactions, spinners, toggles, tooltips, and rotating parts.
+    /// </summary>
     IToolbarAnimations Toolbar { get; }
 
     void PlayLogoHide(GameObject logo, Action onComplete = null);
@@ -35,7 +57,6 @@ public interface IGridAnimations
     void PlayCellClick(CellReleaseAnimator cell);
     void PlayCellSelect(bool isSelected, CellReleaseAnimator cell);
     void AbortCellSelect(CellReleaseAnimator cell);
-
     void PlayRowClick(RowTrackAnimator row);
     void PlayShowActionPanel(RectTransform panelRect, RowTrackAnimator row);
     void PlayHideActionPanel(RectTransform panelRect);
@@ -52,32 +73,29 @@ public interface IInputAnimations
 public interface IPanelAnimations
 {
     void PlayPanelVisibility(bool isVisible, float duration, float delay = 0, params CanvasGroup[] panels);
-
     void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, Action onComplete = null);
     void PlayExpandAudioPlayer(RectTransform expandedPlayer, RectTransform collapsedPlayer, Action onComplete = null);
-
     void PlayShowLoginWindow(GameObject loginWindow, float delay);
     void PlayHideLoginWindow(GameObject loginWindow);
     void PlayShowErrorWindow(GameObject errorWindow);
     void PlayHideErrorWindow(GameObject errorWindow);
-
-    void PlayGridReleaseVisiblity(bool isVisible, GridReleaseController release);
+    void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release);
     void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails);
 
 }
 
 public interface IToolbarAnimations
 {
-    void PlayButtonClicked(ToolbarButtonAnimator button);
-    void PlayButtonHoverEnter(ToolbarButtonAnimator button, float duration = 0);
-    void PlayButtonHoverExit(ToolbarButtonAnimator button);
-    void PlayButtonInteractableChanged(ToolbarButtonAnimator button, bool isInteractable);
-
-    void PlayToolbarShowSpinner(ToolbarButtonAnimator button);
-    void PlayToolbarHideSpinner(ToolbarButtonAnimator button);
-    void PlayToolbarToggleOn(ToolbarButtonAnimator button);
-    void PlayToolbarToggleOff(ToolbarButtonAnimator button);
-    void PlayToolbarShowTooltip(ToolbarButtonAnimator button);
-    void PlayToolbarHideTooltip(ToolbarButtonAnimator button);
-    void PlayToolbarPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart);
+    void Initialize(IMusicMateManager manager);
+    void PlayClicked(ToolbarButtonAnimator button);
+    void PlayHoverEnter(ToolbarButtonAnimator button, float duration = 0);
+    void PlayHoverExit(ToolbarButtonAnimator button);
+    void PlayInteractableChanged(ToolbarButtonAnimator button, bool isInteractable);
+    void PlayShowSpinner(ToolbarButtonAnimator button);
+    void PlayHideSpinner(ToolbarButtonAnimator button);
+    void PlayToggleOn(ToolbarButtonAnimator button);
+    void PlayToggleOff(ToolbarButtonAnimator button);
+    void PlayShowTooltip(ToolbarButtonAnimator button);
+    void PlayHideTooltip(ToolbarButtonAnimator button);
+    void PlayPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart);
 }

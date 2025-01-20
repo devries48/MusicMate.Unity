@@ -76,7 +76,7 @@ public class MainWindowAnimator : MusicMateBehavior
 
     void VisibleReleaseResult(bool show)
     {
-        Animations.Panel.PlayGridReleaseVisiblity(show, _releaseResult);
+        Animations.Panel.PlayReleaseGridVisiblity(show, _releaseResult);
         _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
     }
 

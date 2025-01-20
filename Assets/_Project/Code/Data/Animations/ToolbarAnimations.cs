@@ -25,16 +25,16 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
 
     public void Initialize(IMusicMateManager manager) => _manager = manager;
 
-    public void PlayButtonClicked(ToolbarButtonAnimator button)
+    public void PlayClicked(ToolbarButtonAnimator button)
     {
             var duration = _animationTime / 2;
             button.transform
                 .DOScale(_toolbarClickScale, duration)
                 .SetEase(_animationEase)
-                .OnComplete(() => PlayButtonHoverEnter(button, duration));
+                .OnComplete(() => PlayHoverEnter(button, duration));
     }
 
-    public void PlayButtonHoverEnter(ToolbarButtonAnimator button, float duration = 0)
+    public void PlayHoverEnter(ToolbarButtonAnimator button, float duration = 0)
     {
         if (!button.IsInteractable)
             return;
@@ -45,12 +45,12 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
             button.transform.DOScale(_toolbarHoverScale, duration).SetEase(_animationEase);
     }
 
-    public void PlayButtonHoverExit(ToolbarButtonAnimator button)
+    public void PlayHoverExit(ToolbarButtonAnimator button)
     {
             button.transform.DOScale(1, _animationTime).SetEase(_animationEase);
     }
 
-    public void PlayToolbarShowSpinner(ToolbarButtonAnimator button)
+    public void PlayShowSpinner(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
             .DOScale(_toolbarSpinnerScale, _toolbarSpinTime)
@@ -64,13 +64,13 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
                 });
     }
 
-    public void PlayButtonInteractableChanged(ToolbarButtonAnimator button, bool isInteractable)
+    public void PlayInteractableChanged(ToolbarButtonAnimator button, bool isInteractable)
     {
         Color32 color = isInteractable ? _manager.IconColor : _manager.DisabledIconColor;
         button.m_icon.DOColor(color, _animationTime);
     }
 
-    public void PlayToolbarHideSpinner(ToolbarButtonAnimator button)
+    public void PlayHideSpinner(ToolbarButtonAnimator button)
     {
         button.m_spinnerBackground.gameObject.SetActive(false);
         button.m_spinner.gameObject.SetActive(false);
@@ -81,7 +81,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
             .OnComplete(() => button.IsInteractable= true);
     }
 
-    public void PlayToolbarToggleOn(ToolbarButtonAnimator button)
+    public void PlayToggleOn(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
             .DOScale(_toolbarToggleScale, .25f)
@@ -95,7 +95,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
                 });
     }
 
-    public void PlayToolbarToggleOff(ToolbarButtonAnimator button)
+    public void PlayToggleOff(ToolbarButtonAnimator button)
     {
         button.m_icon.transform
             .DOScale(1f, .25f)
@@ -108,7 +108,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
                 });
     }
 
-    public void PlayToolbarShowTooltip(ToolbarButtonAnimator button)
+    public void PlayShowTooltip(ToolbarButtonAnimator button)
     {
         //button.m_tooltipText.color = button.m_button.interactable || button.IsToggleOn
         //    ? MusicMateManager.Instance.AccentColor
@@ -119,7 +119,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
         button.m_tooltipVisible = true;
     }
 
-    public void PlayToolbarHideTooltip(ToolbarButtonAnimator button)
+    public void PlayHideTooltip(ToolbarButtonAnimator button)
     {
         button.m_tooltipPanel
             .DOScale(0, _toolbarTooltipPopupTime / 2)
@@ -127,7 +127,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
         button.m_tooltipVisible = false;
     }
 
-    public void PlayToolbarPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart)
+    public void PlayPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart)
     {
         var duration = _toolbarPartRotateTime / 2;
 

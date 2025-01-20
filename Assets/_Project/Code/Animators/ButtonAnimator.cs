@@ -214,8 +214,13 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     #endregion
 
     #region Editor-Specific Code
+
 #if UNITY_EDITOR
-    void OnValidate()
+
+    // Suppress message: "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate”  
+    void OnValidate() { EditorApplication.delayCall += OnValidateDelayed; }
+
+    void OnValidateDelayed()
     {
         if (Application.isPlaying) return;
         if (EditorApplication.isCompiling) return;

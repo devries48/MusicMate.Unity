@@ -120,6 +120,6 @@ public class ToolbarPartController : ToolbarControllerBase
         }
 
         if (title != default)
-            Animations.Toolbar.PlayToolbarPartRotate(this, title, showPart, hidePart);
+            Animations.Toolbar.PlayPartRotate(this, title, showPart, hidePart);
     }
 }

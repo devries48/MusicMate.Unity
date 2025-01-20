@@ -6,8 +6,14 @@ public abstract class MusicMateEditorBase : Editor
 {
     protected Texture2D _logoTexture;
     readonly Dictionary<string, bool> _foldoutStates = new();
+    static readonly string[] _dontIncludeMe = new string[] { "m_Script" };
 
     protected virtual void OnEnable() => _logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/spr_logo.png");
+
+    protected virtual void DrawDefaultFields()
+    {
+        DrawPropertiesExcluding(serializedObject, _dontIncludeMe);
+    }
 
     protected virtual void DrawLogo()
     {
@@ -31,23 +37,21 @@ public abstract class MusicMateEditorBase : Editor
         DrawSpace();
     }
 
-    protected virtual void DrawDescription(string description)
+    protected virtual void DrawDescription(string description, bool drawSpace = true)
     {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         GUILayout.Label(description, CustomEditorStyles.descriptionStyle, GUILayout.Width(EditorGUIUtility.currentViewWidth - 32));
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-        DrawSpace();
+        if (drawSpace)
+            DrawSpace();
     }
 
     protected virtual void DrawWarningIfNotInRoot(Transform transform)
     {
         if (transform.parent != null)
-        {
             EditorGUILayout.HelpBox("Warning: This manager should be at the root level of the hierarchy.", MessageType.Warning);
-        }
-
     }
 
     protected virtual void DrawSpace() => EditorGUILayout.Space();
@@ -89,9 +93,9 @@ public abstract class MusicMateEditorBase : Editor
         return _foldoutStates[label];
     }
 
-    private SerializedProperty Find(string name) => serializedObject.FindProperty(name);
+    SerializedProperty Find(string name) => serializedObject.FindProperty(name);
 
-    private string GetFoldoutKey(string sectionName) => $"{target.GetType().Name}_{sectionName}_Foldout";
+    string GetFoldoutKey(string sectionName) => $"{target.GetType().Name}_{sectionName}_Foldout";
 }
 
 public static class CustomEditorStyles
