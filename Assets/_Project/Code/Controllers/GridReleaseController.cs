@@ -70,6 +70,24 @@ public class GridReleaseController : MusicMateBehavior
             ChangeSelection(_selectedCell);
     }
 
+    public RectTransform CreateActionPanel(CellReleaseAnimator release)
+    {
+        var rectPanel = Instantiate(_prefabActionPanel, release.transform).GetComponent<RectTransform>();
+        var controller = rectPanel.GetComponent<ActionPanelController>();
+        rectPanel.anchoredPosition = Vector2.zero;
+        rectPanel.pivot = new Vector2(rectPanel.pivot.x, 1);
+        
+        controller.Initialize(release);
+        release.SetActionPanel(rectPanel);
+
+        return release.m_actionPanel;
+    }
+
+    public void DestroyActionPanel(CellReleaseAnimator release)
+    {
+        Destroy(release.m_actionPanel.gameObject);
+    }
+
     IEnumerator ProcessResult(List<ReleaseResult> result)
     {
         CalculateGridColums();
@@ -108,7 +126,7 @@ public class GridReleaseController : MusicMateBehavior
             _ => _large
         };
 
-        var minSpace = cellSize / 10f;
+        var minSpace = cellSize / 6f;
         var maxWidth = _parentTrans.rect.width;
         var offsetMax = Mathf.Abs(_parentTrans.offsetMax.x);
 

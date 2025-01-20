@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Grid Animations", fileName = "Grid Animations")]
-public class GridAnimations : ScriptableObject,IGridAnimations
+public class GridAnimations : ScriptableObject, IGridAnimations
 {
     [Header("Grid Click")]
     [SerializeField] float _clickScale = 0.9f;
@@ -60,33 +60,17 @@ public class GridAnimations : ScriptableObject,IGridAnimations
     public void PlayRowClick(RowTrackAnimator row)
     {
         row.transform
-             .DOScale(_clickScale, _clickDuration / 2)
-             .SetEase(Ease.OutBack)
-             .OnComplete(
-                 () => row.transform
-                     .DOScale(1, _clickDuration / 2)
-                     .SetEase(Ease.OutBack));
+            .DOScale(_clickScale, _clickDuration / 2)
+            .SetEase(Ease.OutBack)
+            .OnComplete(() => row.transform.DOScale(1, _clickDuration / 2).SetEase(Ease.OutBack));
     }
-    public void  PlayCellSelect(bool isSelected, CellReleaseAnimator cell)
-    {
-        CellSelect(isSelected, cell, false);
-    }
+    public void PlayCellSelect(bool isSelected, CellReleaseAnimator cell) { CellSelect(isSelected, cell); }
 
-     void CellSelect(bool isSelected, CellReleaseAnimator cell, bool isAbort = false, Action onComplete = null)
+    void CellSelect(bool isSelected, CellReleaseAnimator cell, bool isAbort = false, Action onComplete = null)
     {
-        if (isSelected)
-            cell.m_actionPanel.gameObject.SetActive(true);
-
         var duration = isSelected ? _cellShowPanelTime : _cellHidePanelTime;
 
-        if (isAbort)
-            duration = 0;
-
-        var showPanel = cell.m_actionPanel
-        .DOPivotY(isSelected ? 0 : 1, duration)
-        .SetEase(isSelected ? _cellShowPanelEase : _cellHidePanelEase)
-        .OnComplete(() => onComplete?.Invoke())
-        .Pause();
+        if (isAbort) duration = 0;
 
         if (isSelected)
         {
@@ -94,31 +78,43 @@ public class GridAnimations : ScriptableObject,IGridAnimations
                 .DOScale(_clickScale, duration / 2)
                 .SetEase(Ease.OutBack)
                 .OnComplete(
-                    () => cell.transform
-                        .DOScale(_cellHoverScale, duration / 2)
-                        .SetEase(Ease.OutBack)
-                        .OnComplete(() => showPanel.Play()));
+                    () =>
+                    {
+                        cell.m_actionPanel = cell.m_parent.CreateActionPanel(cell);
+                        cell.m_actionPanel
+                            .DOPivotY(0, duration)
+                            .SetEase(_cellShowPanelEase)
+                            .OnComplete(() => onComplete?.Invoke());
+
+                        cell.transform.DOScale(_cellHoverScale, duration / 2).SetEase(Ease.OutBack);
+                    });
         }
         else
         {
             PlayCellHoverExit(cell);
-
-            showPanel.OnComplete(
-                () =>
-                {
-                    cell.m_actionPanel.gameObject.SetActive(false);
-                    onComplete?.Invoke();
-                })
+            cell.m_actionPanel
+                .DOPivotY(1, duration)
+                .SetEase(_cellHidePanelEase)
+                .OnComplete(
+                    () =>
+                    {
+                        cell.m_parent.DestroyActionPanel(cell);
+                        onComplete?.Invoke();
+                    })
                 .Play();
         }
     }
 
     public void AbortCellSelect(CellReleaseAnimator cell)
     {
-        CellSelect(false, cell, true, () =>
-        {
-            cell.IsSelected = false;
-        });
+        CellSelect(
+            false,
+            cell,
+            true,
+            () =>
+            {
+                cell.IsSelected = false;
+            });
     }
 
 
