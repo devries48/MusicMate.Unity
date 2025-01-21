@@ -22,12 +22,4 @@ MonoBehaviour:
   _imageLargeScale: 1
   _imageLargeHoverScale: 1.2
   _imageLargeClickScale: 0.8
-  _toolbarHoverScale: 1.2
-  _toolbarClickScale: 0.8
-  _toolbarToggleScale: 0.7
-  _toolbarTooltipPopupTime: 0.1
-  _iconAnimationTime: 0.6
-  _toolbarSpinnerScale: 0.7
-  _toolbarSpinTime: 0.4
-  _toolbarPartRotateTime: 0.2
-  _toolbarPartDelayTime: 0.1
+  _iconAnimationTime: 0.8

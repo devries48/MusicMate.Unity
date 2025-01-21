@@ -10,7 +10,7 @@ public class GridReleaseController : MusicMateBehavior
 {
     [SerializeField] GameObject _prefabReleaseCell;
     [SerializeField] GameObject _prefabActionPanel;
-    
+
     [Header("Thumbnail Size")]
     [SerializeField] ThumbnailSize _selectedSize;
     [SerializeField, Range(100, 149)] int _tiny = 100;
@@ -73,10 +73,11 @@ public class GridReleaseController : MusicMateBehavior
     public RectTransform CreateActionPanel(CellReleaseAnimator release)
     {
         var rectPanel = Instantiate(_prefabActionPanel, release.transform).GetComponent<RectTransform>();
-        var controller = rectPanel.GetComponent<ActionPanelController>();
         rectPanel.anchoredPosition = Vector2.zero;
         rectPanel.pivot = new Vector2(rectPanel.pivot.x, 1);
-        
+
+        var controller = rectPanel.GetComponent<ActionPanelController>();
+        controller.OnActionClicked += release.OnActionClicked;
         controller.Initialize(release);
         release.SetActionPanel(rectPanel);
 
@@ -85,6 +86,9 @@ public class GridReleaseController : MusicMateBehavior
 
     public void DestroyActionPanel(CellReleaseAnimator release)
     {
+        var controller = release.m_actionPanel.GetComponent<ActionPanelController>();
+        controller.OnActionClicked -= release.OnActionClicked;
+
         Destroy(release.m_actionPanel.gameObject);
     }
 

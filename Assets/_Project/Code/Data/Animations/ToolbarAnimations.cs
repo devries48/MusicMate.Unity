@@ -36,7 +36,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
 
     public void PlayHoverEnter(ToolbarButtonAnimator button, float duration = 0)
     {
-        if (!button.IsInteractable)
+        if (!button.IsInteractable || button.IsSpinning)
             return;
 
         if (duration == 0)

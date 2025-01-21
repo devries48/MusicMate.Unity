@@ -65,8 +65,6 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         OnRectTransformDimensionsChange();
     }
 
-    public void ShowRelease() => Manager.ShowRelease(m_release);
-
     public void ChangeSelectedState()
     {
         IsSelected = !IsSelected;
@@ -74,6 +72,12 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         m_parent.ChangeSelection(this); // Notify parent
 
         Animations.Grid.PlayCellSelect(IsSelected, this);
+    }
+
+    public void OnActionClicked(ActionPanelButton action)
+    {
+        if (action== ActionPanelButton.Show)
+            Manager.ShowRelease(m_release);
     }
 
     void OnRectTransformDimensionsChange()
@@ -157,7 +161,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
         m_parent.ClearSelection();
 
         Animations.Grid.PlayCellClick(this);
-        ShowRelease();
+        OnActionClicked(ActionPanelButton.Show);
     }
-     #endregion
+    #endregion
 }

@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 public class ActionPanelController : MusicMateBehavior
@@ -12,7 +11,7 @@ public class ActionPanelController : MusicMateBehavior
     TrackResult _trackModel;
     ReleaseResult _releaseModel;
 
-    public delegate void ActionClickHandler(ActionPanelButton buttonClicked);
+    public delegate void ActionClickHandler(ActionPanelButton action);
     public event ActionClickHandler OnActionClicked;
 
     #region Base Class Methods
@@ -21,6 +20,9 @@ public class ActionPanelController : MusicMateBehavior
         PlayerService.SubscribeToStateChanged(OnPlayerStateChanged);
 
         _playPauseButton.OnButtonClick.AddListener(OnPlayOrPauseClicked);
+
+        if (_showReleaseButton != null)
+            _showReleaseButton.OnButtonClick.AddListener(OnShowReleaseClicked);
     }
 
     protected override void UnregisterEventHandlers()
@@ -28,6 +30,10 @@ public class ActionPanelController : MusicMateBehavior
         PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
 
         _playPauseButton.OnButtonClick.RemoveListener(OnPlayOrPauseClicked);
+
+        if (_showReleaseButton != null)
+            _showReleaseButton.OnButtonClick.RemoveListener(OnShowReleaseClicked);
+
     }
     #endregion
 
@@ -63,6 +69,11 @@ public class ActionPanelController : MusicMateBehavior
             PlayerService.Pause();
             OnActionClicked?.Invoke(ActionPanelButton.Pause);
         }
+    }
+
+    void OnShowReleaseClicked()
+    {
+        OnActionClicked?.Invoke(ActionPanelButton.Show);
     }
 
     IEnumerator SetPlayerState()
