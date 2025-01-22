@@ -9,6 +9,7 @@ public class MainWindowAnimator : MusicMateBehavior
 
     [Header("Toolbar Controllers")]
     [SerializeField] ToolbarApplicationController _applicationToolbar;
+    [SerializeField] ToolbarModeController _modeToolbar;
     [SerializeField] ToolbarPartController _searchToolbar;
     [SerializeField] ToolbarImportController _importToolbar;
 
@@ -43,7 +44,8 @@ public class MainWindowAnimator : MusicMateBehavior
 
         Animations.Panel.PlayPanelVisibility(connected, _fadeTime, 0f,
             _audioPlayer.m_canvasGroupExpanded,
-            _applicationToolbar.m_canvasGroup,
+            _applicationToolbar.m_CanvasGroup,
+            _modeToolbar.m_CanvasGroup,
             _searchToolbar.m_CanvasGroup,
             _importToolbar.m_CanvasGroup);
 
@@ -114,6 +116,11 @@ public class MainWindowAnimator : MusicMateBehavior
             default:
                 break;
         }
+    }
+
+    protected override void OnMusicMateModeChanged(MusicMateMode mode)
+    {
+        Manager.AppState.ApplyTheme(this.gameObject);
     }
 
     class State

@@ -1,15 +1,54 @@
 using DG.Tweening;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class AppState : IAppState
 {
     public AppState(AppSetings config) => _config = config;
 
-    AppSetings _config;
+    readonly AppSetings _config;
     VisiblePart _parentPart, _currentPart;
+    MusicMateMode _currentMode = MusicMateMode.Collection;
 
     event VisiblePartChangedEventHandler VisiblePartChanged;
+    public event MusicMateModeChangedHandler ModeChanged; 
+
+    public MusicMateMode CurrentMode
+    {
+        get => _currentMode;
+        private set
+        {
+            if (_currentMode == value) return;
+
+            _currentMode = value;
+            ModeChanged?.Invoke(_currentMode);
+        }
+    }
+
+    public void NotifyModeChanged(MusicMateMode newMode) => CurrentMode = newMode;
+
+    public void ApplyTheme(GameObject root)
+    {
+        //var colors=CurrentMode== MusicMateMode.
+        //var themableComponents = root.GetComponentsInChildren<ITheme>(true);
+
+        //foreach (var component in themableComponents)
+        //{
+        //    // Check if the component is a UI element needing theming
+        //    if (component is TextMeshProUGUI textComponent)
+        //    {
+        //        textComponent.color = colors.TextColor;
+        //    }
+        //    else if (component is Image imageComponent)
+        //    {
+        //        if (imageComponent.GetComponentInParent<ButtonInteractable>() == null)
+        //        {
+        //            imageComponent.color = colors.BackgroundColor;
+        //        }
+        //    }
+        //}
+    }
 
     #region Change UI element states (disabled/enabled)
     public void ChangeState(Button button, bool enabled, bool? isPlaying)
@@ -90,7 +129,6 @@ public class AppState : IAppState
             ChangeState(item, enabled, isPlaying);
     }
     #endregion
-
 
     /// <summary>
     /// Notify subscribed controllers the visibility of a particular part has changed.

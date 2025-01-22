@@ -1,3 +1,17 @@
+public enum MusicMateMode
+{
+    Collection,
+    Edit
+}
+
+public enum VisiblePart
+{
+    Previous,
+    ReleaseResult,
+    ReleaseDetails,
+    ArtistDetails
+}
+
 public enum PlayerState
 {
     None,
@@ -22,14 +36,6 @@ public enum PlayerAction
 }
 
 public enum PlaylistAction { None, NewList, IndexChanged }
-
-public enum VisiblePart
-{
-    Previous,
-    ReleaseResult,
-    ReleaseDetails,
-    ArtistDetails
-}
 
 public enum ButtonAnimationType
 {

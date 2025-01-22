@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(CanvasGroup))]
 public class ToolbarImportController : ToolbarControllerBase
 {
     [SerializeField] ToolbarButtonAnimator _scanFolderButton;
@@ -11,15 +12,11 @@ public class ToolbarImportController : ToolbarControllerBase
     #region MusicMate Base Class Methods
     protected override void RegisterEventHandlers()
     {
-        base.RegisterEventHandlers();
-
         _scanFolderButton.OnButtonClick.AddListener(OnScanFolderClicked);
     }
 
     protected override void UnregisterEventHandlers()
     {
-        base.UnregisterEventHandlers();
-
         CancelInvoke();
 
         _scanFolderButton.OnButtonClick.RemoveListener(OnScanFolderClicked);

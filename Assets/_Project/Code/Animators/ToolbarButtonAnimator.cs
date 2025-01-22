@@ -20,7 +20,6 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     [Header("Toggle")]
     [SerializeField] bool _isToggleButton;
     [SerializeField] bool _isToggleOn;
-    [SerializeField, Tooltip("The button is part of a group where only one button can be toggled.")] bool _isToggleGroup;
 
     [Header("Spinner")]
     [SerializeField] bool _isSpinnerButton;
@@ -234,7 +233,6 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (!_isToggleButton)
         {
             _isToggleOn = false;
-            _isToggleGroup = false;
         }
         else
             _isSpinnerButton = false;

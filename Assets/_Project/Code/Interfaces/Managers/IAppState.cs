@@ -1,9 +1,15 @@
 ﻿using System;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public interface IAppState
 {
+    event MusicMateModeChangedHandler ModeChanged;
+
+    MusicMateMode CurrentMode { get; }
+    void ApplyTheme(GameObject root);
+    void NotifyModeChanged(MusicMateMode newMode);
     void ChangeState(Button button, bool enabled, bool? isPlaying);
     void ChangeState(ButtonAnimator button, bool enabled, bool? isPlaying);
     void ChangeState(Image image, bool enabled, bool? isPlaying = null);
@@ -20,6 +26,7 @@ public interface IAppState
 
 #region EventHandlers & EventArgs
 public delegate void VisiblePartChangedEventHandler(object sender, VisiblePartChangedEventArgs e);
+public delegate void MusicMateModeChangedHandler(MusicMateMode mode);
 
 public class VisiblePartChangedEventArgs : EventArgs
 {

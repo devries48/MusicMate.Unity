@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "MusicMate/Settings/App Settings", fileName = "App Settings")]
 public class AppSetings : ScriptableObject
 {
-
     [Header("Connection")]
     public string ApiServiceUrl;
     public string User;
@@ -13,6 +12,7 @@ public class AppSetings : ScriptableObject
 
     [Header("Colors")]
     public ColorSettings Colors;
+    public ColorSettings ColorsEditMode;
 
     [Header("Sprites")]
     public Sprite PlaySprite;

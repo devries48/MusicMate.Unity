@@ -60,8 +60,22 @@ public abstract class MusicMateBehavior : MonoBehaviour
         }
     }
 
-    protected virtual void OnEnable() => RegisterEventHandlers();
-    protected virtual void OnDisable() => UnregisterEventHandlers();
+    protected virtual void OnEnable()
+    {
+        if (Manager?.AppState != null)
+            Manager.AppState.ModeChanged += OnMusicMateModeChanged;
+
+        RegisterEventHandlers();
+    }
+
+    protected virtual void OnDisable()
+    {
+        if (Manager?.AppState != null)
+            Manager.AppState.ModeChanged -= OnMusicMateModeChanged;
+
+        UnregisterEventHandlers();
+    }
+
     protected virtual void Awake() => InitializeComponents();
     protected virtual void Start() => InitializeValues();
 
@@ -114,4 +128,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     /// </code>
     /// </example>
     protected virtual void UnregisterEventHandlers() { }
+
+    protected virtual void OnMusicMateModeChanged(MusicMateMode mode) { }
+
 }

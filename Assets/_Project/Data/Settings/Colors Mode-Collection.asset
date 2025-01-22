@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 174375c57a3b78f47a4ef6923e5a334e, type: 3}
-  m_Name: Color Settings
+  m_Name: Colors Mode-Collection
   m_EditorClassIdentifier: 
-  AccentColor:
+  _accentColor:
     serializedVersion: 2
     rgba: 4282954999
-  DefaultColor:
+  _defaultColor:
     serializedVersion: 2
     rgba: 4284699969
-  TextColor:
+  _textColor:
     serializedVersion: 2
     rgba: 4288651167
-  BackgroundColor:
+  _backgroundColor:
     serializedVersion: 2
     rgba: 4280622092
-  AccentTextColor:
+  _panelColor:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 3208195093

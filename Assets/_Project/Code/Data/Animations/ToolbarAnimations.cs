@@ -2,7 +2,7 @@ using DG.Tweening;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Toolbar Animations", fileName = "Toolbar Animations")]
-public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
+public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
 {
     [SerializeField, Tooltip("Default animation duration")] float _animationTime = 0.2f;
     [SerializeField] Ease _animationEase = Ease.OutBack;
@@ -27,11 +27,11 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
 
     public void PlayClicked(ToolbarButtonAnimator button)
     {
-            var duration = _animationTime / 2;
-            button.transform
-                .DOScale(_toolbarClickScale, duration)
-                .SetEase(_animationEase)
-                .OnComplete(() => PlayHoverEnter(button, duration));
+        var duration = _animationTime / 2;
+        button.transform
+            .DOScale(_toolbarClickScale, duration)
+            .SetEase(_animationEase)
+            .OnComplete(() => PlayHoverEnter(button, duration));
     }
 
     public void PlayHoverEnter(ToolbarButtonAnimator button, float duration = 0)
@@ -42,12 +42,12 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
         if (duration == 0)
             duration = _animationTime;
 
-            button.transform.DOScale(_toolbarHoverScale, duration).SetEase(_animationEase);
+        button.transform.DOScale(_toolbarHoverScale, duration).SetEase(_animationEase);
     }
 
     public void PlayHoverExit(ToolbarButtonAnimator button)
     {
-            button.transform.DOScale(1, _animationTime).SetEase(_animationEase);
+        button.transform.DOScale(1, _animationTime).SetEase(_animationEase);
     }
 
     public void PlayShowSpinner(ToolbarButtonAnimator button)
@@ -58,9 +58,10 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
             .OnComplete(
                 () =>
                 {
+                    button.transform.localScale = Vector2.one;
                     button.m_spinnerBackground.gameObject.SetActive(true);
                     button.m_spinner.gameObject.SetActive(true);
-                    button.IsInteractable= false;
+                    button.IsInteractable = false;
                 });
     }
 
@@ -78,7 +79,7 @@ public class ToolbarAnimations : ScriptableObject,IToolbarAnimations
         button.m_icon.transform
             .DOScale(1f, _toolbarSpinTime)
             .SetEase(Ease.InBack)
-            .OnComplete(() => button.IsInteractable= true);
+            .OnComplete(() => button.IsInteractable = true);
     }
 
     public void PlayToggleOn(ToolbarButtonAnimator button)
