@@ -67,7 +67,7 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
 
     public void PlayInteractableChanged(ToolbarButtonAnimator button, bool isInteractable)
     {
-        Color32 color = isInteractable ? _manager.IconColor : _manager.DisabledIconColor;
+        Color32 color = isInteractable ? _manager.AppColors.IconColor : _manager.AppColors.DisabledIconColor;
         button.m_icon.DOColor(color, _animationTime);
     }
 

@@ -7,8 +7,9 @@ public interface IAppState
 {
     event MusicMateModeChangedHandler ModeChanged;
 
+    IColorSettings CurrentColors { get; }
     MusicMateMode CurrentMode { get; }
-    void ApplyTheme(GameObject root);
+
     void NotifyModeChanged(MusicMateMode newMode);
     void ChangeState(Button button, bool enabled, bool? isPlaying);
     void ChangeState(ButtonAnimator button, bool enabled, bool? isPlaying);
@@ -19,6 +20,8 @@ public interface IAppState
     void ChangeStates(Image[] images, bool enabled, bool isPlaying);
     void ChangeStates(TextMeshProUGUI[] texts, bool enabled);
     void ChangeStates(Slider[] sliders, bool enabled);
+    void ChangeColor(Image image, Color32 toColor, bool animate);
+    void ChangeColor(TextMeshProUGUI text, Color32 toColor, bool animate);
     void ChangeVisiblePart(VisiblePart part);
     void SubscribeToVisiblePartChanged(VisiblePartChangedEventHandler handler);
     void UnsubscribeFromVisiblePartChanged(VisiblePartChangedEventHandler handler);

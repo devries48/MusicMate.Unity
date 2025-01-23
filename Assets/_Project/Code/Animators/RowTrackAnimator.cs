@@ -38,7 +38,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
 
     void SetColors()
     {
-        var textcolor = _isHover ? Manager.AccentTextColor : IsActive ? Manager.AccentColor : Manager.TextColor;
+        var textcolor = _isHover ? Manager.AppColors.AccentTextColor : IsActive ? Manager.AppColors.AccentColor : Manager.AppColors.TextColor;
 
         _nrText.color = textcolor;
         _titleMarque.SetColor(textcolor);
@@ -50,7 +50,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
     public void OnPointerEnter(PointerEventData eventData)
     {
         _isHover = true;
-        _backgroundImage.color = IsActive ? Manager.AccentColor : Manager.TextColor;
+        _backgroundImage.color = IsActive ? Manager.AppColors.AccentColor : Manager.AppColors.TextColor;
         _backgroundImage.enabled = true;
 
         SetColors();

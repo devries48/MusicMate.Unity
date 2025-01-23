@@ -1,18 +1,25 @@
 using DG.Tweening;
+using NUnit.Framework.Internal;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AppState : IAppState
 {
-    public AppState(AppSetings config) => _config = config;
-
     readonly AppSetings _config;
     VisiblePart _parentPart, _currentPart;
     MusicMateMode _currentMode = MusicMateMode.Collection;
+    IAnimationManager _animations;
 
     event VisiblePartChangedEventHandler VisiblePartChanged;
-    public event MusicMateModeChangedHandler ModeChanged; 
+    public event MusicMateModeChangedHandler ModeChanged;
+
+    public AppState(MusicMateManager manager)
+    {
+        _config = manager.AppConfiguration;
+
+        CurrentColors = _config.Colors;
+    }
 
     public MusicMateMode CurrentMode
     {
@@ -22,33 +29,31 @@ public class AppState : IAppState
             if (_currentMode == value) return;
 
             _currentMode = value;
+
+            if (value == MusicMateMode.Edit)
+                CurrentColors = _config.ColorsEditMode;
+            else
+                CurrentColors = _config.Colors;
+
             ModeChanged?.Invoke(_currentMode);
         }
     }
 
-    public void NotifyModeChanged(MusicMateMode newMode) => CurrentMode = newMode;
-
-    public void ApplyTheme(GameObject root)
+    IAnimationManager Animations
     {
-        //var colors=CurrentMode== MusicMateMode.
-        //var themableComponents = root.GetComponentsInChildren<ITheme>(true);
+        get
+        {
+            if (_animations == null)
+                _animations = AnimationManager.Instance;
 
-        //foreach (var component in themableComponents)
-        //{
-        //    // Check if the component is a UI element needing theming
-        //    if (component is TextMeshProUGUI textComponent)
-        //    {
-        //        textComponent.color = colors.TextColor;
-        //    }
-        //    else if (component is Image imageComponent)
-        //    {
-        //        if (imageComponent.GetComponentInParent<ButtonInteractable>() == null)
-        //        {
-        //            imageComponent.color = colors.BackgroundColor;
-        //        }
-        //    }
-        //}
+            return _animations;
+        }
     }
+
+
+    public IColorSettings CurrentColors { get; private set; }
+
+    public void NotifyModeChanged(MusicMateMode newMode) => CurrentMode = newMode;
 
     #region Change UI element states (disabled/enabled)
     public void ChangeState(Button button, bool enabled, bool? isPlaying)
@@ -129,6 +134,23 @@ public class AppState : IAppState
             ChangeState(item, enabled, isPlaying);
     }
     #endregion
+
+    public void ChangeColor(Image image, Color32 toColor, bool animate)
+    {
+        if (animate)
+            Animations.Panel.PlayImageColor(image, toColor);
+        else
+            image.color = toColor;
+    }
+
+    public void ChangeColor(TextMeshProUGUI text, Color32 toColor, bool animate)
+    {
+        if (animate)
+            Animations.Panel.PlayTextColor(text, toColor);
+        else
+            text.color = toColor;
+    }
+
 
     /// <summary>
     /// Notify subscribed controllers the visibility of a particular part has changed.

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class MusicMateBehavior : MonoBehaviour
@@ -7,10 +8,13 @@ public abstract class MusicMateBehavior : MonoBehaviour
     IAudioPlayerService _playerService;
     IMusicMateApiService _apiService;
 
+    MusicMateMode? _currentMode = null;
+    protected bool IsInitioalizing { get; private set; }
+
     /// <summary>
     /// Access the AnimationManager instance.
     /// </summary>
-    protected AnimationManager Animations
+    protected IAnimationManager Animations
     {
         get
         {
@@ -63,8 +67,16 @@ public abstract class MusicMateBehavior : MonoBehaviour
     protected virtual void OnEnable()
     {
         if (Manager?.AppState != null)
+        {
             Manager.AppState.ModeChanged += OnMusicMateModeChanged;
 
+            if (_currentMode != Manager.AppState.CurrentMode)
+            {
+                IsInitioalizing = true;
+                ApplyColors();
+                IsInitioalizing=false;
+            }
+        }
         RegisterEventHandlers();
     }
 
@@ -74,6 +86,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
             Manager.AppState.ModeChanged -= OnMusicMateModeChanged;
 
         UnregisterEventHandlers();
+        StopAllCoroutines();
     }
 
     protected virtual void Awake() => InitializeComponents();
@@ -129,6 +142,56 @@ public abstract class MusicMateBehavior : MonoBehaviour
     /// </example>
     protected virtual void UnregisterEventHandlers() { }
 
-    protected virtual void OnMusicMateModeChanged(MusicMateMode mode) { }
+     void OnMusicMateModeChanged(MusicMateMode mode) 
+    {
+        if (_currentMode != mode)
+        {
+            _currentMode = Manager.AppState.CurrentMode;
 
+            MusicMateModeChanged();
+            ApplyColors();
+        }
+    }
+
+    /// <summary>
+    /// Invoked when the application's mode changes. 
+    /// Override this method in derived classes to implement behavior specific to the newly activated mode.
+    /// </summary>
+    /// <remarks>
+    /// Use this method to define custom logic or state changes that should occur when the mode switches, 
+    /// such as enabling/disabling certain UI elements or modifying functionality specific to a mode.
+    /// </remarks>
+    /// <example>
+    /// Example implementation in a derived class:
+    /// <code>
+    /// protected override void MusicMateModeChanged()
+    /// {
+    ///     if (Manager.AppState.CurrentMode == MusicMateMode.Edit)
+    ///         EnableEditModeFeatures();
+    ///     else
+    ///         DisableEditModeFeatures();
+    /// }
+    /// </code>
+    /// </example>
+    protected virtual void MusicMateModeChanged() { }
+
+    /// <summary>
+    /// Applies color settings to the component based on the current theme or mode.
+    /// Override this method in derived classes to customize how colors are applied to UI elements within the component.
+    /// </summary>
+    /// <remarks>
+    /// This method is called automatically when the component is enabled or when the application's mode changes.
+    /// It provides a centralized way to update the component's visual appearance to reflect the current theme or mode.
+    /// </remarks>
+    /// <example>
+    /// Example implementation in a derived class:
+    /// <code>
+    /// protected override void ApplyColors()
+    /// {
+    ///     _headerText.color = Manager.AppColors.TextColor;
+    ///     _backgroundPanel.color = Manager.AppColors.BackgroundColor;
+    /// }
+    /// </code>
+    /// </example>
+    protected virtual void ApplyColors() { }
 }

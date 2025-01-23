@@ -21,6 +21,15 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     #endregion
 
     #region Properties
+    IAnimationManager Animations
+    {
+        get
+        {
+            _animations ??= AnimationManager.Instance;
+
+            return _animations;
+        }
+    }
 
     /// <summary>
     /// Gets the application's configuration settings.
@@ -34,25 +43,18 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     {
         get
         {
-            _appState ??= new AppState(_appSettings);
+            _appState ??= new AppState(this);
             return _appState;
         }
     }
 
-    public Color32 AccentColor => _appSettings.Colors.AccentColor;
-    public Color32 DefaultColor => _appSettings.Colors.DefaultColor;
-    public Color32 AccentTextColor => _appSettings.Colors.BackgroundColor;
-    public Color32 TextColor => _appSettings.Colors.TextColor;
-    public Color32 BackgroundColor => _appSettings.Colors.BackgroundColor;
-    public Color32 IconColor => _appSettings.Colors.IconColor;
-    public Color32 DisabledIconColor => _appSettings.Colors.DisabledIconColor;
-    
+    public IColorSettings AppColors => AppState.CurrentColors;
     #endregion
 
     #region #region Field Declarations
+    IAnimationManager _animations;
     IMusicMateApiService _service;
     IAppState _appState;
-    AnimationManager _animations;
     #endregion
 
     #region Unity Events
@@ -62,7 +64,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         ActivateGameObjects();
 
         _service = MusicMateApiService.Instance.GetClient();
-        _animations = AnimationManager.Instance;
     }
 
     void OnEnable() => _service.SubscribeToConnectionChanged(OnConnectionChanged);
@@ -177,17 +178,17 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     void ShowOrHideErrorPanel(bool show)
     {
         if (show)
-        _animations.Panel.PlayShowErrorWindow(_errorController.gameObject);
+        Animations.Panel.PlayShowErrorWindow(_errorController.gameObject);
         else
-        _animations.Panel.PlayHideErrorWindow(_errorController.gameObject);
+        Animations.Panel.PlayHideErrorWindow(_errorController.gameObject);
     }
 
     void ShowOrHideLoginPanel(bool show, float delay = 0f)
     {
         if (show)
-            _animations.Panel.PlayShowLoginWindow(_errorController.gameObject,delay);
+            Animations.Panel.PlayShowLoginWindow(_errorController.gameObject,delay);
         else
-            _animations.Panel.PlayHideLoginWindow(_errorController.gameObject);
+            Animations.Panel.PlayHideLoginWindow(_errorController.gameObject);
     }
 
     IEnumerator DelayAndConnect(float seconds)

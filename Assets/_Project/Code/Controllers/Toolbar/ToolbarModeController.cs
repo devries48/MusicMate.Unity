@@ -1,10 +1,10 @@
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class ToolbarModeController : ToolbarControllerBase
 {
     [SerializeField] ToolbarButtonAnimator _editModeButton;
-
 
     #region MusicMate Base Class Methods
     protected override void RegisterEventHandlers()
@@ -28,10 +28,5 @@ public class ToolbarModeController : ToolbarControllerBase
     {
         var mode = _editModeButton.IsToggleOn ? MusicMateMode.Edit : MusicMateMode.Collection;
         Manager.AppState.NotifyModeChanged(mode);
-    }
-
-    protected override void OnMusicMateModeChanged(MusicMateMode mode)
-    {
-        Debug.Log("Mode changedL: " + mode);
     }
 }

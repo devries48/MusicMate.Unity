@@ -31,6 +31,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     #region Properties
     public ButtonInteractable Button { get; private set; }
+
     public bool IsStateOn { get { return _isStateOn; } }
 
     public UnityEvent OnButtonClick { get; private set; } = new UnityEvent();
@@ -57,43 +58,35 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         {
             Button.interactable = _interactable;
 
-            if (Button.TextComponent != null)
+            if(Button.TextComponent != null)
             {
-                Button.TextComponent.color = _isPrimary ? Button.Colors.AccentTextColor : Button.Colors.TextColor;
                 Button.TextComponent.text = _buttonType == ButtonAnimationType.ExpandCollapseButton
                     ? _headerText
                     : _text;
             }
 
-            if (Button.ImageComponent != null)
+            if(Button.ImageComponent != null)
             {
-                if (_buttonType == ButtonAnimationType.DefaultImageButton ||
+                if(_buttonType == ButtonAnimationType.DefaultImageButton ||
                     _buttonType == ButtonAnimationType.LargeImageButton ||
                     _buttonType == ButtonAnimationType.StateImageButton)
                 {
-                    if (_icon != null)
+                    if(_icon != null)
                     {
                         SetIcon();
-                        Button.ImageComponent.color = !Button.interactable
-                            ? Button.Colors.DisabledIconColor
-                            : _isPrimary ? Button.Colors.AccentColor : Button.Colors.IconColor;
 
                         var scale = _buttonType == ButtonAnimationType.LargeImageButton
                             ? Animations.Button.ImageButtonLargeScale
                             : Animations.Button.ImageButtonScale;
 
                         Button.transform.localScale = new Vector3(scale, scale, scale);
+                    } else if(_buttonType == ButtonAnimationType.ExpandCollapseButton)
+                    {
+                        InitializeExpandCollapseButton();
                     }
                 }
-                else if (_buttonType == ButtonAnimationType.ExpandCollapseButton)
-                {
-                    InitializeExpandCollapseButton();
-                }
-                else
-                    Button.ImageComponent.color = _isPrimary ? Button.Colors.AccentColor : Button.Colors.DefaultColor;
             }
-        }
-        catch (System.Exception)
+        } catch(System.Exception)
         {
             //  Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name + ")");
         }
@@ -102,23 +95,21 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     void InitializeExpandCollapseButton()
     {
         Button.ImageComponent.gameObject.SetActive(_interactable);
-        Button.ImageComponent.color = Button.Colors.TextColor;
 
         // Initialize rotation based on state
         RotateIcon(_isExpanded);
 
         // Adjust PlaceholderTransform anchors based on _headerText
-        if (Button.PlaceholderTransform != null)
+        if(Button.PlaceholderTransform != null)
         {
-            if (string.IsNullOrEmpty(_headerText))
+            if(string.IsNullOrEmpty(_headerText))
             {
                 // Center the placeholder
                 Button.PlaceholderTransform.anchorMin = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.anchorMax = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.pivot = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.anchoredPosition = Vector2.zero;
-            }
-            else
+            } else
             {
                 // Default alignment (e.g., right/middle)
                 Button.PlaceholderTransform.anchorMin = new Vector2(1f, 0.5f);
@@ -126,6 +117,33 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                 Button.PlaceholderTransform.pivot = new Vector2(1f, 0.5f);
                 Button.PlaceholderTransform.anchoredPosition = Vector2.zero; // Adjust as necessary
             }
+        }
+    }
+
+    protected override void ApplyColors()
+    {
+        if (Button==null)
+            return;
+
+        if(Button.TextComponent != null)
+            Button.TextComponent.color = _isPrimary ? Manager.AppColors.AccentTextColor : Manager.AppColors.TextColor;
+
+        if(Button.ImageComponent != null)
+        {
+            if(_buttonType == ButtonAnimationType.DefaultImageButton ||
+                _buttonType == ButtonAnimationType.LargeImageButton ||
+                _buttonType == ButtonAnimationType.StateImageButton)
+            {
+                if(_icon != null)
+                {
+                    Button.ImageComponent.color = !Button.interactable
+                        ? Manager.AppColors.DisabledIconColor
+                        : _isPrimary ? Manager.AppColors.AccentColor : Manager.AppColors.IconColor;
+                }
+            } else if(_buttonType != ButtonAnimationType.ExpandCollapseButton)
+                Button.ImageComponent.color = Manager.AppColors.TextColor;
+            else
+                Button.ImageComponent.color = _isPrimary ? Manager.AppColors.AccentColor : Manager.AppColors.DefaultColor;
         }
     }
     #endregion
@@ -142,10 +160,10 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     /// <param name="isExpanded">Indicates whether the button should be expanded (true) or collapsed (false).</param>
     public void SetExpanded(bool isExpanded)
     {
-        if (!_isToggle)
+        if(!_isToggle)
             return;
 
-        if (_isExpanded != isExpanded)
+        if(_isExpanded != isExpanded)
         {
             _isExpanded = isExpanded;
             RotateIcon(_isExpanded);
@@ -154,7 +172,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     public void SetState(bool isOn)
     {
-        if (_isStateOn != isOn)
+        if(_isStateOn != isOn)
         {
             _isStateOn = isOn;
             SetIcon();
@@ -175,7 +193,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     /// </notes>
     void RotateIcon(bool isExpanded)
     {
-        if (Button.ImageComponent == null)
+        if(Button.ImageComponent == null)
             return;
 
         float targetRotation = isExpanded ? 180f : 0f;
@@ -185,7 +203,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     void SetIcon()
     {
         var icon = _icon;
-        if (_buttonType == ButtonAnimationType.StateImageButton && _isStateOn)
+        if(_buttonType == ButtonAnimationType.StateImageButton && _isStateOn)
             icon = _stateIcon;
 
         Button.ImageComponent.sprite = icon;
@@ -195,17 +213,14 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     {
         Animations.Button.PlayClicked(Button, _buttonType);
 
-        if (_buttonType == ButtonAnimationType.StateImageButton)
+        if(_buttonType == ButtonAnimationType.StateImageButton)
             SetState(!_isStateOn);
 
         OnButtonClick?.Invoke();
     }
 
-    void OnInteractableChanged(bool isInteractable) => Animations.Button.PlayInteractableChanged(
-        Button,
-        isInteractable,
-        _isPrimary,
-        _buttonType);
+    void OnInteractableChanged(bool isInteractable) => Animations.Button
+        .PlayInteractableChanged(Button, isInteractable, _isPrimary, _buttonType);
 
     #region Pointer Event Handlers (Handles pointer hover events)
     public void OnPointerEnter(PointerEventData eventData) => Animations.Button.PlayHoverEnter(Button, _buttonType);
@@ -222,12 +237,13 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     void OnValidateDelayed()
     {
-        if (Application.isPlaying) return;
-        if (EditorApplication.isCompiling) return;
+        if(Application.isPlaying)
+            return;
+        if(EditorApplication.isCompiling)
+            return;
 
-        Button = (ButtonInteractable)GetComponent<Button>();
-        if (Button != null)
-            InitializeValues();
+        InitializeValues();
+        ApplyColors();
     }
 #endif
 

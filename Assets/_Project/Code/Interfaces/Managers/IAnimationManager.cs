@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// The Animation Manager serves as the central hub for managing and orchestrating animations across various UI elements and components in the application. 
@@ -73,6 +74,8 @@ public interface IInputAnimations
 public interface IPanelAnimations
 {
     void PlayPanelVisibility(bool isVisible, float duration, float delay = 0, params CanvasGroup[] panels);
+    void PlayImageColor(Image image, Color32 toColor);
+    void PlayTextColor(TextMeshProUGUI text, Color32 toColor);
     void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, Action onComplete = null);
     void PlayExpandAudioPlayer(RectTransform expandedPlayer, RectTransform collapsedPlayer, Action onComplete = null);
     void PlayShowLoginWindow(GameObject loginWindow, float delay);

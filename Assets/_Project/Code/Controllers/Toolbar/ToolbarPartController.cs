@@ -64,12 +64,10 @@ public class ToolbarPartController : ToolbarControllerBase
     #endregion
 
     #region ToolbarController Base Class Methods
-    protected override IEnumerator SetElementStates()
+    protected override void SetElementStates()
     {
         _releaseToggle.SetToggle(_toggled == DetailsToggle.release);
         _artistToggle.SetToggle(_toggled == DetailsToggle.artist);
-
-        yield return null;
     }
     #endregion
 
@@ -78,7 +76,7 @@ public class ToolbarPartController : ToolbarControllerBase
     void OnReleaseToggleClicked()
     {
         _toggled = DetailsToggle.release;
-        ChangeElementStates();
+        SetElementStates();
 
         Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
     }
@@ -86,7 +84,7 @@ public class ToolbarPartController : ToolbarControllerBase
     void OnArtistToggleClicked()
     {
         _toggled = DetailsToggle.artist;
-        ChangeElementStates();
+        SetElementStates();
 
         Manager.AppState.ChangeVisiblePart(VisiblePart.ArtistDetails);
     }
@@ -109,7 +107,7 @@ public class ToolbarPartController : ToolbarControllerBase
 
             // reset toolbar
             _toggled = DetailsToggle.release;
-            ChangeElementStates();
+            SetElementStates();
         }
         else if (e.Part == VisiblePart.ReleaseDetails)
         {

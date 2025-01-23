@@ -13,7 +13,7 @@ public class ButtonInteractable : Button
     /// <summary>
     /// The color settings used to style the button's text and image.
     /// </summary>
-    public ColorSettings Colors;
+    public ColorSettings Colors1;
 
     /// <summary>
     /// Gets the button's foreground image for a text button or the icon for other button types.

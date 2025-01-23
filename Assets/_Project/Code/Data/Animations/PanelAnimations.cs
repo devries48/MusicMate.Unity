@@ -1,6 +1,8 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using UnityEngine.UI;
+using TMPro;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Panel Animations", fileName = "Panel Animations")]
 public class PanelAnimations : ScriptableObject,IPanelAnimations
@@ -14,6 +16,10 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
     [Header("Default Panel Fading")]
     [SerializeField] float _fadeDuration = .5f;
     [SerializeField] Ease _fadeEase = Ease.InCirc;
+
+    [Header("Default Color/Theme Transition")]
+    [SerializeField] float _colorDuration = .5f;
+    [SerializeField] Ease _colorEase = Ease.InOutSine;
 
     [Header("Login Window")]
     [SerializeField, Tooltip("Pivot Y position to hide Login Window")] float _loginHidePivot = -2f;
@@ -126,6 +132,16 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
             canvas.alpha = fadeIn ? 0f : 1f;
             canvas.DOFade(fadeIn ? 1f : 0f, duration).SetEase(_fadeEase).SetDelay(delay);
         }
+    }
+
+    public void PlayImageColor(Image image, Color32 toColor)
+    {
+        image.DOColor(toColor, _colorDuration).SetEase(_colorEase);
+    }
+
+    public void PlayTextColor(TextMeshProUGUI text, Color32 toColor)
+    {
+        text.DOColor(toColor, _colorDuration).SetEase(_colorEase);
     }
 
     public void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release)

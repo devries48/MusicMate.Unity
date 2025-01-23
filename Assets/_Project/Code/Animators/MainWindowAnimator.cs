@@ -118,11 +118,6 @@ public class MainWindowAnimator : MusicMateBehavior
         }
     }
 
-    protected override void OnMusicMateModeChanged(MusicMateMode mode)
-    {
-        Manager.AppState.ApplyTheme(this.gameObject);
-    }
-
     class State
     {
         public State()

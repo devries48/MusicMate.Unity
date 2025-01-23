@@ -1,24 +1,27 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
 public abstract class ToolbarControllerBase : MusicMateBehavior
 {
+    Image _panel;
+
     internal CanvasGroup m_CanvasGroup;
 
     protected override void InitializeComponents()
     {
         m_CanvasGroup = GetComponent<CanvasGroup>();
+        _panel = GetComponent<Image>();
     }
 
     protected override void InitializeValues()
     {
         m_CanvasGroup.alpha = 0f;
-        InitElements();
-        ChangeElementStates();
-    }
 
-    protected void ChangeElementStates() => StartCoroutine(SetElementStates());
+        InitElements();
+        SetElementStates();
+    }
 
     protected virtual void InitElements() { }
 
@@ -26,8 +29,10 @@ public abstract class ToolbarControllerBase : MusicMateBehavior
     /// Set the state of elements on the toolbar
     /// </summary>
     /// <returns></returns>
-    protected virtual IEnumerator SetElementStates()
+    protected virtual void SetElementStates() { }
+
+    protected override void ApplyColors()
     {
-        yield return null;
+        Manager.AppState.ChangeColor(_panel, Manager.AppColors.PanelColor, !IsInitioalizing);
     }
 }

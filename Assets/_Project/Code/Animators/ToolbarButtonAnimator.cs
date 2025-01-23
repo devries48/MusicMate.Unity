@@ -90,7 +90,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (m_icon != null)
         {
             m_icon.sprite = _icon;
-            m_icon.color = _interactable ? Manager.IconColor : Manager.DisabledIconColor;
+            m_icon.color = _interactable ? Manager.AppColors.IconColor : Manager.AppColors.DisabledIconColor;
         }
 
         m_tooltipText.text = _tooltip;
@@ -241,7 +241,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (m_icon != null && Manager.AppConfiguration != null)
         {
             m_icon.sprite = _icon;
-            m_icon.color = _interactable ? Manager.IconColor : Manager.DisabledIconColor;
+            m_icon.color = _interactable ? Manager.AppColors.IconColor : Manager.AppColors.DisabledIconColor;
         }
     }
 

@@ -103,24 +103,24 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
 
     public void PlayInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
     {
-        Color32 backgroundColor = _manager.DefaultColor;
+        Color32 backgroundColor = _manager.AppColors.DefaultColor;
         Color32 foregroundColor;
 
         if (buttonType == ButtonAnimationType.DefaultImageButton || buttonType == ButtonAnimationType.LargeImageButton)
         {
-            foregroundColor = isPrimary ? _manager.AccentColor : _manager.TextColor;
+            foregroundColor = isPrimary ? _manager.AppColors.AccentColor : _manager.AppColors.TextColor;
         }
         else
         {
             if (isInteractable)
             {
                 if (isPrimary)
-                    backgroundColor = _manager.AccentColor;
+                    backgroundColor = _manager.AppColors.AccentColor;
 
-                foregroundColor = isPrimary ? _manager.AccentTextColor : _manager.TextColor;
+                foregroundColor = isPrimary ? _manager.AppColors.AccentTextColor : _manager.AppColors.TextColor;
             }
             else
-                foregroundColor = _manager.AccentTextColor;
+                foregroundColor = _manager.AppColors.AccentTextColor;
         }
         PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
     }
@@ -128,8 +128,8 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
 
     void StartExpandOrCollapseAnimation(ButtonInteractable button)
     {
-        button.TextComponent.DOColor(button.Colors.AccentColor, _animationTime);
-        button.ImageComponent.DOColor(button.Colors.AccentColor, _animationTime);
+        button.TextComponent.DOColor(_manager.AppColors.AccentColor, _animationTime);
+        button.ImageComponent.DOColor(_manager.AppColors.AccentColor, _animationTime);
 
         // Determine the state based on the rotation of the image
         bool isExpanded = Mathf.Approximately(button.ImageComponent.rectTransform.localEulerAngles.z, 180f);
@@ -180,8 +180,8 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
 
     void StopExpandOrCollapseAnimation(ButtonInteractable button)
     {
-        button.TextComponent.DOColor(button.Colors.TextColor, _animationTime);
-        button.ImageComponent.DOColor(button.Colors.TextColor, _animationTime);
+        button.TextComponent.DOColor(_manager.AppColors.TextColor, _animationTime);
+        button.ImageComponent.DOColor(_manager.AppColors.TextColor, _animationTime);
 
         var target = button.ImageComponent.rectTransform;
         var resetPosition = new Vector2(0f, 0f);
@@ -212,7 +212,7 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
 
         // Flash text color
         Color originalColor = text.color;
-        text.DOColor(button.Colors.TextColor, 0.1f).OnComplete(() =>
+        text.DOColor(_manager.AppColors.TextColor, 0.1f).OnComplete(() =>
         {
             text.DOColor(originalColor, 0.1f);
         });

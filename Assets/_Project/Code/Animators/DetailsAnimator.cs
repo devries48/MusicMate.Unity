@@ -16,6 +16,7 @@ public class DetailsAnimator : MusicMateBehavior
     public bool IsLoading { get; set; }
 
     readonly float _speed = 1.5f;
+    Image _panel;
 
     protected override void RegisterEventHandlers()
     {
@@ -25,6 +26,11 @@ public class DetailsAnimator : MusicMateBehavior
     protected override void UnregisterEventHandlers()
     {
         _closeButton.onClick.RemoveListener(OnCloseClicked);
+    }
+
+    protected override void InitializeComponents()
+    {
+        _panel = GetComponent<Image>();
     }
 
     void Update()
@@ -62,6 +68,11 @@ public class DetailsAnimator : MusicMateBehavior
     }
 
     void OnCloseClicked() => CloseDetails();
+
+    protected override void ApplyColors()
+    {
+        Manager.AppState.ChangeColor(_panel, Manager.AppColors.PanelColor, true);
+    }
 
     /*
         void MoveReleaseDetails(bool show, float delay = 0)

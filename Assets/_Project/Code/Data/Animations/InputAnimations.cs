@@ -14,19 +14,19 @@ public class InputAnimations : ScriptableObject,IInputAnimations
 
     public void PlayTextNormal(TMP_InputField input)
     {
-        SetColor(input, _manager.TextColor);
-        SetBackgroundColor(input, _manager.BackgroundColor);
+        SetColor(input, _manager.AppColors.TextColor);
+        SetBackgroundColor(input, _manager.AppColors.BackgroundColor);
     }
 
     public void PlayTextSelect(TMP_InputField input)
     {
-        SetColor(input, _manager.AccentColor);
+        SetColor(input, _manager.AppColors.AccentColor);
     }
 
     public void PlayTextHighlight(TMP_InputField input)
     {
-        SetColor(input, _manager.AccentColor);
-        SetBackgroundColor(input, _manager.DefaultColor);
+        SetColor(input, _manager.AppColors.AccentColor);
+        SetBackgroundColor(input, _manager.AppColors.DefaultColor);
     }
 
     public void SetColor(TMP_InputField input, Color targetColor) => input.textComponent.DOColor(targetColor, _textTransitionDuration);

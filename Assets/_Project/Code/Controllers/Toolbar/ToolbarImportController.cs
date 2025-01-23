@@ -26,7 +26,7 @@ public class ToolbarImportController : ToolbarControllerBase
     #region ToolbarController Base Class Methods
     protected override void InitElements() => _scanFolderButton.IsInteractable=true;
 
-    protected override IEnumerator SetElementStates()
+    protected override void SetElementStates()
     {
         if (_scanFolderButton.CanShowSpinner)
         {
@@ -39,15 +39,13 @@ public class ToolbarImportController : ToolbarControllerBase
             CancelInvoke(nameof(CheckImportRunning));
             _scanFolderButton.HideSpinner();
         }
-
-        yield return null;
     }
     #endregion
 
     void OnScanFolderClicked()
     {
         _scanFolderButton.IsSpinning = true;
-        ChangeElementStates();
+        SetElementStates();
     }
 
     void CheckImportRunning()
@@ -57,7 +55,7 @@ public class ToolbarImportController : ToolbarControllerBase
             if (_scanFolderButton.IsSpinning != isRunning)
             {
                 _scanFolderButton.IsSpinning = isRunning;
-                ChangeElementStates();
+                SetElementStates();
             }
         });
     }
