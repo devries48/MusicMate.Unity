@@ -58,20 +58,20 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         {
             Button.interactable = _interactable;
 
-            if(Button.TextComponent != null)
+            if (Button.TextComponent != null)
             {
                 Button.TextComponent.text = _buttonType == ButtonAnimationType.ExpandCollapseButton
                     ? _headerText
                     : _text;
             }
 
-            if(Button.ImageComponent != null)
+            if (Button.ImageComponent != null)
             {
-                if(_buttonType == ButtonAnimationType.DefaultImageButton ||
+                if (_buttonType == ButtonAnimationType.DefaultImageButton ||
                     _buttonType == ButtonAnimationType.LargeImageButton ||
                     _buttonType == ButtonAnimationType.StateImageButton)
                 {
-                    if(_icon != null)
+                    if (_icon != null)
                     {
                         SetIcon();
 
@@ -80,13 +80,15 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                             : Animations.Button.ImageButtonScale;
 
                         Button.transform.localScale = new Vector3(scale, scale, scale);
-                    } else if(_buttonType == ButtonAnimationType.ExpandCollapseButton)
+                    }
+                    else if (_buttonType == ButtonAnimationType.ExpandCollapseButton)
                     {
                         InitializeExpandCollapseButton();
                     }
                 }
             }
-        } catch(System.Exception)
+        }
+        catch (System.Exception)
         {
             //  Debug.LogError("Button InitializeValues Error (" + gameObject.gameObject.name + "/" + gameObject.name + ")");
         }
@@ -100,16 +102,17 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         RotateIcon(_isExpanded);
 
         // Adjust PlaceholderTransform anchors based on _headerText
-        if(Button.PlaceholderTransform != null)
+        if (Button.PlaceholderTransform != null)
         {
-            if(string.IsNullOrEmpty(_headerText))
+            if (string.IsNullOrEmpty(_headerText))
             {
                 // Center the placeholder
                 Button.PlaceholderTransform.anchorMin = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.anchorMax = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.pivot = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.anchoredPosition = Vector2.zero;
-            } else
+            }
+            else
             {
                 // Default alignment (e.g., right/middle)
                 Button.PlaceholderTransform.anchorMin = new Vector2(1f, 0.5f);
@@ -122,28 +125,26 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     protected override void ApplyColors()
     {
-        if (Button==null)
+        if (Button == null)
             return;
 
-        if(Button.TextComponent != null)
-            Button.TextComponent.color = _isPrimary ? Manager.AppColors.AccentTextColor : Manager.AppColors.TextColor;
+        ChangeColor(_isPrimary ? MusicMateColor.AccentText : MusicMateColor.Text, Button.TextComponent);
 
-        if(Button.ImageComponent != null)
+        if (Button.ImageComponent != null)
         {
-            if(_buttonType == ButtonAnimationType.DefaultImageButton ||
+            var iconColor = MusicMateColor.Icon;
+
+            if (_buttonType == ButtonAnimationType.DefaultImageButton ||
                 _buttonType == ButtonAnimationType.LargeImageButton ||
                 _buttonType == ButtonAnimationType.StateImageButton)
-            {
-                if(_icon != null)
-                {
-                    Button.ImageComponent.color = !Button.interactable
-                        ? Manager.AppColors.DisabledIconColor
-                        : _isPrimary ? Manager.AppColors.AccentColor : Manager.AppColors.IconColor;
-                }
-            } else if(_buttonType != ButtonAnimationType.ExpandCollapseButton)
-                Button.ImageComponent.color = Manager.AppColors.TextColor;
-            else
-                Button.ImageComponent.color = _isPrimary ? Manager.AppColors.AccentColor : Manager.AppColors.DefaultColor;
+
+                iconColor = !Button.interactable
+                    ? MusicMateColor.DisabledIcon
+                    : _isPrimary ? MusicMateColor.Accent : MusicMateColor.Icon;
+            else if (_buttonType != ButtonAnimationType.ExpandCollapseButton)
+                iconColor = _isPrimary ? MusicMateColor.Accent : MusicMateColor.Default;
+
+            ChangeColor(iconColor, Button.ImageComponent);
         }
     }
     #endregion
@@ -160,10 +161,10 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     /// <param name="isExpanded">Indicates whether the button should be expanded (true) or collapsed (false).</param>
     public void SetExpanded(bool isExpanded)
     {
-        if(!_isToggle)
+        if (!_isToggle)
             return;
 
-        if(_isExpanded != isExpanded)
+        if (_isExpanded != isExpanded)
         {
             _isExpanded = isExpanded;
             RotateIcon(_isExpanded);
@@ -172,7 +173,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     public void SetState(bool isOn)
     {
-        if(_isStateOn != isOn)
+        if (_isStateOn != isOn)
         {
             _isStateOn = isOn;
             SetIcon();
@@ -193,7 +194,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     /// </notes>
     void RotateIcon(bool isExpanded)
     {
-        if(Button.ImageComponent == null)
+        if (Button.ImageComponent == null)
             return;
 
         float targetRotation = isExpanded ? 180f : 0f;
@@ -203,7 +204,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     void SetIcon()
     {
         var icon = _icon;
-        if(_buttonType == ButtonAnimationType.StateImageButton && _isStateOn)
+        if (_buttonType == ButtonAnimationType.StateImageButton && _isStateOn)
             icon = _stateIcon;
 
         Button.ImageComponent.sprite = icon;
@@ -213,7 +214,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     {
         Animations.Button.PlayClicked(Button, _buttonType);
 
-        if(_buttonType == ButtonAnimationType.StateImageButton)
+        if (_buttonType == ButtonAnimationType.StateImageButton)
             SetState(!_isStateOn);
 
         OnButtonClick?.Invoke();
@@ -237,9 +238,9 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     void OnValidateDelayed()
     {
-        if(Application.isPlaying)
+        if (Application.isPlaying)
             return;
-        if(EditorApplication.isCompiling)
+        if (EditorApplication.isCompiling)
             return;
 
         InitializeValues();

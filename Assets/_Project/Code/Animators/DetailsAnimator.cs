@@ -71,7 +71,7 @@ public class DetailsAnimator : MusicMateBehavior
 
     protected override void ApplyColors()
     {
-        Manager.AppState.ChangeColor(_panel, Manager.AppColors.PanelColor, true);
+        ChangeColor(MusicMateColor.Panel, _panel);
     }
 
     /*

@@ -57,6 +57,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     internal Image m_spinner;
 
     internal RectTransform m_tooltipPanel;
+    internal Image m_tooltipBackground;
     internal TextMeshProUGUI m_tooltipText;
     internal bool m_tooltipVisible;
 
@@ -80,6 +81,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         transform.Find("Button/Spinner").TryGetComponent(out m_spinner);
         transform.Find("Toggle Icon").TryGetComponent(out m_toggleIcon);
         transform.Find("Tooltip").TryGetComponent(out m_tooltipPanel);
+        transform.Find("Tooltip").TryGetComponent(out m_tooltipBackground);
         transform.Find("Tooltip/Text (TMP)").TryGetComponent(out m_tooltipText);
 
         m_tooltipText = m_tooltipPanel.GetComponentInChildren<TextMeshProUGUI>();
@@ -107,6 +109,14 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
         if (_isToggleButton && _isToggleOn)
             SetToggle();
+    }
+
+    protected override void ApplyColors()
+    {
+        ChangeColor(_interactable ? MusicMateColor.Icon : MusicMateColor.DisabledIcon, m_icon);
+        ChangeColor(MusicMateColor.Accent, m_toggleIcon, m_spinner);
+        ChangeColor(MusicMateColor.Background, m_tooltipBackground);
+        ChangeColor(MusicMateColor.Text, m_tooltipText);
     }
     #endregion
 
@@ -231,9 +241,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
             _isToggleOn = false;
 
         if (!_isToggleButton)
-        {
             _isToggleOn = false;
-        }
         else
             _isSpinnerButton = false;
 
@@ -241,7 +249,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (m_icon != null && Manager.AppConfiguration != null)
         {
             m_icon.sprite = _icon;
-            m_icon.color = _interactable ? Manager.AppColors.IconColor : Manager.AppColors.DisabledIconColor;
+            ApplyColors();
         }
     }
 

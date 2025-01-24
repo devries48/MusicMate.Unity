@@ -76,6 +76,7 @@ public interface IPanelAnimations
     void PlayPanelVisibility(bool isVisible, float duration, float delay = 0, params CanvasGroup[] panels);
     void PlayImageColor(Image image, Color32 toColor);
     void PlayTextColor(TextMeshProUGUI text, Color32 toColor);
+    void PlayMarqueeColor(Marquee marquee, Color32 toColor);
     void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, Action onComplete = null);
     void PlayExpandAudioPlayer(RectTransform expandedPlayer, RectTransform collapsedPlayer, Action onComplete = null);
     void PlayShowLoginWindow(GameObject loginWindow, float delay);

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Panel Animations", fileName = "Panel Animations")]
-public class PanelAnimations : ScriptableObject,IPanelAnimations
+public class PanelAnimations : ScriptableObject, IPanelAnimations
 {
     [Header("Default Window Visibility")]
     [SerializeField] float _showAndHideDuration = 0.5f;
@@ -118,15 +118,15 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
 
     public void PlayPanelVisibility(bool fadeIn, float duration, float delay = 0, params CanvasGroup[] canvases)
     {
-        if (canvases == null || canvases.Length == 0)
+        if(canvases == null || canvases.Length == 0)
             return;
 
-        if (duration == 0f)
+        if(duration == 0f)
             duration = _fadeDuration;
 
-        foreach (var canvas in canvases)
+        foreach(var canvas in canvases)
         {
-            if (canvas == null)
+            if(canvas == null)
                 continue;
 
             canvas.alpha = fadeIn ? 0f : 1f;
@@ -135,14 +135,13 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
     }
 
     public void PlayImageColor(Image image, Color32 toColor)
-    {
-        image.DOColor(toColor, _colorDuration).SetEase(_colorEase);
-    }
+    { image.DOColor(toColor, _colorDuration).SetEase(_colorEase); }
 
     public void PlayTextColor(TextMeshProUGUI text, Color32 toColor)
-    {
-        text.DOColor(toColor, _colorDuration).SetEase(_colorEase);
-    }
+    { text.DOColor(toColor, _colorDuration).SetEase(_colorEase); }
+
+    public void PlayMarqueeColor(Marquee marquee, Color32 toColor)
+    { DOTween.To(() => marquee.TextColor, x => marquee.TextColor = x, toColor, _colorDuration).SetEase(_colorEase); }
 
     public void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release)
     {
@@ -157,7 +156,7 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
 
     public void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails)
     {
-        if (isVisible)
+        if(isVisible)
             showDetails.gameObject.SetActive(true);
 
         var scaleTo = isVisible ? 1f : 0f;
@@ -170,14 +169,14 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
             .OnComplete(
                 () =>
                 {
-                    if (!isVisible)
+                    if(!isVisible)
                         showDetails.gameObject.SetActive(false);
                 });
     }
 
     void MoveVertical(bool show, GameObject obj, float hidePivot, float showPivot, float delay = 0f)
     {
-        if (show)
+        if(show)
             obj.SetActive(true);
 
         var pivotTo = show ? showPivot : hidePivot;
@@ -190,7 +189,7 @@ public class PanelAnimations : ScriptableObject,IPanelAnimations
             .OnComplete(
                 () =>
                 {
-                    if (!show)
+                    if(!show)
                         obj.SetActive(false);
                 });
     }

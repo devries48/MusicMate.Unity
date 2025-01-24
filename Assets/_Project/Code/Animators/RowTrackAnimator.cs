@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -26,6 +27,13 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
 
     protected override void InitializeComponents() => _backgroundImage = GetComponent<Image>();
 
+    protected override void ApplyColors()
+    {
+        var textcolor = _isHover ? MusicMateColor.AccentText : IsActive ? MusicMateColor.Accent : MusicMateColor.Text;
+        ChangeColor(textcolor, _nrText, _durationText);
+        ChangeColor(textcolor, _titleMarque);
+    }
+
     public void Initialize(TrackResult track, int pos, GridTrackController parent)
     {
         m_track = track;
@@ -41,7 +49,7 @@ public class RowTrackAnimator : MusicMateBehavior, IPointerEnterHandler, IPointe
         var textcolor = _isHover ? Manager.AppColors.AccentTextColor : IsActive ? Manager.AppColors.AccentColor : Manager.AppColors.TextColor;
 
         _nrText.color = textcolor;
-        _titleMarque.SetColor(textcolor);
+        _titleMarque.TextColor=textcolor;
         _durationText.color = textcolor;
     }
 

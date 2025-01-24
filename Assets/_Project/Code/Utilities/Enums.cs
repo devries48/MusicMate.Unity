@@ -4,6 +4,18 @@ public enum MusicMateMode
     Edit
 }
 
+public enum MusicMateColor
+{
+    Accent,
+    Default,
+    Text,
+    Panel,
+    Background,
+    AccentText,
+    Icon,
+    DisabledIcon
+}
+
 public enum VisiblePart
 {
     Previous,

@@ -33,6 +33,6 @@ public abstract class ToolbarControllerBase : MusicMateBehavior
 
     protected override void ApplyColors()
     {
-        Manager.AppState.ChangeColor(_panel, Manager.AppColors.PanelColor, !IsInitioalizing);
+        ChangeColor(MusicMateColor.Panel, _panel);
     }
 }

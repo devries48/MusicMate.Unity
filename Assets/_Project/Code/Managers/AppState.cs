@@ -1,7 +1,5 @@
 using DG.Tweening;
-using NUnit.Framework.Internal;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class AppState : IAppState
@@ -9,7 +7,6 @@ public class AppState : IAppState
     readonly AppSetings _config;
     VisiblePart _parentPart, _currentPart;
     MusicMateMode _currentMode = MusicMateMode.Collection;
-    IAnimationManager _animations;
 
     event VisiblePartChangedEventHandler VisiblePartChanged;
     public event MusicMateModeChangedHandler ModeChanged;
@@ -38,18 +35,6 @@ public class AppState : IAppState
             ModeChanged?.Invoke(_currentMode);
         }
     }
-
-    IAnimationManager Animations
-    {
-        get
-        {
-            if (_animations == null)
-                _animations = AnimationManager.Instance;
-
-            return _animations;
-        }
-    }
-
 
     public IColorSettings CurrentColors { get; private set; }
 
@@ -134,23 +119,6 @@ public class AppState : IAppState
             ChangeState(item, enabled, isPlaying);
     }
     #endregion
-
-    public void ChangeColor(Image image, Color32 toColor, bool animate)
-    {
-        if (animate)
-            Animations.Panel.PlayImageColor(image, toColor);
-        else
-            image.color = toColor;
-    }
-
-    public void ChangeColor(TextMeshProUGUI text, Color32 toColor, bool animate)
-    {
-        if (animate)
-            Animations.Panel.PlayTextColor(text, toColor);
-        else
-            text.color = toColor;
-    }
-
 
     /// <summary>
     /// Notify subscribed controllers the visibility of a particular part has changed.
