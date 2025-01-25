@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
+using System.Linq;
 #endregion
 
 [RequireComponent(typeof(AudioSource))]
@@ -40,47 +41,57 @@ public class AudioPlayerController : MusicMateBehavior
 
     public bool IsPlayerExpanded { get; set; } = true; // TODO: Save and load state
 
-    internal CanvasGroup m_canvasGroupExpanded;
-
-    IAudioPlayerService _playerService;
-    IMusicMateApiService _apiService;
     AudioSource _audioSource;
     FadeData _fade;
+    Image _panelExpanded, _panelCollapsed;
 
     float _volume = 0.5f;
     bool _isPosDrag = false;
     bool _isVolumeOn = false;
 
+    internal CanvasGroup m_canvasGroupExpanded;
+
     #region Base Class Methods
     protected override void RegisterEventHandlers()
     {
-        _playerService.SubscribeToStateChanged(OnPlayerStateChanged);
-        _playerService.SubscribeToActionChanged(OnActionChanged);
+        PlayerService.SubscribeToStateChanged(OnPlayerStateChanged);
+        PlayerService.SubscribeToActionChanged(OnActionChanged);
     }
 
     protected override void UnregisterEventHandlers()
     {
-        _playerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
-        _playerService.UnsubscribeFromActionChanged(OnActionChanged);
+        PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
+        PlayerService.UnsubscribeFromActionChanged(OnActionChanged);
     }
 
     protected override void InitializeComponents()
     {
-        _playerService = AudioPlayerService.Instance;
-        _apiService = MusicMateApiService.Instance.GetClient();
         _audioSource = GetComponent<AudioSource>();
 
         m_canvasGroupExpanded = _expandedPlayer.gameObject.GetComponent<CanvasGroup>();
         m_canvasGroupExpanded.alpha = 0f;
+
+        _panelExpanded = _expandedPlayer.transform.GetComponent<Image>();
+        _panelCollapsed = _collapsedPlayer.transform.GetComponent<Image>();
     }
 
     protected override void InitializeValues()
     {
-        _playerService.PlayerWidth = _expandedPlayer.rect.width;
+        PlayerService.PlayerWidth = _expandedPlayer.rect.width;
         _fade = new FadeData(.2f, .4f);
 
         InitElements();
         StartCoroutine(SetPlayerState());
+    }
+
+    protected override void ApplyColors()
+    {
+        ChangeColor(MusicMateColor.Panel, _panelExpanded, _panelCollapsed);
+        ChangeColor(MusicMateColor.Text, _artistMarquee, _titleMarquee, _artistAndTitleMarquee);
+        ChangeColor(MusicMateColor.Text, _trackTotalText);
+        ChangeColor(MusicMateColor.Text, _trackStartTexts);
+        ChangeColor(MusicMateColor.Accent, _positionSliders);
+        ChangeColor(MusicMateColor.Accent, _volumeSlider1, _volumeSlider2);
     }
 
     void InitElements()
@@ -127,7 +138,7 @@ public class AudioPlayerController : MusicMateBehavior
                 text.SetText(ToTimeString(_audioSource.time));
         }
 
-        if (_playerService.IsPlaying && !_audioSource.isPlaying && _audioSource.time == 0)
+        if (PlayerService.IsPlaying && !_audioSource.isPlaying && _audioSource.time == 0)
             ClipFinished();
 
         //_audioSource.loop = repeat;
@@ -154,9 +165,9 @@ public class AudioPlayerController : MusicMateBehavior
         _collapseButton.gameObject.SetActive(false);
         _expandButton.gameObject.SetActive(true);
 
-        Animations.Panel.PlayCollapseAudioPlayer( _expandedPlayer, _collapsedPlayer, () =>
+        Animations.Panel.PlayCollapseAudioPlayer(_expandedPlayer, _collapsedPlayer, () =>
         {
-            _playerService.ChangeExpandedState(false);
+            PlayerService.ChangeExpandedState(false);
         });
     }
 
@@ -167,14 +178,14 @@ public class AudioPlayerController : MusicMateBehavior
     {
         _collapseButton.gameObject.SetActive(true);
         _expandButton.gameObject.SetActive(false);
-        _playerService.ChangeExpandedState(true);
+        PlayerService.ChangeExpandedState(true);
 
         Animations.Panel.PlayExpandAudioPlayer(_expandedPlayer, _collapsedPlayer);
     }
 
     void OnPlayPauseClicked()
     {
-        if (_playerService.IsPlaying)
+        if (PlayerService.IsPlaying)
             Pause();
         else
             Play();
@@ -214,36 +225,36 @@ public class AudioPlayerController : MusicMateBehavior
 
     void Play()
     {
-        if (_playerService.IsPaused)
+        if (PlayerService.IsPaused)
             ResumeFromPause();
     }
 
     void Pause()
     {
-        if (_playerService.IsPlaying)
+        if (PlayerService.IsPlaying)
             Fade(_volume, 0, _fade.FadeOutTime);
     }
 
     IEnumerator SetPlayerState()
     {
-        Manager.AppState.ChangeStates(_playPauseButtons, _playerService.IsActive, _playerService.IsPlaying);
-        Manager.AppState.ChangeStates(_previousButtons, _playerService.CanMoveBack);
-        Manager.AppState.ChangeStates(_nextButtons, _playerService.CanMoveForward);
+        Manager.AppState.ChangeStates(_playPauseButtons, PlayerService.IsActive, PlayerService.IsPlaying);
+        Manager.AppState.ChangeStates(_previousButtons, PlayerService.CanMoveBack);
+        Manager.AppState.ChangeStates(_nextButtons, PlayerService.CanMoveForward);
 
-        Manager.AppState.ChangeStates(_trackStartTexts, _playerService.IsActive);
-        Manager.AppState.ChangeState(_trackTotalText, _playerService.IsActive);
-        Manager.AppState.ChangeStates(_positionSliders, _playerService.IsActive);
-        Manager.AppState.ChangeStates(_releaseImages, _playerService.IsActive, _playerService.IsPlaying);
+        Manager.AppState.ChangeStates(_trackStartTexts, PlayerService.IsActive);
+        Manager.AppState.ChangeState(_trackTotalText, PlayerService.IsActive);
+        Manager.AppState.ChangeStates(_positionSliders, PlayerService.IsActive);
+        Manager.AppState.ChangeStates(_releaseImages, PlayerService.IsActive, PlayerService.IsPlaying);
 
         yield return null;
     }
 
     IEnumerator SetPlayerTrack()
     {
-        var release = _playerService.CurrentRelease;
-        var track = _playerService.CurrentTrack;
+        var release = PlayerService.CurrentRelease;
+        var track = PlayerService.CurrentTrack;
 
-        _apiService.DownloadImage(release.ThumbnailUrl, ProcessReleaseImage);
+        ApiService.DownloadImage(release.ThumbnailUrl, ProcessReleaseImage);
 
         yield return null;
 
@@ -287,7 +298,7 @@ public class AudioPlayerController : MusicMateBehavior
         }
     }
 
-    void SetPlayerState(PlayerState state) => _playerService.ChangeState(state);
+    void SetPlayerState(PlayerState state) => PlayerService.ChangeState(state);
 
     void ProcessReleaseImage(Sprite sprite)
     {

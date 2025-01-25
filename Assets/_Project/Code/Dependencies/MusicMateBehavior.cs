@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,7 +87,6 @@ public abstract class MusicMateBehavior : MonoBehaviour
             Manager.AppState.ModeChanged -= OnMusicMateModeChanged;
 
         UnregisterEventHandlers();
-        StopAllCoroutines();
     }
 
     protected virtual void Awake() => InitializeComponents();
@@ -187,51 +185,114 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
     }
 
-    protected void ChangeColor(MusicMateColor color, params Image[] args)
+    protected void ChangeColor<T>(MusicMateColor color, params T[] args) where T : class
     {
-        foreach (var image in args)
-            if (image != null)
-                ChangeColor(image, ColorFromEnum(color), !_initializing);
+        foreach (var item in args)
+        {
+            var animate = !_initializing && IsGameObjectActive(item);
+            var targetColor = ColorFromEnum(color);
+
+            ChangeColor(item, targetColor, animate);
+        }
     }
 
-    protected void ChangeColor(MusicMateColor color, params TextMeshProUGUI[] args)
+    bool IsGameObjectActive<T>(T item) where T : class
     {
-        foreach (var text in args)
-            if (text != null)
-                ChangeColor(text, ColorFromEnum(color), !_initializing);
+        if (item is Component component)
+            return component.gameObject.activeInHierarchy;
+        return true; // Non-component items are always considered "active"
     }
 
-    protected void ChangeColor(MusicMateColor color, params Marquee[] args)
+    void ChangeColor<T>(T target, Color32 toColor, bool animate) where T : class
     {
-        foreach (var marq in args)
-            if (marq != null)
-                ChangeColor(marq, ColorFromEnum(color), !_initializing);
-    }
+        if (target == null) return;
 
-    void ChangeColor(Image image, Color32 toColor, bool animate)
-    {
+        // Special handling for sliders, relay to separate method and exit
+        if (target is Slider slider)
+        {
+            ChangeSliderColor(slider, toColor, animate);
+            return;
+        }
+
+        switch (target)
+        {
+            case Image image:
+                toColor = EnsureAlphaConsistency(image.color, toColor);
+                break;
+            case TextMeshProUGUI text:
+                toColor = EnsureAlphaConsistency(text.color, toColor);
+                break;
+            case Marquee marq:
+                toColor = EnsureAlphaConsistency(marq.TextColor, toColor);
+                break;
+            default:
+                Debug.LogWarning($"ChangeColor: Unsupported type {typeof(T)} for color adjustment.");
+                return;
+        }
+
         if (animate)
-            Animations.Panel.PlayImageColor(image, toColor);
+        {
+            switch (target)
+            {
+                case Image image:
+                    Animations.Panel.PlayImageColor(image, toColor);
+                    break;
+                case TextMeshProUGUI text:
+                    Animations.Panel.PlayTextColor(text, toColor);
+                    break;
+                case Marquee marq:
+                    Animations.Panel.PlayMarqueeColor(marq, toColor);
+                    break;
+                default:
+                    break;
+            }
+        }
         else
-            image.color = toColor;
+        {
+            switch (target)
+            {
+                case Image image:
+                    image.color = toColor;
+                    break;
+                case TextMeshProUGUI text:
+                    text.color = toColor;
+                    break;
+                case Marquee marq:
+                    marq.TextColor = toColor;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-    void ChangeColor(TextMeshProUGUI text, Color32 toColor, bool animate)
+    void ChangeSliderColor(Slider slider, Color32 toColor, bool animate)
     {
+        var fillImage = slider.fillRect.GetComponent<Image>();
+        var handleImage = slider.handleRect.GetComponent<Image>();
+
+        toColor = EnsureAlphaConsistency(fillImage.color, toColor);
+
         if (animate)
-            Animations.Panel.PlayTextColor(text, toColor);
+        {
+            Animations.Panel.PlayImageColor(fillImage, toColor);
+            Animations.Panel.PlayImageColor(handleImage, toColor);
+        }
         else
-            text.color = toColor;
+        {
+            fillImage.color = toColor;
+            handleImage.color = toColor;
+        }
     }
 
-    void ChangeColor(Marquee marq, Color32 toColor, bool animate)
+    Color32 EnsureAlphaConsistency(Color32 currentColor, Color32 targetColor)
     {
-        if (animate)
-            Animations.Panel.PlayMarqueeColor(marq, toColor);
-        else
-            marq.TextColor = toColor;
-    }
+        // If the alpha values differ, use the current color's alpha for the target color
+        if (currentColor.a != targetColor.a)
+            targetColor.a = currentColor.a;
 
+        return targetColor;
+    }
 
     Color32 ColorFromEnum(MusicMateColor color)
     {

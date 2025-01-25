@@ -17,6 +17,9 @@ public class ShowReleaseController : MusicMateBehavior
     [SerializeField] Image _image;
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
+    [SerializeField] TextMeshProUGUI _yearCountry;
+    [SerializeField] TextMeshProUGUI _mainGenre;
+    [SerializeField] TextMeshProUGUI _subGenres;
     public TextMeshProUGUI m_artist_title;
     public TextMeshProUGUI m_total_length;
     public GridTrackController m_tracks;
@@ -47,6 +50,12 @@ public class ShowReleaseController : MusicMateBehavior
             m_maximized.ApplyTransformDataInstant(this);
         else
             m_normal.ApplyTransformDataInstant(this);
+    }
+
+    protected override void ApplyColors()
+    {
+        ChangeColor(MusicMateColor.Text, _artist,_title);
+        ChangeColor(MusicMateColor.Text,_yearCountry,_mainGenre,_subGenres, m_artist_title, m_total_length);
     }
 
     protected override void RegisterEventHandlers()
@@ -88,7 +97,6 @@ public class ShowReleaseController : MusicMateBehavior
             m_tracks.SetRelease(model);
 
             _showDetails.StopSpinner();
-
         });
     }
 

@@ -37,6 +37,9 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
             DrawSectionField("_image", "Release Image");
             DrawSectionField("_artist", "Artist");
             DrawSectionField("_title", "Title");
+            DrawSectionField("_yearCountry", "Tear & Country");
+            DrawSectionField("_mainGenre", "Main Genre");
+            DrawSectionField("_subGenres", "Sub Genres");
             DrawSectionField("m_artist_title", "Artist & Title");
             DrawSectionField("m_total_length", "Total Length");
             DrawSectionField("m_tracks", "Tracks");

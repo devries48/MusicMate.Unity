@@ -33,6 +33,12 @@ public class DetailsAnimator : MusicMateBehavior
         _panel = GetComponent<Image>();
     }
 
+    protected override void ApplyColors()
+    {
+        ChangeColor(MusicMateColor.Panel, _panel);
+        ChangeColor(MusicMateColor.Accent, _spinner);
+    }
+
     void Update()
     {
         if (IsLoading)
@@ -68,11 +74,6 @@ public class DetailsAnimator : MusicMateBehavior
     }
 
     void OnCloseClicked() => CloseDetails();
-
-    protected override void ApplyColors()
-    {
-        ChangeColor(MusicMateColor.Panel, _panel);
-    }
 
     /*
         void MoveReleaseDetails(bool show, float delay = 0)
