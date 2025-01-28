@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class MainWindowAnimator : MusicMateBehavior
 {
-    [Header("Controllers")]
+    [Header("Panel Controllers")]
     [SerializeField] AudioPlayerController _audioPlayer;
     [SerializeField] GridReleaseController _releaseResult;
     [SerializeField] DetailsAnimator _showDetails;
+    [SerializeField] ProvidersController _providers;
 
     [Header("Toolbar Controllers")]
     [SerializeField] ToolbarApplicationController _applicationToolbar;

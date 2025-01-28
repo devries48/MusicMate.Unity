@@ -11,6 +11,7 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
     [SerializeField] float _toolbarHoverScale = 1.2f;
     [SerializeField] float _toolbarClickScale = 0.8f;
     [SerializeField] float _toolbarToggleScale = 0.7f;
+    [SerializeField] float _toolbarToggleTime = 0.1f;
     [SerializeField] float _toolbarTooltipPopupTime = 0.1f;
 
     // toolbar spinner
@@ -84,28 +85,39 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
 
     public void PlayToggleOn(ToolbarButtonAnimator button)
     {
+        if (button.IsTextToggle)
+        {
+            button.m_toggleIcon.gameObject.SetActive(true);
+            return;
+        }
+
         button.m_icon.transform
-            .DOScale(_toolbarToggleScale, .25f)
+            .DOScale(_toolbarToggleScale, _toolbarToggleTime)
             .SetEase(Ease.InBack)
             .OnComplete(
                 () =>
                 {
                     button.m_toggleIcon.gameObject.SetActive(true);
-                    button.IsInteractable = false;
-                    //button.m_icon.color = MusicMateManager.Instance.AccentColor;
+                    if (button.IsToggleGroup) button.IsInteractable = false;
                 });
     }
 
     public void PlayToggleOff(ToolbarButtonAnimator button)
     {
+        if (button.IsTextToggle)
+        {
+            button.m_toggleIcon.gameObject.SetActive(false);
+            return;
+        }
+
         button.m_icon.transform
-            .DOScale(1f, .25f)
+            .DOScale(1f, _toolbarToggleTime/2)
             .SetEase(Ease.OutBack)
             .OnComplete(
                 () =>
                 {
                     button.m_toggleIcon.gameObject.SetActive(false);
-                    button.IsInteractable = true;
+                    if (button.IsToggleGroup) button.IsInteractable = true;
                 });
     }
 

@@ -49,13 +49,21 @@ public enum PlayerAction
 
 public enum PlaylistAction { None, NewList, IndexChanged }
 
-public enum ButtonAnimationType
+public enum ButtonType
 {
-    TextButton,
-    DefaultImageButton,
-    LargeImageButton,
-    StateImageButton,
-    ExpandCollapseButton
+    Text,
+    DefaultImage,
+    LargeImage,
+    StateImage,
+    ExpandCollapse
+}
+
+public enum ToolbarButtonType
+{
+    Default,
+    Spinner,
+    Toggle,
+    ToggleText,
 }
 
 public enum ThumbnailSize { Tiny, Small, Medium, Large };

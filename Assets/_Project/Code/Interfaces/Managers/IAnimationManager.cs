@@ -45,10 +45,10 @@ public interface IButtonAnimations
     float ImageButtonLargeScale { get; }
 
     void Initialize(IMusicMateManager manager);
-    void PlayClicked(ButtonInteractable button, ButtonAnimationType buttonType);
-    void PlayHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType, float duration = 0);
-    void PlayHoverExit(ButtonInteractable button, ButtonAnimationType buttonType);
-    void PlayInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType);
+    void PlayClicked(ButtonInteractable button, ButtonType buttonType);
+    void PlayHoverEnter(ButtonInteractable button, ButtonType buttonType, float duration = 0);
+    void PlayHoverExit(ButtonInteractable button, ButtonType buttonType);
+    void PlayInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonType buttonType);
 }
 
 public interface IGridAnimations

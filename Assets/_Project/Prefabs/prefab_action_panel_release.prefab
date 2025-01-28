@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6074267774290331329}
   - component: {fileID: 9167184125328028417}
   m_Layer: 5
-  m_Name: prefab_release_action_panel
+  m_Name: prefab_action_panel_release
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

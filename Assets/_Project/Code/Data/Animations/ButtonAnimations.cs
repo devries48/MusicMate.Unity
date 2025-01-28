@@ -38,18 +38,18 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
     readonly Dictionary<RectTransform, Tween> _expandTweens = new();
 
     #region Default Button Events
-    public void PlayClicked(ButtonInteractable button, ButtonAnimationType buttonType)
+    public void PlayClicked(ButtonInteractable button, ButtonType buttonType)
     {
-        if (buttonType == ButtonAnimationType.ExpandCollapseButton)
+        if (buttonType == ButtonType.ExpandCollapse)
             ExpandOrCollapsClickAnimation(button);
         else
         {
             var duration = _animationTime / 2;
             var scaleClick = buttonType switch
             {
-                ButtonAnimationType.DefaultImageButton => _imageClickScale,
-                ButtonAnimationType.StateImageButton => _imageClickScale,
-                ButtonAnimationType.LargeImageButton => _imageLargeClickScale,
+                ButtonType.DefaultImage => _imageClickScale,
+                ButtonType.StateImage => _imageClickScale,
+                ButtonType.LargeImage => _imageLargeClickScale,
                 _ => _textClickScale
             };
             button.transform
@@ -59,7 +59,7 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         }
     }
 
-    public void PlayHoverEnter(ButtonInteractable button, ButtonAnimationType buttonType, float duration = 0)
+    public void PlayHoverEnter(ButtonInteractable button, ButtonType buttonType, float duration = 0)
     {
         if (!button.interactable)
             return;
@@ -67,15 +67,15 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         if (duration == 0)
             duration = _animationTime;
 
-        if (buttonType == ButtonAnimationType.ExpandCollapseButton)
+        if (buttonType == ButtonType.ExpandCollapse)
             StartExpandOrCollapseAnimation(button);
         else
         {
             var scale = buttonType switch
             {
-                ButtonAnimationType.DefaultImageButton => _imageHoverScale,
-                ButtonAnimationType.StateImageButton => _imageHoverScale,
-                ButtonAnimationType.LargeImageButton => _imageLargeHoverScale,
+                ButtonType.DefaultImage => _imageHoverScale,
+                ButtonType.StateImage => _imageHoverScale,
+                ButtonType.LargeImage => _imageLargeHoverScale,
                 _ => _textHoverScale
             };
 
@@ -83,17 +83,17 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         }
     }
 
-    public void PlayHoverExit(ButtonInteractable button, ButtonAnimationType buttonType)
+    public void PlayHoverExit(ButtonInteractable button, ButtonType buttonType)
     {
-        if (buttonType == ButtonAnimationType.ExpandCollapseButton)
+        if (buttonType == ButtonType.ExpandCollapse)
             StopExpandOrCollapseAnimation(button);
         else
         {
             var scale = buttonType switch
             {
-                ButtonAnimationType.DefaultImageButton => _imageScale,
-                ButtonAnimationType.StateImageButton => _imageScale,
-                ButtonAnimationType.LargeImageButton => _imageLargeScale,
+                ButtonType.DefaultImage => _imageScale,
+                ButtonType.StateImage => _imageScale,
+                ButtonType.LargeImage => _imageLargeScale,
                 _ => 1.0f
             };
 
@@ -101,12 +101,12 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         }
     }
 
-    public void PlayInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonAnimationType buttonType)
+    public void PlayInteractableChanged(ButtonInteractable button, bool isInteractable, bool isPrimary, ButtonType buttonType)
     {
         Color32 backgroundColor = _manager.AppColors.DefaultColor;
         Color32 foregroundColor;
 
-        if (buttonType == ButtonAnimationType.DefaultImageButton || buttonType == ButtonAnimationType.LargeImageButton)
+        if (buttonType == ButtonType.DefaultImage || buttonType == ButtonType.LargeImage)
         {
             foregroundColor = isPrimary ? _manager.AppColors.AccentColor : _manager.AppColors.TextColor;
         }
@@ -222,9 +222,9 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         ButtonInteractable button,
         Color32 backgroundColor,
         Color32 foregroundColor,
-        ButtonAnimationType buttonType)
+        ButtonType buttonType)
     {
-        if (buttonType == ButtonAnimationType.TextButton)
+        if (buttonType == ButtonType.Text)
         {
             button.TextComponent.DOColor(foregroundColor, _animationTime);
             button.ImageComponent.DOColor(backgroundColor, _animationTime);

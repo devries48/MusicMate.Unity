@@ -12,3 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7cec93c3020b141819ec547e1dad42, type: 3}
   m_Name: Toolbar Animations
   m_EditorClassIdentifier: 
+  _animationTime: 0.2
+  _animationEase: 27
+  _toolbarHoverScale: 1.1
+  _toolbarClickScale: 0.9
+  _toolbarToggleScale: 0.7
+  _toolbarToggleTime: 0.1
+  _toolbarTooltipPopupTime: 0.1
+  _toolbarSpinnerScale: 0.7
+  _toolbarSpinTime: 0.4
+  _toolbarPartRotateTime: 0.5
+  _toolbarPartDelayTime: 0.1

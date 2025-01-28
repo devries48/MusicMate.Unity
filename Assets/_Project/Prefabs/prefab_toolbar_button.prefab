@@ -140,8 +140,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 55606eb7c5b83e3489889acc81d0dd44, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 73cfd1cbcc3215040a8189cb5cab5991, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 2.5
 --- !u!1 &2295789091444348390
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 3674797669516159946}
   - component: {fileID: 8872490707343478299}
   m_Layer: 5
-  m_Name: prefab_button_toolbar
+  m_Name: prefab_toolbar_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

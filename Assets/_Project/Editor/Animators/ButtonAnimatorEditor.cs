@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEngine;
 
 [CustomEditor(typeof(ButtonAnimator))]
 public class ButtonAnimatorEditor : MusicMateEditorBase
@@ -11,34 +10,35 @@ public class ButtonAnimatorEditor : MusicMateEditorBase
         serializedObject.Update();
 
         DrawLogo();
-        DrawSectionHeader("Button Animator");
+        DrawTitle("Button Animator");
+   
         DrawSectionField(_buttonType, "Button Type");
         DrawSectionField("_interactable", "Is Interactable");
 
-        var buttonType = (ButtonAnimationType)_buttonType.enumValueIndex;
-        if(buttonType != ButtonAnimationType.ExpandCollapseButton)
+        var buttonType = (ButtonType)_buttonType.enumValueIndex;
+        if(buttonType != ButtonType.ExpandCollapse)
             DrawSectionField("_isPrimary", "Is Primary");
 
         DrawSpace();
 
         switch (buttonType)
         {
-            case ButtonAnimationType.TextButton:
+            case ButtonType.Text:
                 DrawSectionHeader("Text Button");
                 DrawSectionField("_text", "Text");
                 break;
-            case ButtonAnimationType.DefaultImageButton:
-            case ButtonAnimationType.LargeImageButton:
+            case ButtonType.DefaultImage:
+            case ButtonType.LargeImage:
                 DrawSectionHeader("Image Button");
                 DrawSectionField("_icon", "Icon");
                 break;
-            case ButtonAnimationType.StateImageButton:
+            case ButtonType.StateImage:
                 DrawSectionHeader("State Image Button");
                 DrawSectionField("_isStateOn", "State ON");
                 DrawSectionField("_icon", "State Icon OFF");
                 DrawSectionField("_stateIcon", "State Icon ON");
                 break;
-            case ButtonAnimationType.ExpandCollapseButton:
+            case ButtonType.ExpandCollapse:
                 DrawSectionHeader("Expand/Collapse Button");
                 DrawSectionField("_isToggle", "Is Toggle");
                 DrawSectionField("_isExpanded", "Is Expanded");

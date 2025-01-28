@@ -67,17 +67,17 @@ public class AudioPlayerController : MusicMateBehavior
     protected override void InitializeComponents()
     {
         _audioSource = GetComponent<AudioSource>();
-
-        m_canvasGroupExpanded = _expandedPlayer.gameObject.GetComponent<CanvasGroup>();
-        m_canvasGroupExpanded.alpha = 0f;
-
         _panelExpanded = _expandedPlayer.transform.GetComponent<Image>();
         _panelCollapsed = _collapsedPlayer.transform.GetComponent<Image>();
+
+        m_canvasGroupExpanded = _expandedPlayer.gameObject.GetComponent<CanvasGroup>();
     }
 
     protected override void InitializeValues()
     {
         PlayerService.PlayerWidth = _expandedPlayer.rect.width;
+
+        m_canvasGroupExpanded.alpha = 0f;
         _fade = new FadeData(.2f, .4f);
 
         InitElements();

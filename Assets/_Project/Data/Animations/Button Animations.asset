@@ -17,9 +17,9 @@ MonoBehaviour:
   _textHoverScale: 1.1
   _textClickScale: 0.9
   _imageScale: 0.6
-  _imageHoverScale: 0.8
-  _imageClickScale: 0.4
+  _imageHoverScale: 0.7
+  _imageClickScale: 0.5
   _imageLargeScale: 1
-  _imageLargeHoverScale: 1.2
-  _imageLargeClickScale: 0.8
+  _imageLargeHoverScale: 1.1
+  _imageLargeClickScale: 0.9
   _iconAnimationTime: 0.8

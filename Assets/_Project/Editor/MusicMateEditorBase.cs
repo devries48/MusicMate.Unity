@@ -71,7 +71,7 @@ public abstract class MusicMateEditorBase : Editor
         if (!condition) return;
 
         var property = Find(propertyName);
-
+        
         GUILayout.BeginVertical();
         EditorGUILayout.PropertyField(property, new GUIContent(label));
         GUILayout.EndVertical();

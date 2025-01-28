@@ -19,7 +19,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     #region Serialized Fields
     [SerializeField] bool _interactable;
     [SerializeField] bool _isPrimary;
-    [SerializeField] ButtonAnimationType _buttonType;
+    [SerializeField] ButtonType _buttonType;
     [SerializeField] string _text;   // Text Button
     [SerializeField] Sprite _icon;   // Image Button
     [SerializeField] Sprite _stateIcon;   // Image State Button
@@ -60,28 +60,28 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
             if (Button.TextComponent != null)
             {
-                Button.TextComponent.text = _buttonType == ButtonAnimationType.ExpandCollapseButton
+                Button.TextComponent.text = _buttonType == ButtonType.ExpandCollapse
                     ? _headerText
                     : _text;
             }
 
             if (Button.ImageComponent != null)
             {
-                if (_buttonType == ButtonAnimationType.DefaultImageButton ||
-                    _buttonType == ButtonAnimationType.LargeImageButton ||
-                    _buttonType == ButtonAnimationType.StateImageButton)
+                if (_buttonType == ButtonType.DefaultImage ||
+                    _buttonType == ButtonType.LargeImage ||
+                    _buttonType == ButtonType.StateImage)
                 {
                     if (_icon != null)
                     {
                         SetIcon();
 
-                        var scale = _buttonType == ButtonAnimationType.LargeImageButton
+                        var scale = _buttonType == ButtonType.LargeImage
                             ? Animations.Button.ImageButtonLargeScale
                             : Animations.Button.ImageButtonScale;
 
                         Button.transform.localScale = new Vector3(scale, scale, scale);
                     }
-                    else if (_buttonType == ButtonAnimationType.ExpandCollapseButton)
+                    else if (_buttonType == ButtonType.ExpandCollapse)
                     {
                         InitializeExpandCollapseButton();
                     }
@@ -134,14 +134,14 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         {
             var iconColor = MusicMateColor.Icon;
 
-            if (_buttonType == ButtonAnimationType.DefaultImageButton ||
-                _buttonType == ButtonAnimationType.LargeImageButton ||
-                _buttonType == ButtonAnimationType.StateImageButton)
+            if (_buttonType == ButtonType.DefaultImage ||
+                _buttonType == ButtonType.LargeImage ||
+                _buttonType == ButtonType.StateImage)
 
                 iconColor = !Button.interactable
                     ? MusicMateColor.DisabledIcon
                     : _isPrimary ? MusicMateColor.Accent : MusicMateColor.Icon;
-            else if (_buttonType != ButtonAnimationType.ExpandCollapseButton)
+            else if (_buttonType != ButtonType.ExpandCollapse)
                 iconColor = _isPrimary ? MusicMateColor.Accent : MusicMateColor.Default;
 
             ChangeColor(iconColor, Button.ImageComponent);
@@ -204,7 +204,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     void SetIcon()
     {
         var icon = _icon;
-        if (_buttonType == ButtonAnimationType.StateImageButton && _isStateOn)
+        if (_buttonType == ButtonType.StateImage && _isStateOn)
             icon = _stateIcon;
 
         Button.ImageComponent.sprite = icon;
@@ -214,7 +214,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     {
         Animations.Button.PlayClicked(Button, _buttonType);
 
-        if (_buttonType == ButtonAnimationType.StateImageButton)
+        if (_buttonType == ButtonType.StateImage)
             SetState(!_isStateOn);
 
         OnButtonClick?.Invoke();

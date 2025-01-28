@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEditor.Experimental.GraphView;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -14,21 +16,16 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 {
     #region Serialized Fields
     [SerializeField] bool _interactable;
+    [SerializeField] ToolbarButtonType _buttonType;
     [SerializeField] Sprite _icon;
+    [SerializeField] string _text;
     [SerializeField] string _tooltip;
-
-    [Header("Toggle")]
-    [SerializeField] bool _isToggleButton;
     [SerializeField] bool _isToggleOn;
-
-    [Header("Spinner")]
-    [SerializeField] bool _isSpinnerButton;
+    [SerializeField, Tooltip("The button is part of a group where only one button can be toggled.")] bool _isToggleGroup;
     #endregion
 
     #region Properties
     public UnityEvent OnButtonClick { get; private set; } = new UnityEvent();
-
-    public bool IsSpinning { get; set; }
 
     public bool IsInteractable
     {
@@ -44,9 +41,11 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     }
 
     public bool IsToggleOn { get => _isToggleOn; private set { _isToggleOn = value; } }
+    public bool IsToggleGroup { get  => _isToggleGroup; }
+    public bool IsTextToggle { get => _buttonType == ToolbarButtonType.ToggleText; }
 
+    public bool IsSpinning { get; set; }
     public bool CanShowSpinner => IsSpinning && !m_spinner.isActiveAndEnabled;
-
     public bool CanHideSpinner => !IsSpinning && m_spinner.isActiveAndEnabled;
     #endregion
 
@@ -55,6 +54,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     internal Image m_toggleIcon;
     internal Image m_spinnerBackground;
     internal Image m_spinner;
+    internal TextMeshProUGUI m_text;
 
     internal RectTransform m_tooltipPanel;
     internal Image m_tooltipBackground;
@@ -77,8 +77,13 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         _isInitialized = true;
 
         transform.Find("Button/Icon").TryGetComponent(out m_icon);
-        transform.Find("Button/Background").TryGetComponent(out m_spinnerBackground);
-        transform.Find("Button/Spinner").TryGetComponent(out m_spinner);
+        if (_buttonType == ToolbarButtonType.ToggleText)
+            transform.Find("Button/Text").TryGetComponent(out m_text);
+        else
+        {
+            transform.Find("Button/Background").TryGetComponent(out m_spinnerBackground);
+            transform.Find("Button/Spinner").TryGetComponent(out m_spinner);
+        }
         transform.Find("Toggle Icon").TryGetComponent(out m_toggleIcon);
         transform.Find("Tooltip").TryGetComponent(out m_tooltipPanel);
         transform.Find("Tooltip").TryGetComponent(out m_tooltipBackground);
@@ -90,10 +95,10 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     protected override void InitializeValues()
     {
         if (m_icon != null)
-        {
             m_icon.sprite = _icon;
-            m_icon.color = _interactable ? Manager.AppColors.IconColor : Manager.AppColors.DisabledIconColor;
-        }
+
+        if (m_text != null)
+            m_text.text = _text;
 
         m_tooltipText.text = _tooltip;
 
@@ -107,13 +112,17 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
         IsInteractable = _interactable;
 
-        if (_isToggleButton && _isToggleOn)
+        if (_isToggleOn && (_buttonType == ToolbarButtonType.Toggle || _buttonType == ToolbarButtonType.ToggleText))
             SetToggle();
     }
 
     protected override void ApplyColors()
     {
-        ChangeColor(_interactable ? MusicMateColor.Icon : MusicMateColor.DisabledIcon, m_icon);
+        if (m_icon != null)
+            ChangeColor(_interactable ? MusicMateColor.Icon : MusicMateColor.DisabledIcon, m_icon);
+        if (m_text != null)
+            ChangeColor(_interactable ? MusicMateColor.Text : MusicMateColor.DisabledIcon, m_text);
+      
         ChangeColor(MusicMateColor.Accent, m_toggleIcon, m_spinner);
         ChangeColor(MusicMateColor.Background, m_tooltipBackground);
         ChangeColor(MusicMateColor.Text, m_tooltipText);
@@ -141,13 +150,13 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     void OnButtonClicked()
     {
-        if (_isToggleButton)
+        if (_buttonType == ToolbarButtonType.Toggle || _buttonType == ToolbarButtonType.ToggleText)
         {
             IsToggleOn = !IsToggleOn;
             SetToggle();
         }
 
-        if (!_isToggleButton && !_isSpinnerButton)
+        if (_buttonType != ToolbarButtonType.Toggle && _buttonType != ToolbarButtonType.ToggleText && _buttonType != ToolbarButtonType.Spinner)
             Animations.Toolbar.PlayClicked(this);
 
         OnButtonClick?.Invoke();
@@ -183,7 +192,8 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Animations.Toolbar.PlayHoverEnter(this);
+        if (!_isToggleGroup || !IsToggleOn)
+            Animations.Toolbar.PlayHoverEnter(this);
 
         if (_tooltipHideCoroutine != null)
         {
@@ -240,10 +250,8 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (!_interactable && _isToggleOn)
             _isToggleOn = false;
 
-        if (!_isToggleButton)
+        if (_buttonType != ToolbarButtonType.Toggle && _buttonType != ToolbarButtonType.ToggleText)
             _isToggleOn = false;
-        else
-            _isSpinnerButton = false;
 
         // Prevent Object Reference error when loading the project and the colors scriptable is not loaded yet.
         if (m_icon != null && Manager.AppConfiguration != null)
