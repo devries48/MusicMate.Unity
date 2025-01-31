@@ -43,6 +43,14 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
     [SerializeField] float _detailsHideTime = .2f;
     [SerializeField] Ease _detailsHideEase = Ease.OutQuint;
 
+    [Header("Providers Panel")]
+    [SerializeField] float _providersShowTime = .5f;
+    [SerializeField] Ease _providersShowEase = Ease.OutBack;
+    [SerializeField, Tooltip("Pivot X position to show Providers Panel")] float _providersShowPivot = 1f;
+    [SerializeField] float _providersHideTime = .2f;
+    [SerializeField] Ease _providersHideEase = Ease.InBack;
+    [SerializeField, Tooltip("Pivot X position to hide Providers Panel")] float _providersHidePivot = -.5f;
+
     [Header("AudioPlayer Collapsed")]
     [SerializeField] float _playerCollapseTime = 1f;
     [SerializeField] float _playerSmallShowDelay = .5f;
@@ -56,6 +64,7 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
     [SerializeField] Ease _playerSmallHideEase = Ease.InBack;
     [SerializeField] Ease _playerLargeShowEase = Ease.OutBack;
     [SerializeField] Ease _playerLargeGrowEase = Ease.OutBack;
+
 
     public void PlayShowLoginWindow(GameObject loginWindow, float delay) => MoveVertical(
         true,
@@ -84,7 +93,7 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
         _errorShowPivot,
         _hideDelay);
 
-    public void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, Action onComplete = null)
+    public void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, bool delay = false, Action onComplete = null)
     {
         var scaleTo = largePlayer.transform.localScale * .8f;
 
@@ -101,13 +110,16 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
     public void PlayExpandAudioPlayer(
         RectTransform expandedPlayer,
         RectTransform collapsedPlayer,
+        bool delay = false,
         Action onComplete = null)
     {
         collapsedPlayer.DOPivotY(-.5f, _playerExpandTime / 2).SetEase(_playerSmallHideEase);
 
+        var delayTime = delay ? _providersHideTime : 0;
+
         expandedPlayer.DOPivotX(1, _playerExpandTime / 2)
             .SetEase(_playerLargeShowEase)
-            .SetDelay(_playerLargeGrowDelay)
+            .SetDelay(_playerLargeGrowDelay + delayTime)
             .OnComplete(
                 () =>
                 {
@@ -118,15 +130,15 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
 
     public void PlayPanelVisibility(bool fadeIn, float duration, float delay = 0, params CanvasGroup[] canvases)
     {
-        if(canvases == null || canvases.Length == 0)
+        if (canvases == null || canvases.Length == 0)
             return;
 
-        if(duration == 0f)
+        if (duration == 0f)
             duration = _fadeDuration;
 
-        foreach(var canvas in canvases)
+        foreach (var canvas in canvases)
         {
-            if(canvas == null)
+            if (canvas == null)
                 continue;
 
             canvas.alpha = fadeIn ? 0f : 1f;
@@ -156,7 +168,7 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
 
     public void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails)
     {
-        if(isVisible)
+        if (isVisible)
             showDetails.gameObject.SetActive(true);
 
         var scaleTo = isVisible ? 1f : 0f;
@@ -169,14 +181,37 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
             .OnComplete(
                 () =>
                 {
-                    if(!isVisible)
+                    if (!isVisible)
                         showDetails.gameObject.SetActive(false);
+                });
+    }
+
+    public void PlayProvidersVisibility(bool isVisible, ProvidersController providers, bool delay = false)
+    {
+        if (isVisible)
+            providers.gameObject.SetActive(true);
+
+        // Wait for Audip Player to collapse
+        float delaytime = delay ? _playerCollapseTime : 0f;
+
+        var pivotTo = isVisible ? _providersShowPivot : _providersHidePivot;
+        var easing = isVisible ? _providersShowEase : _providersHideEase;
+        var rect = providers.gameObject.GetComponent<RectTransform>();
+
+        rect.DOPivotX(pivotTo, _providersShowTime)
+            .SetEase(easing)
+            .SetDelay(delaytime)
+            .OnComplete(
+                () =>
+                {
+                    if (!isVisible)
+                        providers.gameObject.SetActive(false);
                 });
     }
 
     void MoveVertical(bool show, GameObject obj, float hidePivot, float showPivot, float delay = 0f)
     {
-        if(show)
+        if (show)
             obj.SetActive(true);
 
         var pivotTo = show ? showPivot : hidePivot;
@@ -189,7 +224,7 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
             .OnComplete(
                 () =>
                 {
-                    if(!show)
+                    if (!show)
                         obj.SetActive(false);
                 });
     }

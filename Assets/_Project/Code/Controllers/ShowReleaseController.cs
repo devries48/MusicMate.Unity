@@ -54,8 +54,8 @@ public class ShowReleaseController : MusicMateBehavior
 
     protected override void ApplyColors()
     {
-        ChangeColor(MusicMateColor.Text, _artist,_title);
-        ChangeColor(MusicMateColor.Text,_yearCountry,_mainGenre,_subGenres, m_artist_title, m_total_length);
+        ChangeState(true, _artist,_title);
+        ChangeState(true,_yearCountry,_mainGenre,_subGenres, m_artist_title, m_total_length);
     }
 
     protected override void RegisterEventHandlers()

@@ -9,14 +9,20 @@ public enum MusicMateColor
     Accent,
     Default,
     Text,
+    DisabledText,
     Panel,
     Background,
     AccentText,
     Icon,
     DisabledIcon
 }
+public enum MusicMateStateChange
+{
+    Part,
+    Providers
+}
 
-public enum VisiblePart
+public enum MusicMateStatePart
 {
     Previous,
     ReleaseResult,

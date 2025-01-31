@@ -105,7 +105,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public void ShowRelease(ReleaseResult releaseModel)
     {
         _mainPage.ShowRelease(releaseModel);
-        AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
+        AppState.InvokeStateChanged(MusicMateStatePart.ReleaseDetails);
     }
 
     public void HideSpinner()

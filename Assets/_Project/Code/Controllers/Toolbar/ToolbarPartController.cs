@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -20,7 +20,7 @@ public class ToolbarPartController : ToolbarControllerBase
     internal GameObject m_activePart;
 
     DetailsToggle _toggled;
-    VisiblePart _currentPart;
+    MusicMateStatePart _currentPart;
 
     enum DetailsToggle { release, artist }
 
@@ -39,14 +39,14 @@ public class ToolbarPartController : ToolbarControllerBase
         _searchPart.SetActive(true);
         _releasePart.SetActive(false);
         m_activePart = _searchPart;
-        _currentPart = VisiblePart.ReleaseResult;
+        _currentPart = MusicMateStatePart.ReleaseResult;
     }
 
     protected override void RegisterEventHandlers()
     {
         base.RegisterEventHandlers();
 
-        Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
+        Manager.AppState.SubscribeToMusicMateStateChanged(OnMusicMateStateChanged);
 
         _releaseToggle.OnButtonClick.AddListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.AddListener(OnArtistToggleClicked);
@@ -56,10 +56,11 @@ public class ToolbarPartController : ToolbarControllerBase
     {
         base.UnregisterEventHandlers();
 
-        Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+        Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
 
         _releaseToggle.OnButtonClick.RemoveListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.RemoveListener(OnArtistToggleClicked);
+
     }
     #endregion
 
@@ -78,7 +79,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.release;
         SetElementStates();
 
-        Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseDetails);
+        Manager.AppState.InvokeStateChanged(MusicMateStatePart.ReleaseDetails);
     }
 
     void OnArtistToggleClicked()
@@ -86,21 +87,21 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.artist;
         SetElementStates();
 
-        Manager.AppState.ChangeVisiblePart(VisiblePart.ArtistDetails);
+        Manager.AppState.InvokeStateChanged(MusicMateStatePart.ArtistDetails);
     }
 
-    void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)
+    void OnMusicMateStateChanged(MusicMateState state)
     {
-        if (e.Part != VisiblePart.ReleaseResult && e.Part != VisiblePart.ReleaseDetails || e.Part == _currentPart)
+        if (state.Part != MusicMateStatePart.ReleaseResult && state.Part != MusicMateStatePart.ReleaseDetails || state.Part == _currentPart)
             return;
 
-        _currentPart = e.Part;
+        _currentPart = state.Part;
 
         string title = default;
         GameObject hidePart = m_activePart;
         GameObject showPart = default;
 
-        if (e.Part == VisiblePart.ReleaseResult)
+        if (state.Part == MusicMateStatePart.ReleaseResult)
         {
             title = _titleSearch;
             showPart = _searchPart;
@@ -109,7 +110,7 @@ public class ToolbarPartController : ToolbarControllerBase
             _toggled = DetailsToggle.release;
             SetElementStates();
         }
-        else if (e.Part == VisiblePart.ReleaseDetails)
+        else if (state.Part == MusicMateStatePart.ReleaseDetails)
         {
             title = _titleRelease;
             showPart = _releasePart;

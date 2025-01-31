@@ -49,7 +49,7 @@ public class ActionPanelController : MusicMateBehavior
         InitializePlayState();
     }
 
-    void InitializePlayState() => Manager.AppState.ChangeState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
+    void InitializePlayState() => Manager.AppState.ChangePlayButtonState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
 
     void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
 
@@ -78,7 +78,7 @@ public class ActionPanelController : MusicMateBehavior
 
     IEnumerator SetPlayerState()
     {
-        Manager.AppState.ChangeState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
+        Manager.AppState.ChangePlayButtonState(_playPauseButton, PlayerService.IsActive, PlayerService.IsPlaying);
 
         yield return null;
     }

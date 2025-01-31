@@ -77,15 +77,15 @@ public interface IPanelAnimations
     void PlayImageColor(Image image, Color32 toColor);
     void PlayTextColor(TextMeshProUGUI text, Color32 toColor);
     void PlayMarqueeColor(Marquee marquee, Color32 toColor);
-    void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, Action onComplete = null);
-    void PlayExpandAudioPlayer(RectTransform expandedPlayer, RectTransform collapsedPlayer, Action onComplete = null);
+    void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, bool delay = false, Action onComplete = null);
+    void PlayExpandAudioPlayer(RectTransform expandedPlayer, RectTransform collapsedPlayer, bool delay = false, Action onComplete = null);
     void PlayShowLoginWindow(GameObject loginWindow, float delay);
     void PlayHideLoginWindow(GameObject loginWindow);
     void PlayShowErrorWindow(GameObject errorWindow);
     void PlayHideErrorWindow(GameObject errorWindow);
     void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release);
     void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails);
-
+    void PlayProvidersVisibility(bool isVisible, ProvidersController providers,bool delay=false);
 }
 
 public interface IToolbarAnimations
@@ -102,4 +102,5 @@ public interface IToolbarAnimations
     void PlayShowTooltip(ToolbarButtonAnimator button);
     void PlayHideTooltip(ToolbarButtonAnimator button);
     void PlayPartRotate(ToolbarPartController controller, string title, GameObject showPart, GameObject hidePart);
+    void PlayModePanelResize(MusicMateMode mode, ToolbarModeController toolbarModeController);
 }

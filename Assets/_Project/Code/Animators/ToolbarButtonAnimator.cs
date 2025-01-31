@@ -119,9 +119,9 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     protected override void ApplyColors()
     {
         if (m_icon != null)
-            ChangeColor(_interactable ? MusicMateColor.Icon : MusicMateColor.DisabledIcon, m_icon);
+            ChangeState(_interactable , m_icon);
         if (m_text != null)
-            ChangeColor(_interactable ? MusicMateColor.Text : MusicMateColor.DisabledIcon, m_text);
+            ChangeState(_interactable, m_text);
       
         ChangeColor(MusicMateColor.Accent, m_toggleIcon, m_spinner);
         ChangeColor(MusicMateColor.Background, m_tooltipBackground);

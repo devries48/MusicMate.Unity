@@ -51,7 +51,7 @@ public class ArtistDetailsController : MonoBehaviour
 
     public void CloseDetails()
     {
-        _manager.AppState.ChangeVisiblePart(VisiblePart.Previous);
+        _manager.AppState.InvokeStateChanged(MusicMateStatePart.Previous);
     }
 
     IEnumerator GetArtistCore()

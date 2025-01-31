@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine.UI;
 
 public interface IAppState
@@ -8,33 +7,38 @@ public interface IAppState
 
     IColorSettings CurrentColors { get; }
     MusicMateMode CurrentMode { get; }
+    bool ProvidersVisible { get; }
 
     void NotifyModeChanged(MusicMateMode newMode);
-    void ChangeState(Button button, bool enabled, bool? isPlaying);
-    void ChangeState(ButtonAnimator button, bool enabled, bool? isPlaying);
-    void ChangeState(Image image, bool enabled, bool? isPlaying = null);
-    void ChangeState(TextMeshProUGUI text, bool enabled);
-    void ChangeStates(Button[] buttons, bool enabled, bool? isPlaying = null);
-    void ChangeStates(ButtonAnimator[] buttons, bool enabled, bool? isPlaying = null);
-    void ChangeStates(Image[] images, bool enabled, bool isPlaying);
-    void ChangeStates(TextMeshProUGUI[] texts, bool enabled);
-    void ChangeStates(Slider[] sliders, bool enabled);
-    void ChangeVisiblePart(VisiblePart part);
-    void SubscribeToVisiblePartChanged(VisiblePartChangedEventHandler handler);
-    void UnsubscribeFromVisiblePartChanged(VisiblePartChangedEventHandler handler);
+    void ChangePlayButtonState(ButtonAnimator button, bool enabled, bool? isPlaying);
+    void ChangePlayButtonsState(ButtonAnimator[] buttons, bool enabled, bool? isPlaying = null);
+
+    void InvokeStateChanged(MusicMateStatePart part);
+    void InvokeStateChanged(bool showProviders);
+    void SubscribeToMusicMateStateChanged(MusicMateStateChangedHandler handler);
+    void UnsubscribeFromMusicMateStateChangedd(MusicMateStateChangedHandler handler);
 }
 
 #region EventHandlers & EventArgs
-public delegate void VisiblePartChangedEventHandler(object sender, VisiblePartChangedEventArgs e);
+public delegate void MusicMateStateChangedHandler(MusicMateState state);
 public delegate void MusicMateModeChangedHandler(MusicMateMode mode);
 
-public class VisiblePartChangedEventArgs : EventArgs
+public class MusicMateState
 {
-    public VisiblePartChangedEventArgs(VisiblePart part)
+    public MusicMateState(MusicMateStatePart part)
     {
+        Change = MusicMateStateChange.Part;
         Part = part;
     }
 
-    public VisiblePart Part { get; }
+    public MusicMateState(bool showProviders)
+    {
+        Change = MusicMateStateChange.Providers;
+        ShowProviders = showProviders;
+    }
+
+    public MusicMateStateChange Change { get; }
+    public MusicMateStatePart Part { get; }
+    public bool ShowProviders { get; }
 }
 #endregion

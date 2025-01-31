@@ -16,6 +16,8 @@ public class ColorSettings : ScriptableObject, IColorSettings
     public Color32 PanelColor => _panelColor;
 
     public Color32 AccentTextColor => _backgroundColor;
+    public Color32 DisabledTextColor => _defaultColor;
+
     public Color32 IconColor => _textColor;
     public Color32 DisabledIconColor => _defaultColor;
 }

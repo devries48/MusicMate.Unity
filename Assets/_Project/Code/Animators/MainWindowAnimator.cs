@@ -25,15 +25,15 @@ public class MainWindowAnimator : MusicMateBehavior
     protected override void RegisterEventHandlers()
     {
         PlayerService.SubscribeToExpandedChanged(OnAudioPlayerExpandedChanged);
-        Manager.AppState.SubscribeToVisiblePartChanged(OnVisiblePartChanged);
+        Manager.AppState.SubscribeToMusicMateStateChanged(OnMusicMateStateChanged);
     }
 
     protected override void UnregisterEventHandlers()
     {
         PlayerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
-        Manager.AppState.UnsubscribeFromVisiblePartChanged(OnVisiblePartChanged);
+        Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
     }
-    #endregion
+     #endregion
 
     public void ConnectionChanged(bool connected)
     {
@@ -77,12 +77,6 @@ public class MainWindowAnimator : MusicMateBehavior
         _importToolbar.gameObject.SetActive(activate);
     }
 
-    void VisibleReleaseResult(bool show)
-    {
-        Animations.Panel.PlayReleaseGridVisiblity(show, _releaseResult);
-        _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
-    }
-
     /// <summary>
     /// Initial result on startup.
     /// </summary>
@@ -94,29 +88,79 @@ public class MainWindowAnimator : MusicMateBehavior
 
     /// <summary>
     /// Change the right margin of the result when the audio players expanded/collapsed state changes.
+    /// <remmarks>
+    /// - Do not collapse when the providers panel is visible.
+    /// - Hide providers panel when the audio player is expanded.
+    /// </remmarks>
     /// </summary>
-    void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e) => _releaseResult.SetRightMargin(e.IsExpanded);
+    void OnAudioPlayerExpandedChanged(object sender, ExpandedChangedEventArgs e)
+    {
+        if (!_state.ProvidersVisible)
+            _releaseResult.SetRightMargin(e.IsExpanded);
+    }
 
     /// <summary>
     /// Show or hide the result when a visible part has changed.
     /// </summary>
-    void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)
+    void OnMusicMateStateChanged(MusicMateState state)
     {
-        switch (e.Part)
+        switch (state.Change)
         {
-            case VisiblePart.ReleaseResult:
-                VisibleReleaseResult(true);
+            case MusicMateStateChange.Providers:
+                SetStateProviders(state.ShowProviders);
+                break;
+            case MusicMateStateChange.Part:
+                SetStatePart(state);
+                break;
+        }
+    }
+
+    void SetStatePart(MusicMateState state)
+    {
+        switch (state.Part)
+        {
+            case MusicMateStatePart.ReleaseResult:
+                VisiblityReleaseResult(true);
                 break;
 
-            case VisiblePart.ReleaseDetails:
-            case VisiblePart.ArtistDetails:
+            case MusicMateStatePart.ReleaseDetails:
+            case MusicMateStatePart.ArtistDetails:
                 if (_state.ReleaseResult == State.States.visible)
-                    VisibleReleaseResult(false);
+                    VisiblityReleaseResult(false);
                 break;
 
             default:
                 break;
         }
+    }
+
+    void SetStateProviders(bool showProviders)
+    {
+        _state.ProvidersVisible = showProviders;
+
+        if (showProviders)
+        {
+            // Save the state of the Audio Player
+            _state.AudioPlayerExpanded = _audioPlayer.IsPlayerExpanded;
+            
+            if (_audioPlayer.IsPlayerExpanded) 
+                _audioPlayer.CollapsePlayer();
+
+            Animations.Panel.PlayProvidersVisibility(true, _providers, _state.AudioPlayerExpanded);
+        }
+        else
+        {
+            Animations.Panel.PlayProvidersVisibility(false, _providers);
+
+            if (_state.AudioPlayerExpanded)
+                _audioPlayer.ExpandPlayer(true);
+        }
+    }
+
+    void VisiblityReleaseResult(bool show)
+    {
+        Animations.Panel.PlayReleaseGridVisiblity(show, _releaseResult);
+        _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
     }
 
     class State
@@ -126,9 +170,15 @@ public class MainWindowAnimator : MusicMateBehavior
             ReleaseResult = States.visible;
             ReleaseDetails = States.hidden;
             ReleaseDetailsArtist = States.hidden;
+
+            AudioPlayerExpanded = true;
         }
 
-        public enum States { visible, hidden, moved }
+        // Save the audio player state when the provider panel is shown
+        public bool AudioPlayerExpanded;
+        public bool ProvidersVisible;
+
+        public enum States { visible, hidden }
 
         public States ReleaseResult;
         public States ReleaseDetails;

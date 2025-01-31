@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,7 +20,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
         get
         {
-            if (_animations == null)
+            if(_animations == null)
                 _animations = AnimationManager.Instance;
 
             return _animations;
@@ -67,11 +68,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if (Manager?.AppState != null)
+        if(Manager?.AppState != null)
         {
             Manager.AppState.ModeChanged += OnMusicMateModeChanged;
 
-            if (_currentMode != Manager.AppState.CurrentMode)
+            if(_currentMode != Manager.AppState.CurrentMode)
             {
                 _initializing = true;
                 ApplyColors();
@@ -83,7 +84,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        if (Manager?.AppState != null)
+        if(Manager?.AppState != null)
             Manager.AppState.ModeChanged -= OnMusicMateModeChanged;
 
         UnregisterEventHandlers();
@@ -118,7 +119,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     /// subscribing to avoid null reference exceptions.
     /// </remarks>
     /// <example>
-    /// Example usage in a derived class: <code> protected override void RegisterEventHandlers() {
+    /// Example usage in a derived class: <code>protected override void RegisterEventHandlers() {
     /// myEventSource.SomeEvent += OnSomeEvent; }</code>
     /// </example>
     protected virtual void RegisterEventHandlers()
@@ -134,7 +135,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     /// null before unsubscribing to avoid errors or unintended behavior.
     /// </remarks>
     /// <example>
-    /// Example usage in a derived class: <code> protected override void UnregisterEventHandlers() {
+    /// Example usage in a derived class: <code>protected override void UnregisterEventHandlers() {
     /// myEventSource.SomeEvent -= OnSomeEvent; }</code>
     /// </example>
     protected virtual void UnregisterEventHandlers()
@@ -143,11 +144,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     void OnMusicMateModeChanged(MusicMateMode mode)
     {
-        if (_currentMode != mode)
+        if(_currentMode != mode)
         {
             _currentMode = Manager.AppState.CurrentMode;
 
-            MusicMateModeChanged();
+            MusicMateModeChanged(mode);
             ApplyColors();
         }
     }
@@ -161,11 +162,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
     /// enabling/disabling certain UI elements or modifying functionality specific to a mode.
     /// </remarks>
     /// <example>
-    /// Example implementation in a derived class: <code> protected override void MusicMateModeChanged() { if
+    /// Example implementation in a derived class: <code>protected override void MusicMateModeChanged() { if
     /// (Manager.AppState.CurrentMode == MusicMateMode.Edit) EnableEditModeFeatures(); else DisableEditModeFeatures();
     /// }</code>
     /// </example>
-    protected virtual void MusicMateModeChanged()
+    protected virtual void MusicMateModeChanged(MusicMateMode mode)
     {
     }
 
@@ -178,16 +179,33 @@ public abstract class MusicMateBehavior : MonoBehaviour
     /// provides a centralized way to update the component's visual appearance to reflect the current theme or mode.
     /// </remarks>
     /// <example>
-    /// Example implementation in a derived class: <code> protected override void ApplyColors() { _headerText.color =
+    /// Example implementation in a derived class: <code>protected override void ApplyColors() { _headerText.color =
     /// Manager.AppColors.TextColor; _backgroundPanel.color = Manager.AppColors.BackgroundColor; }</code>
     /// </example>
     protected virtual void ApplyColors()
     {
     }
 
+    protected void ChangeState<T>(bool enabled, params T[] args) where T : class
+    {
+        foreach(var item in args)
+        {
+            if(item is ButtonAnimator)
+            {
+                (item as ButtonAnimator).SetInteractable(enabled);
+                continue;
+            }
+
+            var animate = !_initializing && IsGameObjectActive(item);
+            var targetColor = GetItemColor(item, enabled);
+
+            ChangeColor(item, targetColor, animate);
+        }
+    }
+
     protected void ChangeColor<T>(MusicMateColor color, params T[] args) where T : class
     {
-        foreach (var item in args)
+        foreach(var item in args)
         {
             var animate = !_initializing && IsGameObjectActive(item);
             var targetColor = ColorFromEnum(color);
@@ -198,23 +216,58 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     bool IsGameObjectActive<T>(T item) where T : class
     {
-        if (item is Component component)
+        if(item is Component component)
             return component.gameObject.activeInHierarchy;
         return true; // Non-component items are always considered "active"
     }
 
+    Color32 GetItemColor<T>(T target, bool enabled) where T : class
+    {
+        Color32 fromColor, toColor;
+        var clr = enabled ? MusicMateColor.Text : MusicMateColor.DisabledText;
+
+        switch(target)
+        {
+            case Image image:
+                fromColor = image.color;
+                break;
+
+            case TextMeshProUGUI text:
+                fromColor = text.color;
+                break;
+
+            case Marquee marq:
+                fromColor = marq.TextColor;
+                break;
+
+            case Slider slider:
+                var fillImage = slider.fillRect.GetComponent<Image>();
+                fromColor = fillImage.color;
+                clr = enabled ? MusicMateColor.Accent : MusicMateColor.DisabledText;
+                break;
+
+            default:
+                Debug.LogWarning($"ChangeColor: Unsupported type {typeof(T)} for color adjustment.");
+                return Color.red;
+        }
+
+        toColor = ColorFromEnum(clr);
+        return EnsureAlphaConsistency(fromColor, toColor);
+    }
+
     void ChangeColor<T>(T target, Color32 toColor, bool animate) where T : class
     {
-        if (target == null) return;
+        if(target == null)
+            return;
 
         // Special handling for sliders, relay to separate method and exit
-        if (target is Slider slider)
+        if(target is Slider slider)
         {
             ChangeSliderColor(slider, toColor, animate);
             return;
         }
 
-        switch (target)
+        switch(target)
         {
             case Image image:
                 toColor = EnsureAlphaConsistency(image.color, toColor);
@@ -230,9 +283,9 @@ public abstract class MusicMateBehavior : MonoBehaviour
                 return;
         }
 
-        if (animate)
+        if(animate)
         {
-            switch (target)
+            switch(target)
             {
                 case Image image:
                     Animations.Panel.PlayImageColor(image, toColor);
@@ -246,10 +299,9 @@ public abstract class MusicMateBehavior : MonoBehaviour
                 default:
                     break;
             }
-        }
-        else
+        } else
         {
-            switch (target)
+            switch(target)
             {
                 case Image image:
                     image.color = toColor;
@@ -271,24 +323,30 @@ public abstract class MusicMateBehavior : MonoBehaviour
         var fillImage = slider.fillRect.GetComponent<Image>();
         var handleImage = slider.handleRect.GetComponent<Image>();
 
+        if(!slider.transform.Find("Background").TryGetComponent<Image>(out var backgroundImage))
+        {
+            print("test");
+        }
+
         toColor = EnsureAlphaConsistency(fillImage.color, toColor);
 
-        if (animate)
+        if(animate)
         {
             Animations.Panel.PlayImageColor(fillImage, toColor);
             Animations.Panel.PlayImageColor(handleImage, toColor);
-        }
-        else
+            Animations.Panel.PlayImageColor(backgroundImage, Manager.AppColors.TextColor);
+        } else
         {
             fillImage.color = toColor;
             handleImage.color = toColor;
+            backgroundImage.color = Manager.AppColors.TextColor;
         }
     }
 
     Color32 EnsureAlphaConsistency(Color32 currentColor, Color32 targetColor)
     {
         // If the alpha values differ, use the current color's alpha for the target color
-        if (currentColor.a != targetColor.a)
+        if(currentColor.a != targetColor.a)
             targetColor.a = currentColor.a;
 
         return targetColor;
@@ -301,6 +359,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
             MusicMateColor.Accent => Manager.AppColors.AccentColor,
             MusicMateColor.Default => Manager.AppColors.DefaultColor,
             MusicMateColor.Text => Manager.AppColors.TextColor,
+            MusicMateColor.DisabledText => Manager.AppColors.DisabledTextColor,
             MusicMateColor.Panel => Manager.AppColors.PanelColor,
             MusicMateColor.Background => Manager.AppColors.BackgroundColor,
             MusicMateColor.AccentText => Manager.AppColors.AccentTextColor,

@@ -70,7 +70,7 @@ public class DetailsAnimator : MusicMateBehavior
     public void CloseDetails()
     {
         Animations.Panel.PlayDetailsVisibility(false, this);
-        Manager.AppState.ChangeVisiblePart(VisiblePart.ReleaseResult);
+        Manager.AppState.InvokeStateChanged(MusicMateStatePart.ReleaseResult);
     }
 
     void OnCloseClicked() => CloseDetails();

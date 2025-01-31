@@ -87,11 +87,27 @@ public class AudioPlayerController : MusicMateBehavior
     protected override void ApplyColors()
     {
         ChangeColor(MusicMateColor.Panel, _panelExpanded, _panelCollapsed);
-        ChangeColor(MusicMateColor.Text, _artistMarquee, _titleMarquee, _artistAndTitleMarquee);
-        ChangeColor(MusicMateColor.Text, _trackTotalText);
-        ChangeColor(MusicMateColor.Text, _trackStartTexts);
-        ChangeColor(MusicMateColor.Accent, _positionSliders);
-        ChangeColor(MusicMateColor.Accent, _volumeSlider1, _volumeSlider2);
+        ChangeState(PlayerService.IsActive, _artistMarquee, _titleMarquee, _artistAndTitleMarquee);
+        ChangeState(PlayerService.IsActive, _trackTotalText);
+        ChangeState(PlayerService.IsActive, _trackStartTexts);
+        ChangeState(PlayerService.IsActive, _positionSliders);
+        ChangeState(PlayerService.IsActive, _volumeSlider1, _volumeSlider2);
+    }
+
+    void ChangeReleaseImageState(Image[] images, bool enabled, bool isPlaying)
+    {
+        foreach (var item in images)
+        {
+            float target;
+            if (!enabled)
+                target = .01f;
+            else if (!isPlaying)
+                target = .2f;
+            else
+                target = 1f;
+
+            item.DOFade(target, .25f).SetEase(Ease.InSine);
+        }
     }
 
     void InitElements()
@@ -103,8 +119,8 @@ public class AudioPlayerController : MusicMateBehavior
         _volumeSlider1.value = _volume;
         _volumeSlider2.value = _volume;
 
-        _collapseButton.OnButtonClick.AddListener(OnCollapseClicked);
-        _expandButton.OnButtonClick.AddListener(OnExpandClicked);
+        _collapseButton.OnButtonClick.AddListener(CollapsePlayerClick);
+        _expandButton.OnButtonClick.AddListener(ExpandPlayerdClick);
 
         foreach (var button in _playPauseButtons)
             button.OnButtonClick.AddListener(OnPlayPauseClicked);
@@ -144,6 +160,37 @@ public class AudioPlayerController : MusicMateBehavior
         //_audioSource.loop = repeat;
     }
 
+    void ExpandPlayerdClick() => ExpandPlayer();
+
+    void CollapsePlayerClick() => CollapsePlayer();
+
+    /// <summary>
+    /// The Audio Player is expanded. Hide mini-player, move player down and notify the parent.
+    /// </summary>
+    public void ExpandPlayer(bool delay = false)
+    {
+        _collapseButton.gameObject.SetActive(true);
+        _expandButton.gameObject.SetActive(false);
+        PlayerService.ChangeExpandedState(true);
+
+        Animations.Panel.PlayExpandAudioPlayer(_expandedPlayer, _collapsedPlayer, delay);
+    }
+
+    /// <summary>
+    /// The Audio Player is collapsed. Move player up, notify the parent and show the mini-player. When expanded: hide mini-
+    /// player, move player down and notify the parent.
+    /// </summary>
+    public void CollapsePlayer(bool delay = false)
+    {
+        _collapseButton.gameObject.SetActive(false);
+        _expandButton.gameObject.SetActive(true);
+
+        Animations.Panel.PlayCollapseAudioPlayer(_expandedPlayer, _collapsedPlayer, delay, () =>
+        {
+            PlayerService.ChangeExpandedState(false);
+        });
+    }
+
     void OnPlayerStateChanged(object sender, StateChangedEventArgs e) => StartCoroutine(SetPlayerState());
 
     void OnActionChanged(object sender, ActionChangedEventArgs e)
@@ -154,33 +201,6 @@ public class AudioPlayerController : MusicMateBehavior
             Play();
         else if (e.Action == PlayerAction.Pause)
             Pause();
-    }
-
-    /// <summary>
-    /// The Audio Player is collapsed. Move player up, notify the parent and show the mini-player. When expanded: hide mini-
-    /// player, move player down and notify the parent.
-    /// </summary>
-    void OnCollapseClicked()
-    {
-        _collapseButton.gameObject.SetActive(false);
-        _expandButton.gameObject.SetActive(true);
-
-        Animations.Panel.PlayCollapseAudioPlayer(_expandedPlayer, _collapsedPlayer, () =>
-        {
-            PlayerService.ChangeExpandedState(false);
-        });
-    }
-
-    /// <summary>
-    /// The Audio Player is expanded. Hide mini-player, move player down and notify the parent.
-    /// </summary>
-    void OnExpandClicked()
-    {
-        _collapseButton.gameObject.SetActive(true);
-        _expandButton.gameObject.SetActive(false);
-        PlayerService.ChangeExpandedState(true);
-
-        Animations.Panel.PlayExpandAudioPlayer(_expandedPlayer, _collapsedPlayer);
     }
 
     void OnPlayPauseClicked()
@@ -237,14 +257,12 @@ public class AudioPlayerController : MusicMateBehavior
 
     IEnumerator SetPlayerState()
     {
-        Manager.AppState.ChangeStates(_playPauseButtons, PlayerService.IsActive, PlayerService.IsPlaying);
-        Manager.AppState.ChangeStates(_previousButtons, PlayerService.CanMoveBack);
-        Manager.AppState.ChangeStates(_nextButtons, PlayerService.CanMoveForward);
+        ApplyColors();
 
-        Manager.AppState.ChangeStates(_trackStartTexts, PlayerService.IsActive);
-        Manager.AppState.ChangeState(_trackTotalText, PlayerService.IsActive);
-        Manager.AppState.ChangeStates(_positionSliders, PlayerService.IsActive);
-        Manager.AppState.ChangeStates(_releaseImages, PlayerService.IsActive, PlayerService.IsPlaying);
+        Manager.AppState.ChangePlayButtonsState(_playPauseButtons, PlayerService.IsActive, PlayerService.IsPlaying);
+        ChangeState(PlayerService.CanMoveBack, _previousButtons);
+        ChangeState(PlayerService.CanMoveForward, _nextButtons);
+        ChangeReleaseImageState(_releaseImages, PlayerService.IsActive, PlayerService.IsPlaying);
 
         yield return null;
     }

@@ -14,6 +14,7 @@ public class PanelAndWindowsAnimationsEditor : MusicMateEditorBase
         InitializeFoldoutState("Error Window");
         InitializeFoldoutState("Result Grid");
         InitializeFoldoutState("Details Panel");
+        InitializeFoldoutState("Providers Panel");
         InitializeFoldoutState("AudioPlayer Collapsed");
         InitializeFoldoutState("AudioPlayer Expanded");
     }
@@ -67,6 +68,16 @@ public class PanelAndWindowsAnimationsEditor : MusicMateEditorBase
             DrawSectionField("_detailsShowEase", "Show Ease");
             DrawSectionField("_detailsHideTime", "Hide Time");
             DrawSectionField("_detailsHideEase", "Hide Ease");
+        }
+
+        if (DrawFoldout("Providers Panel"))
+        {
+            DrawSectionField("_providersShowTime", "Show Time");
+            DrawSectionField("_providersShowEase", "Show Ease");
+            DrawSectionField("_providersShowPivot", "Show Pivot X");
+            DrawSectionField("_providersHideTime", "Hide Time");
+            DrawSectionField("_providersHideEase", "Hide Ease");
+            DrawSectionField("_providersHidePivot", "Hide Pivot X");
         }
 
         if (DrawFoldout("AudioPlayer Collapsed"))

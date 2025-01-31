@@ -153,7 +153,17 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     /// Sets whether the button is interactable. This controls whether the user can interact with the button.
     /// </summary>
     /// <param name="interactable">Indicates whether the button should be interactable.</param>
-    public void SetInteractable(bool interactable) => Button.interactable = interactable;
+    public void SetInteractable(bool interactable)
+    {
+        try
+        {
+            Button.interactable = interactable;
+        }
+        catch (System.Exception)
+        {
+            print("fdfdfsf");
+        }
+    }
 
     /// <summary>
     /// Toggles the expanded state of the button and rotates the icon to reflect the new state.
