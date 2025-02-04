@@ -52,7 +52,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     #region Field Declarations
     internal Image m_icon;
     internal Image m_toggleIcon;
-    internal Image m_spinnerBackground;
+    internal Image m_background;
     internal Image m_spinner;
     internal TextMeshProUGUI m_text;
 
@@ -76,14 +76,15 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (_isInitialized) return;
         _isInitialized = true;
 
-        transform.Find("Button/Icon").TryGetComponent(out m_icon);
         if (_buttonType == ToolbarButtonType.ToggleText)
             transform.Find("Button/Text").TryGetComponent(out m_text);
         else
         {
-            transform.Find("Button/Background").TryGetComponent(out m_spinnerBackground);
             transform.Find("Button/Spinner").TryGetComponent(out m_spinner);
+            transform.Find("Button/Icon").TryGetComponent(out m_icon);
         }
+
+        transform.Find("Button/Background").TryGetComponent(out m_background);
         transform.Find("Toggle Icon").TryGetComponent(out m_toggleIcon);
         transform.Find("Tooltip").TryGetComponent(out m_tooltipPanel);
         transform.Find("Tooltip").TryGetComponent(out m_tooltipBackground);
@@ -118,11 +119,19 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     protected override void ApplyColors()
     {
-        if (m_icon != null)
-            ChangeState(_interactable , m_icon);
-        if (m_text != null)
-            ChangeState(_interactable, m_text);
-      
+        if (_buttonType == ToolbarButtonType.ToggleText)
+        {
+            ChangeState(_interactable, m_background);
+            ChangeColor(MusicMateColor.Panel, m_text);
+        }
+        else
+        {
+            if (m_icon != null)
+                ChangeState(_interactable, m_icon);
+            if (m_text != null)
+                ChangeState(_interactable, m_text);
+        }
+
         ChangeColor(MusicMateColor.Accent, m_toggleIcon, m_spinner);
         ChangeColor(MusicMateColor.Background, m_tooltipBackground);
         ChangeColor(MusicMateColor.Text, m_tooltipText);
@@ -150,14 +159,14 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     void OnButtonClicked()
     {
+        if (_buttonType != ToolbarButtonType.Toggle && _buttonType != ToolbarButtonType.Spinner)
+            Animations.Toolbar.PlayClicked(this);
+
         if (_buttonType == ToolbarButtonType.Toggle || _buttonType == ToolbarButtonType.ToggleText)
         {
             IsToggleOn = !IsToggleOn;
             SetToggle();
         }
-
-        if (_buttonType != ToolbarButtonType.Toggle && _buttonType != ToolbarButtonType.ToggleText && _buttonType != ToolbarButtonType.Spinner)
-            Animations.Toolbar.PlayClicked(this);
 
         OnButtonClick?.Invoke();
     }
@@ -243,8 +252,6 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     {
         if (Application.isPlaying) return;
         if (EditorApplication.isCompiling) return;
-
-        transform.Find("Button/Icon").TryGetComponent(out m_icon);
 
         // Buttons cannot be toggled when disabled
         if (!_interactable && _isToggleOn)

@@ -66,7 +66,7 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
                 () =>
                 {
                     button.transform.localScale = Vector2.one;
-                    button.m_spinnerBackground.gameObject.SetActive(true);
+                    button.m_background.gameObject.SetActive(true);
                     button.m_spinner.gameObject.SetActive(true);
                     button.IsInteractable = false;
                 });
@@ -75,12 +75,16 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
     public void PlayInteractableChanged(ToolbarButtonAnimator button, bool isInteractable)
     {
         Color32 color = isInteractable ? _manager.AppColors.IconColor : _manager.AppColors.DisabledIconColor;
-        button.m_icon.DOColor(color, _animationTime);
+
+        if (button.IsTextToggle)
+            button.m_background.DOColor(color, _animationTime);
+        else
+            button.m_icon.DOColor(color, _animationTime);
     }
 
     public void PlayHideSpinner(ToolbarButtonAnimator button)
     {
-        button.m_spinnerBackground.gameObject.SetActive(false);
+        button.m_background.gameObject.SetActive(false);
         button.m_spinner.gameObject.SetActive(false);
 
         button.m_icon.transform

@@ -91,7 +91,7 @@ public class AudioPlayerController : MusicMateBehavior
         ChangeState(PlayerService.IsActive, _trackTotalText);
         ChangeState(PlayerService.IsActive, _trackStartTexts);
         ChangeState(PlayerService.IsActive, _positionSliders);
-        ChangeState(PlayerService.IsActive, _volumeSlider1, _volumeSlider2);
+        ChangeState(true, _volumeSlider1, _volumeSlider2);
     }
 
     void ChangeReleaseImageState(Image[] images, bool enabled, bool isPlaying)
@@ -169,6 +169,8 @@ public class AudioPlayerController : MusicMateBehavior
     /// </summary>
     public void ExpandPlayer(bool delay = false)
     {
+        IsPlayerExpanded = true;
+
         _collapseButton.gameObject.SetActive(true);
         _expandButton.gameObject.SetActive(false);
         PlayerService.ChangeExpandedState(true);
@@ -182,6 +184,8 @@ public class AudioPlayerController : MusicMateBehavior
     /// </summary>
     public void CollapsePlayer(bool delay = false)
     {
+        IsPlayerExpanded = false;
+
         _collapseButton.gameObject.SetActive(false);
         _expandButton.gameObject.SetActive(true);
 

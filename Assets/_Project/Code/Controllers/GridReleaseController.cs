@@ -23,6 +23,7 @@ public class GridReleaseController : MusicMateBehavior
     CellReleaseAnimator _selectedCell;
 
     internal CanvasGroup m_canvasGroup;
+    internal float _setMarginDuration = .5f;
 
     const float _margin = 10f;
 
@@ -47,11 +48,11 @@ public class GridReleaseController : MusicMateBehavior
     /// The top margin is the bottom position of the toolbar + the border margin.
     /// </summary>
     /// <param name="margin"></param>
-    public void SetRightMargin(bool isExpanded)
+    public void SetRightMargin(bool isExpanded, float delay = 0)
     {
         var margin = isExpanded ? (2 * _margin) + AudioPlayerService.Instance.PlayerWidth : _margin;
         var endval = new Vector2(-margin, -140);
-        DOTween.To(() => _parentTrans.offsetMax, x => _parentTrans.offsetMax = x, endval, .5f);
+        DOTween.To(() => _parentTrans.offsetMax, x => _parentTrans.offsetMax = x, endval, _setMarginDuration).SetDelay(delay);
     }
 
     public void ChangeSelection(CellReleaseAnimator cell)

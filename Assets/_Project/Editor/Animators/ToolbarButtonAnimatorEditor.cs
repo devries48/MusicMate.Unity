@@ -6,18 +6,20 @@ public class ToolbarButtonAnimatorEditor : MusicMateEditorBase
     public override void OnInspectorGUI()
     {
         var _buttonType = serializedObject.FindProperty("_buttonType");
+        var buttonType = (ToolbarButtonType)_buttonType.enumValueIndex;
 
         serializedObject.Update();
 
         DrawLogo();
         DrawTitle("ToolbarButton Animator");
-      
+
         DrawSectionField(_buttonType, "Button Type");
         DrawSectionField("_interactable", "Is Interactable");
-        DrawSectionField("_icon", "Icon");
-        DrawSectionField("_tooltip", "Tooltip");
 
-        var buttonType = (ToolbarButtonType)_buttonType.enumValueIndex;
+        if (buttonType != ToolbarButtonType.ToggleText)
+            DrawSectionField("_icon", "Icon");
+
+        DrawSectionField("_tooltip", "Tooltip");
 
         DrawSpace();
 

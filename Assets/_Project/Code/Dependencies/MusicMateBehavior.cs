@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +19,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
         get
         {
-            if(_animations == null)
+            if (_animations == null)
                 _animations = AnimationManager.Instance;
 
             return _animations;
@@ -68,11 +67,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if(Manager?.AppState != null)
+        if (Manager?.AppState != null)
         {
             Manager.AppState.ModeChanged += OnMusicMateModeChanged;
 
-            if(_currentMode != Manager.AppState.CurrentMode)
+            if (_currentMode != Manager.AppState.CurrentMode)
             {
                 _initializing = true;
                 ApplyColors();
@@ -84,7 +83,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        if(Manager?.AppState != null)
+        if (Manager?.AppState != null)
             Manager.AppState.ModeChanged -= OnMusicMateModeChanged;
 
         UnregisterEventHandlers();
@@ -144,7 +143,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     void OnMusicMateModeChanged(MusicMateMode mode)
     {
-        if(_currentMode != mode)
+        if (_currentMode != mode)
         {
             _currentMode = Manager.AppState.CurrentMode;
 
@@ -188,13 +187,15 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     protected void ChangeState<T>(bool enabled, params T[] args) where T : class
     {
-        foreach(var item in args)
+        foreach (var item in args)
         {
-            if(item is ButtonAnimator)
+            if (item is ButtonAnimator)
             {
                 (item as ButtonAnimator).SetInteractable(enabled);
                 continue;
             }
+            else if (item is Slider)
+                (item as Slider).interactable = enabled;
 
             var animate = !_initializing && IsGameObjectActive(item);
             var targetColor = GetItemColor(item, enabled);
@@ -205,8 +206,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     protected void ChangeColor<T>(MusicMateColor color, params T[] args) where T : class
     {
-        foreach(var item in args)
+        foreach (var item in args)
         {
+            if (item ==  null)
+                continue;
+
             var animate = !_initializing && IsGameObjectActive(item);
             var targetColor = ColorFromEnum(color);
 
@@ -216,7 +220,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     bool IsGameObjectActive<T>(T item) where T : class
     {
-        if(item is Component component)
+        if (item is Component component)
             return component.gameObject.activeInHierarchy;
         return true; // Non-component items are always considered "active"
     }
@@ -226,7 +230,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
         Color32 fromColor, toColor;
         var clr = enabled ? MusicMateColor.Text : MusicMateColor.DisabledText;
 
-        switch(target)
+        switch (target)
         {
             case Image image:
                 fromColor = image.color;
@@ -257,17 +261,17 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     void ChangeColor<T>(T target, Color32 toColor, bool animate) where T : class
     {
-        if(target == null)
+        if (target == null)
             return;
 
         // Special handling for sliders, relay to separate method and exit
-        if(target is Slider slider)
+        if (target is Slider slider)
         {
             ChangeSliderColor(slider, toColor, animate);
             return;
         }
 
-        switch(target)
+        switch (target)
         {
             case Image image:
                 toColor = EnsureAlphaConsistency(image.color, toColor);
@@ -283,9 +287,9 @@ public abstract class MusicMateBehavior : MonoBehaviour
                 return;
         }
 
-        if(animate)
+        if (animate)
         {
-            switch(target)
+            switch (target)
             {
                 case Image image:
                     Animations.Panel.PlayImageColor(image, toColor);
@@ -299,9 +303,10 @@ public abstract class MusicMateBehavior : MonoBehaviour
                 default:
                     break;
             }
-        } else
+        }
+        else
         {
-            switch(target)
+            switch (target)
             {
                 case Image image:
                     image.color = toColor;
@@ -323,19 +328,20 @@ public abstract class MusicMateBehavior : MonoBehaviour
         var fillImage = slider.fillRect.GetComponent<Image>();
         var handleImage = slider.handleRect.GetComponent<Image>();
 
-        if(!slider.transform.Find("Background").TryGetComponent<Image>(out var backgroundImage))
+        if (!slider.transform.Find("Background").TryGetComponent<Image>(out var backgroundImage))
         {
             print("test");
         }
 
         toColor = EnsureAlphaConsistency(fillImage.color, toColor);
 
-        if(animate)
+        if (animate)
         {
             Animations.Panel.PlayImageColor(fillImage, toColor);
             Animations.Panel.PlayImageColor(handleImage, toColor);
             Animations.Panel.PlayImageColor(backgroundImage, Manager.AppColors.TextColor);
-        } else
+        }
+        else
         {
             fillImage.color = toColor;
             handleImage.color = toColor;
@@ -346,7 +352,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     Color32 EnsureAlphaConsistency(Color32 currentColor, Color32 targetColor)
     {
         // If the alpha values differ, use the current color's alpha for the target color
-        if(currentColor.a != targetColor.a)
+        if (currentColor.a != targetColor.a)
             targetColor.a = currentColor.a;
 
         return targetColor;

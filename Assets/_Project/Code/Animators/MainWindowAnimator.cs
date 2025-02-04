@@ -33,7 +33,13 @@ public class MainWindowAnimator : MusicMateBehavior
         PlayerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
         Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
     }
-     #endregion
+
+    protected override void MusicMateModeChanged(MusicMateMode mode)
+    {
+        if (mode == MusicMateMode.Collection && _state.ProvidersVisible)
+            SetStateProviders(false);
+    }
+    #endregion
 
     public void ConnectionChanged(bool connected)
     {
@@ -142,11 +148,13 @@ public class MainWindowAnimator : MusicMateBehavior
         {
             // Save the state of the Audio Player
             _state.AudioPlayerExpanded = _audioPlayer.IsPlayerExpanded;
-            
-            if (_audioPlayer.IsPlayerExpanded) 
-                _audioPlayer.CollapsePlayer();
 
-            Animations.Panel.PlayProvidersVisibility(true, _providers, _state.AudioPlayerExpanded);
+            if (_audioPlayer.IsPlayerExpanded)
+                _audioPlayer.CollapsePlayer();
+            else
+                _releaseResult.SetRightMargin(true);
+
+            Animations.Panel.PlayProvidersVisibility(true, _providers, true);
         }
         else
         {
@@ -154,6 +162,8 @@ public class MainWindowAnimator : MusicMateBehavior
 
             if (_state.AudioPlayerExpanded)
                 _audioPlayer.ExpandPlayer(true);
+            else
+                _releaseResult.SetRightMargin(false, .5f);
         }
     }
 

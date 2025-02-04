@@ -138,9 +138,9 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         var height = target.rect.height;
 
         // Normalize animation speed based on the button's height
-        const float defaultHeight = 40f; // Default button height
-        float speedFactor = height / defaultHeight;
-        float adjustedAnimationTime = _iconAnimationTime * speedFactor;
+        //const float defaultHeight = 40f; // Default button height
+        //float speedFactor = height / defaultHeight;
+        float adjustedAnimationTime = _iconAnimationTime;// * speedFactor;
 
         // Kill any existing tween for this target
         if (_expandTweens.ContainsKey(target) && _expandTweens[target] != null)
