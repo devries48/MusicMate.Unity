@@ -59,8 +59,6 @@ public class ToolbarModeController : ToolbarControllerBase
 
     void OnProvidersToggleClicked()
     {
-        Manager.AppState.InvokeStateChanged(_providersButton.IsToggleOn);
+        Manager.AppState.InvokeStateChanged(MusicMateStateChange.Providers, _providersButton.IsToggleOn);
     }
-
-
 }

@@ -57,14 +57,14 @@ public class AppState : IAppState
     }
  
     /// <summary>
-    /// Notify subscribed controllers the visibility of a particular part has changed.
+    /// Notify subscribed controllers the visibility of a details part has changed.
     /// </summary>
-    public void InvokeStateChanged(MusicMateStatePart part) => StateChanged?.Invoke(new MusicMateState(part));
+    public void InvokeStateChanged(MusicMateStateDetails details) => StateChanged?.Invoke(new MusicMateState(details));
 
     /// <summary>
     /// Notify subscribed controllers the visibility of the providers-panel has changed.
     /// </summary>
-    public void InvokeStateChanged(bool showProviders) => StateChanged?.Invoke(new MusicMateState(showProviders));
+    public void InvokeStateChanged(MusicMateStateChange change, bool value) => StateChanged?.Invoke(new MusicMateState(change,value));
 
     public void SubscribeToMusicMateStateChanged(MusicMateStateChangedHandler handler) => StateChanged += handler;
 

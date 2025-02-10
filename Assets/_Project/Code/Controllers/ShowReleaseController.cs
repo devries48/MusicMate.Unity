@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class ShowReleaseController : MusicMateBehavior
 {
     #region Serialized Fields
-    [SerializeField] DetailsAnimator _showDetails;
+    [SerializeField] DetailsAnimator _parent;
     public PanelReleaseStateData m_normal;
     public PanelReleaseStateData m_maximized;
 
@@ -20,6 +20,7 @@ public class ShowReleaseController : MusicMateBehavior
     [SerializeField] TextMeshProUGUI _yearCountry;
     [SerializeField] TextMeshProUGUI _mainGenre;
     [SerializeField] TextMeshProUGUI _subGenres;
+
     public TextMeshProUGUI m_artist_title;
     public TextMeshProUGUI m_total_length;
     public GridTrackController m_tracks;
@@ -40,6 +41,10 @@ public class ShowReleaseController : MusicMateBehavior
     readonly Color32 _initialBackgroundColor = new(255, 255, 255, 3);
 
     #region Base Class Methods
+    protected override void InitializeComponents()
+    {
+        m_canvasGroup = GetComponent<CanvasGroup>();
+    }
 
     /// <summary>
     /// Set default state
@@ -73,30 +78,30 @@ public class ShowReleaseController : MusicMateBehavior
     {
         if (release != CurrentRelease)
         {
-            _showDetails.StartSpinner();
-            CurrentRelease = release;
-            StartCoroutine(GetReleaseCore());
+            _parent.StartSpinner();
+            StartCoroutine(GetReleaseCore(release));
         }
         else
             m_tracks.ClearSelection();
     }
 
-    IEnumerator GetReleaseCore()
+    IEnumerator GetReleaseCore(ReleaseResult release)
     {
         _image.overrideSprite = null;
         _image.color = _initialBackgroundColor;
-        _artist.SetText(CurrentRelease.Artist.Text);
-        _title.SetText(CurrentRelease.Title);
-        m_artist_title.SetText(CurrentRelease.Artist.Text + " - " + CurrentRelease.Title);
+        _artist.SetText(release.Artist.Text);
+        _title.SetText(release.Title);
+        m_artist_title.SetText(release.Artist.Text + " - " + release.Title);
         
         yield return null;
 
-        ApiService.GetRelease(CurrentRelease.Id, (model) =>
+        ApiService.GetRelease(release.Id, (model) =>
         {
             ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
             m_tracks.SetRelease(model);
+            CurrentRelease = release;
 
-            _showDetails.StopSpinner();
+            _parent.StopSpinner();
         });
     }
 

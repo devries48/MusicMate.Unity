@@ -6,6 +6,7 @@ public interface IMusicMateApiService
     void SignIn(string url, string user, string password);
     void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback);
     void GetRelease(Guid id, Action<ReleaseModel> callback);
+    void GetArtist(Guid id, Action<ArtistModel> callback);
  
     void DownloadImage(string url, Action<Sprite> callback);
     void IsFolderImportRunning(Action<bool> callback);

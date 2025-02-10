@@ -18,12 +18,14 @@ MonoBehaviour:
   _hideEase: 26
   _fadeDuration: 1
   _fadeEase: 14
+  _colorDuration: 0.5
+  _colorEase: 4
   _loginHidePivot: -2
   _loginShowPivot: 0.5
   _errorHidePivot: 3
   _errorShowPivot: 0.5
-  _resultShowTime: 0.2
-  _resultShowEase: 14
+  _resultShowTime: 0.1
+  _resultShowEase: 20
   _resultHideTime: 0.2
   _resultHideScaleTo: 0.5
   _resultHideFadeTo: 0.01
@@ -32,6 +34,15 @@ MonoBehaviour:
   _detailsShowEase: 1
   _detailsHideTime: 0.2
   _detailsHideEase: 1
+  _detailsSwitchTime: 0.3
+  _detailsSwitchShowEase: 11
+  _detailsSwitchHideEase: 12
+  _providersShowTime: 0.5
+  _providersShowEase: 27
+  _providersShowPivot: 1
+  _providersHideTime: 0.2
+  _providersHideEase: 26
+  _providersHidePivot: -0.5
   _playerCollapseTime: 0.4
   _playerSmallShowDelay: 0.2
   _playerLargeShrinkEase: 5

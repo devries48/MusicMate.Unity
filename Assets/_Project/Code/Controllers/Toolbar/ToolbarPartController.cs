@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -10,7 +9,7 @@ public class ToolbarPartController : ToolbarControllerBase
     [SerializeField] GameObject _searchPart;
     [SerializeField] string _titleSearch;
 
-    [Header("Release Part")]
+    [Header("Details Release Part")]
     [SerializeField] GameObject _releasePart;
     [SerializeField] string _titleRelease;
     [SerializeField] ToolbarButtonAnimator _releaseToggle;
@@ -20,8 +19,9 @@ public class ToolbarPartController : ToolbarControllerBase
     internal GameObject m_activePart;
 
     DetailsToggle _toggled;
-    MusicMateStatePart _currentPart;
+    Part _currentPart;
 
+    enum Part { search, details };
     enum DetailsToggle { release, artist }
 
     #region MusicMate Base Class Methods
@@ -39,7 +39,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _searchPart.SetActive(true);
         _releasePart.SetActive(false);
         m_activePart = _searchPart;
-        _currentPart = MusicMateStatePart.ReleaseResult;
+        _currentPart = Part.search;
     }
 
     protected override void RegisterEventHandlers()
@@ -79,7 +79,7 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.release;
         SetElementStates();
 
-        Manager.AppState.InvokeStateChanged(MusicMateStatePart.ReleaseDetails);
+        Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Release);
     }
 
     void OnArtistToggleClicked()
@@ -87,34 +87,39 @@ public class ToolbarPartController : ToolbarControllerBase
         _toggled = DetailsToggle.artist;
         SetElementStates();
 
-        Manager.AppState.InvokeStateChanged(MusicMateStatePart.ArtistDetails);
+        Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Artist);
     }
 
     void OnMusicMateStateChanged(MusicMateState state)
     {
-        if (state.Part != MusicMateStatePart.ReleaseResult && state.Part != MusicMateStatePart.ReleaseDetails || state.Part == _currentPart)
+        if (state.Change != MusicMateStateChange.Details)
+           return;
+
+        var part = state.ShowDetails ? Part.details : Part.search;
+
+        if (part == _currentPart)
             return;
 
-        _currentPart = state.Part;
+        _currentPart = part;
 
         string title = default;
         GameObject hidePart = m_activePart;
         GameObject showPart = default;
 
-        if (state.Part == MusicMateStatePart.ReleaseResult)
+        if (part == Part.search)
         {
             title = _titleSearch;
             showPart = _searchPart;
 
             // reset toolbar
-            _toggled = DetailsToggle.release;
-            SetElementStates();
+            //_toggled = DetailsToggle.release;
+            //SetElementStates();
         }
-        else if (state.Part == MusicMateStatePart.ReleaseDetails)
+        else if (part == Part.details)
         {
             title = _titleRelease;
             showPart = _releasePart;
-            _toggled = DetailsToggle.release;
+            //_toggled = DetailsToggle.release;
         }
 
         if (title != default)

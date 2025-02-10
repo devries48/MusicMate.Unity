@@ -85,6 +85,7 @@ public interface IPanelAnimations
     void PlayHideErrorWindow(GameObject errorWindow);
     void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release);
     void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails);
+    void PlaySwitchDetails(GameObject showGroupObject, CanvasGroup hideGroup);
     void PlayProvidersVisibility(bool isVisible, ProvidersController providers,bool delay=false);
 }
 

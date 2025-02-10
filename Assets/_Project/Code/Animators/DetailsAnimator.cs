@@ -6,7 +6,7 @@ public class DetailsAnimator : MusicMateBehavior
 {
     [Header("Show Details Controllers")]
     [SerializeField] ShowReleaseController _releaseDetails;
-    [SerializeField] ArtistDetailsController _artistDetails;
+    [SerializeField] ShowArtistController _artistDetails;
 
     [Header("Elements")]
     [SerializeField] ButtonInteractable _closeButton;
@@ -17,6 +17,7 @@ public class DetailsAnimator : MusicMateBehavior
 
     readonly float _speed = 1.5f;
     Image _panel;
+    MusicMateStateDetails _current;
 
     protected override void RegisterEventHandlers()
     {
@@ -31,6 +32,11 @@ public class DetailsAnimator : MusicMateBehavior
     protected override void InitializeComponents()
     {
         _panel = GetComponent<Image>();
+    }
+
+    protected override void InitializeValues()
+    {
+        _current = MusicMateStateDetails.Release;
     }
 
     protected override void ApplyColors()
@@ -70,94 +76,32 @@ public class DetailsAnimator : MusicMateBehavior
     public void CloseDetails()
     {
         Animations.Panel.PlayDetailsVisibility(false, this);
-        Manager.AppState.InvokeStateChanged(MusicMateStatePart.ReleaseResult);
+        Manager.AppState.InvokeStateChanged(MusicMateStateChange.Details, false);
     }
 
     void OnCloseClicked() => CloseDetails();
 
-    /*
-        void MoveReleaseDetails(bool show, float delay = 0)
+    public void Show(MusicMateStateDetails details)
+    {
+        if (details == _current)
+            return;
+
+        var showGroup = details switch
         {
-            var pivotTo = show ? .5f : 2f;
-            var easing = show ? Ease.OutBack : Ease.InBack;
-            var rect = _releaseDetails.gameObject.GetComponent<RectTransform>();
+            MusicMateStateDetails.Release => _releaseDetails.gameObject,
+            MusicMateStateDetails.Artist => _artistDetails.gameObject,
+            _ => null
+        };
 
-            rect.DOPivotY(pivotTo, _popupTime).SetEase(easing).SetDelay(delay);
-
-            _state.ReleaseDetails = show ? State.States.visible : State.States.moved;
-        }
-
-        void VisibleArtistDetails(bool show, float delay = 0)
+        var hideGroup = _current switch
         {
-            if (show)
-                ScaleIn(_artistDetails.transform, delay);
-            else
-                ScaleOut(_artistDetails.transform);
+            MusicMateStateDetails.Release => _releaseDetails.m_canvasGroup,
+            MusicMateStateDetails.Artist => _artistDetails.m_canvasGroup,
+            _ => null
+        };
 
-            _state.ReleaseDetailsArtist = show ? State.States.visible : State.States.hidden;
-        }
+        _current = details;
 
-    
-
-        void ScaleIn(Transform trans, float delay = 0)
-        {
-            trans.localScale = Vector3.zero;
-            trans.gameObject.SetActive(true);
-            trans.DOScale(1, _popupTime).SetEase(Ease.OutBack).SetDelay(delay);
-        }
-
-        void ScaleOut(Transform trans)
-        {
-            trans.DOScale(0, _popupTime).SetEase(Ease.InBack)
-                .OnComplete(() => trans.gameObject.SetActive(false));
-        }
-
-           void OnVisiblePartChanged(object sender, VisiblePartChangedEventArgs e)
-        {
-            var p = e.Part;
-            if (p == VisiblePart.Previous)
-            {
-                if (_state.ReleaseDetailsArtist == State.States.visible)
-                {
-                    p = VisiblePart.ReleaseDetails;
-                    VisibleArtistDetails(false);
-                }
-            }
-
-            switch (p)
-            {
-                case VisiblePart.ReleaseResult:
-                    VisibleReleaseResult(true);
-
-                    if (_state.ReleaseDetails == State.States.visible)
-                        VisibleReleaseDetails(false);
-
-                    break;
-
-                case VisiblePart.ReleaseDetails:
-                    if (_state.ReleaseDetails == State.States.moved)
-                        MoveReleaseDetails(true, _popupTime);
-                    else
-                        VisibleReleaseDetails(true);
-
-                    if (_state.ReleaseDetailsArtist == State.States.visible)
-                        VisibleArtistDetails(false);
-
-                    if (_state.ReleaseResult == State.States.visible)
-                        VisibleReleaseResult(false);
-
-                    break;
-
-                case VisiblePart.ArtistDetails:
-                    VisibleArtistDetails(true, _popupTime);
-                    MoveReleaseDetails(false);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-    */
-
+        Animations.Panel.PlaySwitchDetails(showGroup, hideGroup);
+    }
 }

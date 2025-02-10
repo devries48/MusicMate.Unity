@@ -13,8 +13,8 @@ public interface IAppState
     void ChangePlayButtonState(ButtonAnimator button, bool enabled, bool? isPlaying);
     void ChangePlayButtonsState(ButtonAnimator[] buttons, bool enabled, bool? isPlaying = null);
 
-    void InvokeStateChanged(MusicMateStatePart part);
-    void InvokeStateChanged(bool showProviders);
+    void InvokeStateChanged(MusicMateStateDetails details);
+    void InvokeStateChanged(MusicMateStateChange change, bool value);
     void SubscribeToMusicMateStateChanged(MusicMateStateChangedHandler handler);
     void UnsubscribeFromMusicMateStateChangedd(MusicMateStateChangedHandler handler);
 }
@@ -25,20 +25,32 @@ public delegate void MusicMateModeChangedHandler(MusicMateMode mode);
 
 public class MusicMateState
 {
-    public MusicMateState(MusicMateStatePart part)
+    public MusicMateState(MusicMateStateDetails details)
     {
-        Change = MusicMateStateChange.Part;
-        Part = part;
+        Change = MusicMateStateChange.Details;
+        Details = details;
     }
 
-    public MusicMateState(bool showProviders)
+    public MusicMateState(MusicMateStateChange change, bool value)
     {
-        Change = MusicMateStateChange.Providers;
-        ShowProviders = showProviders;
+        Change = change;
+
+        switch (change)
+        {
+            case MusicMateStateChange.Details:
+                ShowDetails = value;    
+                break;
+            case MusicMateStateChange.Providers:
+                ShowProviders = value;
+                break;
+            default:
+                break;
+        }
     }
 
     public MusicMateStateChange Change { get; }
-    public MusicMateStatePart Part { get; }
+    public MusicMateStateDetails Details { get; }
+    public bool ShowDetails { get; }
     public bool ShowProviders { get; }
 }
 #endregion

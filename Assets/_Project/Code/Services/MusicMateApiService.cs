@@ -70,6 +70,8 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
     public void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback) => StartCoroutine(GetReleases(callback));
 
     public void GetRelease(Guid id, Action<ReleaseModel> callback) => StartCoroutine(GetReleaseCore(id, callback));
+    
+    public void GetArtist(Guid id, Action<ArtistModel> callback) => StartCoroutine(GetArtistCore(id, callback));
 
     public void DownloadImage(string url, Action<Sprite> callback) => StartCoroutine(GetImage(url, callback));
 
@@ -137,7 +139,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
         if (wr.result != UnityWebRequest.Result.Success)
         {
-            Debug.Log("Import process started successfully.");
+            Debug.LogError("Web request error getting release.");
         }
         else
         {
@@ -150,7 +152,30 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
             {
                print(ex.ToString());
             }
+        }
+    }
 
+    IEnumerator GetArtistCore(Guid id, Action<ArtistModel> callback)
+    {
+        using UnityWebRequest wr = CreateGetRequest($"artistts/{id}");
+        yield return wr.SendWebRequest();
+
+        if (wr.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Web request error getting artist.");
+        }
+        else
+        {
+            try
+            {
+                print(wr.downloadHandler.text);
+                var result = JsonConvert.DeserializeObject<SingleResult<ArtistModel>>(wr.downloadHandler.text, _jsonSettings);
+                callback.Invoke(result.Data);
+            }
+            catch (Exception ex)
+            {
+                print(ex.ToString());
+            }
         }
     }
 

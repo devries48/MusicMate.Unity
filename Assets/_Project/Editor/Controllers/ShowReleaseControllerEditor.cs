@@ -24,7 +24,7 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
         DrawTitle("Show Release Controller");
 
         DrawSectionHeader("Parent & State Objects");
-        DrawSectionField("_showDetails", "Parent");
+        DrawSectionField("_parent", "Parent");
         DrawSectionField("m_normal", "Normal State");
         DrawSectionField("m_maximized", "Maximized State");
 

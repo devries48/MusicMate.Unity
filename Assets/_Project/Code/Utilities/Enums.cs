@@ -16,18 +16,17 @@ public enum MusicMateColor
     Icon,
     DisabledIcon
 }
+
 public enum MusicMateStateChange
 {
-    Part,
+    Details,
     Providers
 }
 
-public enum MusicMateStatePart
+public enum MusicMateStateDetails
 {
-    Previous,
-    ReleaseResult,
-    ReleaseDetails,
-    ArtistDetails
+    Release,
+    Artist
 }
 
 public enum PlayerState

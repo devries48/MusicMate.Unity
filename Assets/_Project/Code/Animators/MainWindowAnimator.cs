@@ -68,7 +68,7 @@ public class MainWindowAnimator : MusicMateBehavior
         if (!_showDetails.isActiveAndEnabled)
         {
             Animations.Panel.PlayDetailsVisibility(true, _showDetails);
-            _state.ReleaseDetails = State.States.visible;
+            Manager.AppState.InvokeStateChanged(MusicMateStateChange.Details, true);
         }
 
         _showDetails.SetRelease(release);
@@ -115,7 +115,7 @@ public class MainWindowAnimator : MusicMateBehavior
             case MusicMateStateChange.Providers:
                 SetStateProviders(state.ShowProviders);
                 break;
-            case MusicMateStateChange.Part:
+            case MusicMateStateChange.Details:
                 SetStatePart(state);
                 break;
         }
@@ -123,20 +123,25 @@ public class MainWindowAnimator : MusicMateBehavior
 
     void SetStatePart(MusicMateState state)
     {
-        switch (state.Part)
+        if (state.ShowDetails)
         {
-            case MusicMateStatePart.ReleaseResult:
-                VisiblityReleaseResult(true);
-                break;
+            switch (state.Details)
+            {
+                case MusicMateStateDetails.Release:
+                case MusicMateStateDetails.Artist:
+                    if (_state.ResultVisible)
+                        VisiblityResult(false);
 
-            case MusicMateStatePart.ReleaseDetails:
-            case MusicMateStatePart.ArtistDetails:
-                if (_state.ReleaseResult == State.States.visible)
-                    VisiblityReleaseResult(false);
-                break;
+                    _showDetails.Show(state.Details);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            VisiblityResult(true);
         }
     }
 
@@ -167,31 +172,25 @@ public class MainWindowAnimator : MusicMateBehavior
         }
     }
 
-    void VisiblityReleaseResult(bool show)
+    void VisiblityResult(bool show)
     {
+        if (_state.ResultVisible == show)
+            return;
+
         Animations.Panel.PlayReleaseGridVisiblity(show, _releaseResult);
-        _state.ReleaseResult = show ? State.States.visible : State.States.hidden;
+        _state.ResultVisible = show;
     }
 
     class State
     {
         public State()
         {
-            ReleaseResult = States.visible;
-            ReleaseDetails = States.hidden;
-            ReleaseDetailsArtist = States.hidden;
-
             AudioPlayerExpanded = true;
+            ResultVisible = true;
         }
 
-        // Save the audio player state when the provider panel is shown
-        public bool AudioPlayerExpanded;
-        public bool ProvidersVisible;
-
-        public enum States { visible, hidden }
-
-        public States ReleaseResult;
-        public States ReleaseDetails;
-        public States ReleaseDetailsArtist;
+        public bool ResultVisible { get; set; }
+        public bool AudioPlayerExpanded { get; set; }
+        public bool ProvidersVisible { get; set; }
     }
 }

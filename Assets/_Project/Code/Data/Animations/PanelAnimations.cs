@@ -42,6 +42,9 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
     [SerializeField] Ease _detailsShowEase = Ease.Linear;
     [SerializeField] float _detailsHideTime = .2f;
     [SerializeField] Ease _detailsHideEase = Ease.OutQuint;
+    [SerializeField] float _detailsSwitchTime = .3f;
+    [SerializeField] Ease _detailsSwitchShowEase = Ease.InQuart;
+    [SerializeField] Ease _detailsSwitchHideEase = Ease.OutQuart;
 
     [Header("Providers Panel")]
     [SerializeField] float _providersShowTime = .5f;
@@ -186,6 +189,22 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
                 });
     }
 
+    public void PlaySwitchDetails(GameObject showGroupObject, CanvasGroup hideGroup)
+    {
+        showGroupObject.TryGetComponent<CanvasGroup>(out var showGroup);
+        showGroup.gameObject.SetActive(true);
+
+        if (hideGroup != null)
+        {
+            hideGroup.DOFade(0, _detailsSwitchTime).SetEase(_detailsSwitchHideEase).OnComplete(() =>
+            {
+                hideGroup.gameObject.SetActive(false);
+            });
+        }
+
+        showGroup.DOFade(1, _detailsSwitchTime).SetEase(_detailsSwitchShowEase);
+    }
+
     public void PlayProvidersVisibility(bool isVisible, ProvidersController providers, bool delay = false)
     {
         if (isVisible)
@@ -228,4 +247,5 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
                         obj.SetActive(false);
                 });
     }
+
 }

@@ -105,7 +105,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public void ShowRelease(ReleaseResult releaseModel)
     {
         _mainPage.ShowRelease(releaseModel);
-        AppState.InvokeStateChanged(MusicMateStatePart.ReleaseDetails);
     }
 
     public void HideSpinner()
@@ -118,7 +117,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             var img = images[i];
             seq.Join(img.DOFade(0f, 1f));
         }
-        seq.OnComplete(()=>_connectionSpinner.SetActive(false));
+        seq.OnComplete(() => _connectionSpinner.SetActive(false));
     }
 
     public void QuitApplication()
@@ -178,15 +177,15 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     void ShowOrHideErrorPanel(bool show)
     {
         if (show)
-        Animations.Panel.PlayShowErrorWindow(_errorController.gameObject);
+            Animations.Panel.PlayShowErrorWindow(_errorController.gameObject);
         else
-        Animations.Panel.PlayHideErrorWindow(_errorController.gameObject);
+            Animations.Panel.PlayHideErrorWindow(_errorController.gameObject);
     }
 
     void ShowOrHideLoginPanel(bool show, float delay = 0f)
     {
         if (show)
-            Animations.Panel.PlayShowLoginWindow(_errorController.gameObject,delay);
+            Animations.Panel.PlayShowLoginWindow(_errorController.gameObject, delay);
         else
             Animations.Panel.PlayHideLoginWindow(_errorController.gameObject);
     }
