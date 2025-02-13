@@ -26,7 +26,8 @@ public enum MusicMateStateChange
 public enum MusicMateStateDetails
 {
     Release,
-    Artist
+    Artist,
+    Catalog
 }
 
 public enum PlayerState

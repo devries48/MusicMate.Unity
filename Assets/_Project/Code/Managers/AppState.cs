@@ -3,15 +3,16 @@ using UnityEngine.UI;
 public class AppState : IAppState
 {
     readonly AppSetings _config;
+    readonly MusicMateState _currentState;
     MusicMateMode _currentMode = MusicMateMode.Collection;
-
     event MusicMateStateChangedHandler StateChanged;
+
     public event MusicMateModeChangedHandler ModeChanged;
 
     public AppState(MusicMateManager manager)
     {
         _config = manager.AppConfiguration;
-
+        _currentState = new MusicMateState();
         CurrentColors = _config.Colors;
     }
 
@@ -35,8 +36,6 @@ public class AppState : IAppState
 
     public IColorSettings CurrentColors { get; private set; }
 
-    public bool ProvidersVisible { get; private set; }
-
     public void NotifyModeChanged(MusicMateMode newMode) => CurrentMode = newMode;
 
     public void ChangePlayButtonState(ButtonAnimator button, bool enabled, bool? isPlaying)
@@ -55,18 +54,27 @@ public class AppState : IAppState
         foreach (var item in buttons)
             ChangePlayButtonState(item, enabled, isPlaying);
     }
- 
+
     /// <summary>
     /// Notify subscribed controllers the visibility of a details part has changed.
     /// </summary>
-    public void InvokeStateChanged(MusicMateStateDetails details) => StateChanged?.Invoke(new MusicMateState(details));
+    public void InvokeStateChanged(MusicMateStateDetails details)
+    {
+        _currentState.State(details);
+        StateChanged?.Invoke(_currentState);
+    }
 
     /// <summary>
     /// Notify subscribed controllers the visibility of the providers-panel has changed.
     /// </summary>
-    public void InvokeStateChanged(MusicMateStateChange change, bool value) => StateChanged?.Invoke(new MusicMateState(change,value));
+    public void InvokeStateChanged(MusicMateStateChange change, bool value)
+    {
+        _currentState.State(change,value);
+        StateChanged?.Invoke(_currentState);
+    }
 
     public void SubscribeToMusicMateStateChanged(MusicMateStateChangedHandler handler) => StateChanged += handler;
 
     public void UnsubscribeFromMusicMateStateChangedd(MusicMateStateChangedHandler handler) => StateChanged -= handler;
+
 }

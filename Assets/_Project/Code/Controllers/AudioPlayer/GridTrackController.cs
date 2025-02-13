@@ -21,13 +21,13 @@ public class GridTrackController : MusicMateBehavior
     #region Base Class Methods
     protected override void RegisterEventHandlers()
     {
-        if(_isPlaylist)
+        if (_isPlaylist)
             PlayerService.SubscribeToActionChanged(OnActionChanged);
     }
 
     protected override void UnregisterEventHandlers()
     {
-        if(_isPlaylist)
+        if (_isPlaylist)
             PlayerService.UnsubscribeFromActionChanged(OnActionChanged);
     }
 
@@ -47,11 +47,13 @@ public class GridTrackController : MusicMateBehavior
 
     public void SetRelease(ReleaseModel release)
     {
-        _actionPanel.gameObject.SetActive(false);
+        if (_actionPanel != null)
+            _actionPanel.gameObject.SetActive(false);
+
         _tracklist = release.GetAllTracks();
         _currentIndex = 0;
 
-        StartCoroutine(SetTracklist());
+        GlobalCoroutine.StartCoroutine(SetTracklist());
     }
 
     public void ChangeSelection(RowTrackAnimator row)
@@ -59,7 +61,7 @@ public class GridTrackController : MusicMateBehavior
         //if(_selectedRow == row || !row.IsSelected)
         //    return;
 
-        if(_selectedRow != null)
+        if (_selectedRow != null)
             _selectedRow.IsSelected = false;
 
         _selectedRow = row;
@@ -86,7 +88,7 @@ public class GridTrackController : MusicMateBehavior
 
     void ShowActionPanel(RowTrackAnimator track)
     {
-        _actionPanel.SetParent(transform, false); 
+        _actionPanel.SetParent(transform, false);
         _actionPanel.anchoredPosition = CalculatePanelPosition(track.GetComponent<RectTransform>());
         _actionPanel.localScale = Vector3.zero;
 
@@ -109,7 +111,10 @@ public class GridTrackController : MusicMateBehavior
 
     void DestroyItems()
     {
-        for(int i = _trans.childCount - 1; i >= 0; i--)
+        if (_trans == null)
+            return;
+
+        for (int i = _trans.childCount - 1; i >= 0; i--)
             DestroyImmediate(_trans.GetChild(i).gameObject);
     }
 
@@ -141,7 +146,7 @@ public class GridTrackController : MusicMateBehavior
 
         var list = _isPlaylist ? PlayerService.GetPlaylist() : _tracklist;
 
-        for(int i = 0; i < list.Count; i++)
+        for (int i = 0; i < list.Count; i++)
         {
             var track = list[i];
             var item = Instantiate(_prefabTrackRow, _verticalLayout.transform);
@@ -154,18 +159,18 @@ public class GridTrackController : MusicMateBehavior
             yield return null;
         }
 
-        if(_isPlaylist)
+        if (_isPlaylist)
             ActivateItem();
     }
 
     void OnActionChanged(object sender, ActionChangedEventArgs e)
     {
-        if(_isPlaylist && e.Action == PlayerAction.PlaylistChanged)
+        if (_isPlaylist && e.Action == PlayerAction.PlaylistChanged)
         {
-            if(e.PlaylistAction == PlaylistAction.NewList)
-                StartCoroutine(SetTracklist());
+            if (e.PlaylistAction == PlaylistAction.NewList)
+                GlobalCoroutine.StartCoroutine(SetTracklist());
 
-            if(e.PlaylistAction == PlaylistAction.None)
+            if (e.PlaylistAction == PlaylistAction.None)
                 ActivateItem();
         }
     }

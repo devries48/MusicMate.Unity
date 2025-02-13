@@ -157,7 +157,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
     IEnumerator GetArtistCore(Guid id, Action<ArtistModel> callback)
     {
-        using UnityWebRequest wr = CreateGetRequest($"artistts/{id}");
+        using UnityWebRequest wr = CreateGetRequest($"artists/{id}");
         yield return wr.SendWebRequest();
 
         if (wr.result != UnityWebRequest.Result.Success)
@@ -168,7 +168,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         {
             try
             {
-                print(wr.downloadHandler.text);
+                //print(wr.downloadHandler.text);
                 var result = JsonConvert.DeserializeObject<SingleResult<ArtistModel>>(wr.downloadHandler.text, _jsonSettings);
                 callback.Invoke(result.Data);
             }

@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: Quit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -258,7 +258,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  Colors: {fileID: 11400000, guid: 6812727ca4414e349b275ec425d69d93, type: 2}
+  Colors1: {fileID: 0}
 --- !u!114 &1688897903985325820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +271,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2268e44929c70dd49a809802a2039c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interactable: 0
   _isPrimary: 0
   _buttonType: 0
   _text: Quit
+  _icon: {fileID: 0}
+  _stateIcon: {fileID: 0}
+  _isToggle: 0
+  _isExpanded: 0
+  _isStateOn: 0
+  _headerText: 

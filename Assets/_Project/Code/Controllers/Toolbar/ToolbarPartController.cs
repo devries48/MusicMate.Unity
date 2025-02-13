@@ -14,6 +14,7 @@ public class ToolbarPartController : ToolbarControllerBase
     [SerializeField] string _titleRelease;
     [SerializeField] ToolbarButtonAnimator _releaseToggle;
     [SerializeField] ToolbarButtonAnimator _artistToggle;
+    [SerializeField] ToolbarButtonAnimator _catalogToggle;
 
     internal RectTransform m_rectTransform;
     internal GameObject m_activePart;
@@ -22,7 +23,7 @@ public class ToolbarPartController : ToolbarControllerBase
     Part _currentPart;
 
     enum Part { search, details };
-    enum DetailsToggle { release, artist }
+    enum DetailsToggle { release, artist, catalog }
 
     #region MusicMate Base Class Methods
     protected override void InitializeComponents()
@@ -50,6 +51,7 @@ public class ToolbarPartController : ToolbarControllerBase
 
         _releaseToggle.OnButtonClick.AddListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.AddListener(OnArtistToggleClicked);
+        _catalogToggle.OnButtonClick.AddListener(OnCatalogToggleClicked);
     }
 
     protected override void UnregisterEventHandlers()
@@ -60,7 +62,7 @@ public class ToolbarPartController : ToolbarControllerBase
 
         _releaseToggle.OnButtonClick.RemoveListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.RemoveListener(OnArtistToggleClicked);
-
+        _catalogToggle.OnButtonClick.RemoveListener(OnCatalogToggleClicked);
     }
     #endregion
 
@@ -69,6 +71,7 @@ public class ToolbarPartController : ToolbarControllerBase
     {
         _releaseToggle.SetToggle(_toggled == DetailsToggle.release);
         _artistToggle.SetToggle(_toggled == DetailsToggle.artist);
+        _catalogToggle.SetToggle(_toggled == DetailsToggle.catalog);
     }
     #endregion
 
@@ -88,6 +91,14 @@ public class ToolbarPartController : ToolbarControllerBase
         SetElementStates();
 
         Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Artist);
+    }
+    
+    void OnCatalogToggleClicked()
+    {
+        _toggled = DetailsToggle.catalog;
+        SetElementStates();
+
+        Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Catalog);
     }
 
     void OnMusicMateStateChanged(MusicMateState state)
@@ -110,16 +121,11 @@ public class ToolbarPartController : ToolbarControllerBase
         {
             title = _titleSearch;
             showPart = _searchPart;
-
-            // reset toolbar
-            //_toggled = DetailsToggle.release;
-            //SetElementStates();
         }
         else if (part == Part.details)
         {
             title = _titleRelease;
             showPart = _releasePart;
-            //_toggled = DetailsToggle.release;
         }
 
         if (title != default)

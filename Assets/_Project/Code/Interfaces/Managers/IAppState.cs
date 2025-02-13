@@ -1,13 +1,9 @@
-﻿using TMPro;
-using UnityEngine.UI;
-
-public interface IAppState
+﻿public interface IAppState
 {
     event MusicMateModeChangedHandler ModeChanged;
 
     IColorSettings CurrentColors { get; }
     MusicMateMode CurrentMode { get; }
-    bool ProvidersVisible { get; }
 
     void NotifyModeChanged(MusicMateMode newMode);
     void ChangePlayButtonState(ButtonAnimator button, bool enabled, bool? isPlaying);
@@ -25,20 +21,21 @@ public delegate void MusicMateModeChangedHandler(MusicMateMode mode);
 
 public class MusicMateState
 {
-    public MusicMateState(MusicMateStateDetails details)
+    public void State(MusicMateStateDetails details)
     {
+        ShowDetails = true;
         Change = MusicMateStateChange.Details;
         Details = details;
     }
 
-    public MusicMateState(MusicMateStateChange change, bool value)
+    public void State(MusicMateStateChange change, bool value)
     {
         Change = change;
 
         switch (change)
         {
             case MusicMateStateChange.Details:
-                ShowDetails = value;    
+                ShowDetails = value;
                 break;
             case MusicMateStateChange.Providers:
                 ShowProviders = value;
@@ -48,9 +45,9 @@ public class MusicMateState
         }
     }
 
-    public MusicMateStateChange Change { get; }
-    public MusicMateStateDetails Details { get; }
-    public bool ShowDetails { get; }
-    public bool ShowProviders { get; }
+    public MusicMateStateChange Change { get; private set; }
+    public MusicMateStateDetails Details { get; private set; }
+    public bool ShowDetails { get; private set; }
+    public bool ShowProviders { get; private set; }
 }
 #endregion

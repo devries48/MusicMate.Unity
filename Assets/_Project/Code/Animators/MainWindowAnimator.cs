@@ -129,6 +129,7 @@ public class MainWindowAnimator : MusicMateBehavior
             {
                 case MusicMateStateDetails.Release:
                 case MusicMateStateDetails.Artist:
+                case MusicMateStateDetails.Catalog:
                     if (_state.ResultVisible)
                         VisiblityResult(false);
 

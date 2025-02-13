@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animationTime: 0.2
   _animationEase: 27
-  _toolbarHoverScale: 1.1
-  _toolbarClickScale: 0.9
+  _toolbarHoverScale: 1.05
+  _toolbarClickScale: 0.95
   _toolbarToggleScale: 0.7
   _toolbarToggleTime: 0.1
   _toolbarTooltipPopupTime: 0.1

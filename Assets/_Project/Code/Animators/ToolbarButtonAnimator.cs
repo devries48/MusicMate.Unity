@@ -122,7 +122,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (_buttonType == ToolbarButtonType.ToggleText)
         {
             ChangeState(_interactable, m_background);
-            ChangeColor(MusicMateColor.Panel, m_text);
+            ChangeColor(MusicMateColor.Background, m_text);
         }
         else
         {
@@ -260,12 +260,17 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (_buttonType != ToolbarButtonType.Toggle && _buttonType != ToolbarButtonType.ToggleText)
             _isToggleOn = false;
 
-        // Prevent Object Reference error when loading the project and the colors scriptable is not loaded yet.
-        if (m_icon != null && Manager.AppConfiguration != null)
-        {
+        InitializeComponents();
+
+        if (m_icon != null)
             m_icon.sprite = _icon;
+
+        if (m_text != null)
+            m_text.text = _text;
+
+        // Prevent Object Reference error when loading the project and the colors scriptable is not loaded yet.
+        if (Manager.AppConfiguration != null)
             ApplyColors();
-        }
     }
 
 #endif

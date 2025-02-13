@@ -65,6 +65,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Start a global hosted Coroutine.
+    /// </summary>
+    protected CoroutineRunner GlobalCoroutine => CoroutineRunner.Instance;
+
     protected virtual void OnEnable()
     {
         if (Manager?.AppState != null)
@@ -208,7 +213,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
         foreach (var item in args)
         {
-            if (item ==  null)
+            if (item == null)
                 continue;
 
             var animate = !_initializing && IsGameObjectActive(item);

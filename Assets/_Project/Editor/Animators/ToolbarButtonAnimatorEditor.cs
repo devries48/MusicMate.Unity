@@ -29,6 +29,7 @@ public class ToolbarButtonAnimatorEditor : MusicMateEditorBase
                 DrawSectionHeader("Toggle Text Button");
                 DrawSectionField("_text", "Text");
                 DrawSectionField("_isToggleOn", "Toggle On");
+                DrawSectionField("_isToggleGroup", "Member of Toggle-group");
                 break;
             case ToolbarButtonType.Toggle:
                 DrawSectionHeader("Toggle Button");
