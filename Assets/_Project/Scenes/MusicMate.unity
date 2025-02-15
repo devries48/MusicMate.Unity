@@ -4494,11 +4494,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _titleText: {fileID: 1128984878}
-  _descriptionText: {fileID: 2053115598}
-  _errorText: {fileID: 1434184547}
+  _messageText: {fileID: 2053115598}
+  _descriptionText: {fileID: 1434184547}
   _warningImage: {fileID: 1639855008}
-  _acceptButton: {fileID: 1530352717}
-  _cancelButton: {fileID: 926593673}
+  _acceptButton: {fileID: 1530352718}
+  _cancelButton: {fileID: 926593674}
 --- !u!111 &644388913
 Animation:
   m_ObjectHideFlags: 0
@@ -4850,7 +4850,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 15, y: -216}
+  m_AnchoredPosition: {x: 0, y: -216}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &664013653
@@ -11799,16 +11799,16 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1926812188781237935}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &926593673 stripped
+--- !u!114 &926593674 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 650381435541889005, guid: 29835095346c54f4d9bfc056e770a670,
+  m_CorrespondingSourceObject: {fileID: 1688897903985325820, guid: 29835095346c54f4d9bfc056e770a670,
     type: 3}
   m_PrefabInstance: {fileID: 1926812188781237935}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1960f51c7b0159a46a642a0e6c5657bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 2268e44929c70dd49a809802a2039c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &937608866 stripped
@@ -13182,7 +13182,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -90}
-  m_SizeDelta: {x: 0, y: 20}
+  m_SizeDelta: {x: 0, y: 26}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1128984878
 MonoBehaviour:
@@ -13231,12 +13231,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 23.25
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 24
   m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 4096
@@ -15272,7 +15272,7 @@ GameObject:
   - component: {fileID: 1434184548}
   - component: {fileID: 1434184547}
   m_Layer: 5
-  m_Name: Error
+  m_Name: Description
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15295,7 +15295,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -175}
-  m_SizeDelta: {x: -60, y: -265}
+  m_SizeDelta: {x: -60, y: -250}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1434184547
 MonoBehaviour:
@@ -15326,8 +15326,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4288651167
-  m_fontColor: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 1}
+    rgba: 4291809231
+  m_fontColor: {r: 0.8117647, g: 0.8117647, b: 0.8117647, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -15344,15 +15344,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 22
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 22
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -16013,16 +16013,16 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &1530352717 stripped
+--- !u!114 &1530352718 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 650381435541889005, guid: 29835095346c54f4d9bfc056e770a670,
+  m_CorrespondingSourceObject: {fileID: 1688897903985325820, guid: 29835095346c54f4d9bfc056e770a670,
     type: 3}
   m_PrefabInstance: {fileID: 6879975914455854930}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1960f51c7b0159a46a642a0e6c5657bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 2268e44929c70dd49a809802a2039c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1552706598
@@ -19373,7 +19373,7 @@ PrefabInstance:
     - target: {fileID: 1296200222458139033, guid: be296f423a578a44ba94014212bfd768,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.06523155
+      value: 0.0005772477
       objectReference: {fileID: 0}
     - target: {fileID: 1440728410850110145, guid: be296f423a578a44ba94014212bfd768,
         type: 3}
@@ -19736,7 +19736,7 @@ GameObject:
   - component: {fileID: 2053115599}
   - component: {fileID: 2053115598}
   m_Layer: 5
-  m_Name: Description
+  m_Name: Message
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19758,8 +19758,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -141.20001}
-  m_SizeDelta: {x: -60, y: 20}
+  m_AnchoredPosition: {x: 0, y: -127}
+  m_SizeDelta: {x: -60, y: 24}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2053115598
 MonoBehaviour:
@@ -19790,8 +19790,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4288651167
-  m_fontColor: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 1}
+    rgba: 4291809231
+  m_fontColor: {r: 0.8117647, g: 0.8117647, b: 0.8117647, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -19808,13 +19808,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 21.45
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontSizeMax: 24
+  m_fontStyle: 32
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -21328,7 +21328,7 @@ PrefabInstance:
     - target: {fileID: 8876056654474500331, guid: 29835095346c54f4d9bfc056e770a670,
         type: 3}
       propertyPath: m_Name
-      value: Quit button
+      value: Cancel button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21945,7 +21945,7 @@ PrefabInstance:
     - target: {fileID: 8876056654474500331, guid: 29835095346c54f4d9bfc056e770a670,
         type: 3}
       propertyPath: m_Name
-      value: Connect button
+      value: Accept button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21968,7 +21968,7 @@ PrefabInstance:
     - target: {fileID: 1296200222458139033, guid: be296f423a578a44ba94014212bfd768,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.06517918
+      value: 0.0005723967
       objectReference: {fileID: 0}
     - target: {fileID: 1440728410850110145, guid: be296f423a578a44ba94014212bfd768,
         type: 3}

@@ -66,9 +66,17 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
         _service = MusicMateApiService.Instance.GetClient();
     }
 
-    void OnEnable() => _service.SubscribeToConnectionChanged(OnConnectionChanged);
+    void OnEnable()
+    {
+        _service.SubscribeToConnectionChanged(OnConnectionChanged);
+        _service.SubscribeToApiError(OnErrorOccurred);
+    }
 
-    void OnDisable() => _service.UnsubscribeFromConnectionChanged(OnConnectionChanged);
+    void OnDisable()
+    {
+        _service.UnsubscribeFromConnectionChanged(OnConnectionChanged);
+        _service.UnsubscribeFromApiError(OnErrorOccurred);
+    }
 
     void Start() => StartCoroutine(DelayAndConnect(.5f));
     #endregion
@@ -137,7 +145,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     {
         if (quit)
             QuitApp();
-
     });
 
     void ShowSpinner()
@@ -173,7 +180,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             _activateOnStart[i].SetActive(true);
     }
 
-
     void ShowOrHideErrorPanel(bool show)
     {
         if (show)
@@ -185,9 +191,9 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     void ShowOrHideLoginPanel(bool show, float delay = 0f)
     {
         if (show)
-            Animations.Panel.PlayShowLoginWindow(_errorController.gameObject, delay);
+            Animations.Panel.PlayShowLoginWindow(_loginController.gameObject, delay);
         else
-            Animations.Panel.PlayHideLoginWindow(_errorController.gameObject);
+            Animations.Panel.PlayHideLoginWindow(_loginController.gameObject);
     }
 
     IEnumerator DelayAndConnect(float seconds)
@@ -209,16 +215,19 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     }
 
     // 
-    void OnConnectionChanged(object sender, ConnectionChangedEventArgs e)
+    void OnConnectionChanged(ConnectionChangedEventArgs e)
     {
         _mainPage.ConnectionChanged(e.Connected);
 
         if (!e.Connected)
         {
-            ShowError(ErrorType.Connection, e.Error, _appSettings.ApiServiceUrl);
+            ShowError(ErrorType.Connection, _appSettings.ApiServiceUrl, e.Error);
             HideSpinner();
         }
         else
             HideLogo();
     }
+
+     void OnErrorOccurred(ErrorEventArgs e) => ShowError(e.Error, e.Message, e.Description);
+
 }

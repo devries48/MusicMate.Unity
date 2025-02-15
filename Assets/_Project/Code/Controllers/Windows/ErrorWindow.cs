@@ -7,36 +7,67 @@ public class ErrorWindow : MusicMateBehavior
     #region Serialized Fields
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _titleText;
+    [SerializeField] TextMeshProUGUI _messageText;
     [SerializeField] TextMeshProUGUI _descriptionText;
-    [SerializeField] TextMeshProUGUI _errorText;
     [SerializeField] Image _warningImage;
-    [SerializeField] ButtonInteractable _acceptButton;
-    [SerializeField] Button _cancelButton;
+    [SerializeField] ButtonAnimator _acceptButton;
+    [SerializeField] ButtonAnimator _cancelButton;
     #endregion
+
+    ErrorType _errorType;
 
     #region Base Class Methods
     protected override void RegisterEventHandlers()
     {
-        _cancelButton.onClick.AddListener(OnCancelClicked);
-        _acceptButton.onClick.AddListener(OnAcceptClicked);
+        _cancelButton.OnButtonClick.AddListener(OnCancelClicked);
+        _acceptButton.OnButtonClick.AddListener(OnAcceptClicked);
     }
 
     protected override void UnregisterEventHandlers()
     {
-        _cancelButton.onClick.RemoveListener(OnCancelClicked);
-        _acceptButton.onClick.RemoveListener(OnAcceptClicked);
+        _cancelButton.OnButtonClick.RemoveListener(OnCancelClicked);
+        _acceptButton.OnButtonClick.RemoveListener(OnAcceptClicked);
+    }
+
+    protected override void ApplyColors()
+    {
+        ChangeColor(MusicMateColor.Accent, _warningImage);
+        ChangeColor(MusicMateColor.Accent, _messageText);
+        ChangeColor(MusicMateColor.Accent, _titleText);
     }
     #endregion
 
-    public void SetError(ErrorType error, string message, string description = null)
+    public void SetError(ErrorType error, string message, string description)
     {
-        if (error == ErrorType.Connection)
+        _errorType = error;
+
+        switch (error)
         {
-            _descriptionText.text = description ?? string.Empty;
+            case ErrorType.Connection:
+                _titleText.text = "Connecting to API Service failed";
+                _acceptButton.SetText("Connect");
+                break;
+
+            case ErrorType.Api:
+                _titleText.text = "Error in API Request";
+                _acceptButton.SetText("Close");
+                break;
+
+            default:
+                break;
         }
-        _errorText.text = message;
+
+        _messageText.text = message;
+        _descriptionText.text = description;
     }
 
     void OnCancelClicked() => Manager.QuitApplication();
-    void OnAcceptClicked() => Manager.ShowLogin();
+
+    void OnAcceptClicked()
+    {
+        if (_errorType == ErrorType.Connection)
+            Manager.ShowLogin();
+        else
+            Animations.Panel.PlayHideErrorWindow(gameObject);
+    }
 }

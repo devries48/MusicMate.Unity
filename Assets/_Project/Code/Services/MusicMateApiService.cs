@@ -56,6 +56,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
     };
 
     event ConnectionChangedEventHandler ConnectionChanged;
+    event ApiErrorEventHandler ErrorOccurred;
 
     public bool IsConnected => _accessToken != null;
 
@@ -65,12 +66,16 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
     public void UnsubscribeFromConnectionChanged(ConnectionChangedEventHandler handler) => ConnectionChanged -= handler;
 
-    public void SignIn(string url, string user, string password) => StartCoroutine(PostSignInRequest(url,user, password));
+    public void SubscribeToApiError(ApiErrorEventHandler handler) => ErrorOccurred += handler;
+
+    public void UnsubscribeFromApiError(ApiErrorEventHandler handler) => ErrorOccurred -= handler;
+
+    public void SignIn(string url, string user, string password) => StartCoroutine(PostSignInRequest(url, user, password));
 
     public void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback) => StartCoroutine(GetReleases(callback));
 
     public void GetRelease(Guid id, Action<ReleaseModel> callback) => StartCoroutine(GetReleaseCore(id, callback));
-    
+
     public void GetArtist(Guid id, Action<ArtistModel> callback) => StartCoroutine(GetArtistCore(id, callback));
 
     public void DownloadImage(string url, Action<Sprite> callback) => StartCoroutine(GetImage(url, callback));
@@ -100,14 +105,14 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
         if (wr.result != UnityWebRequest.Result.Success)
         {
-            OnConnectionChanged(false, wr.error);
+            InvokeConnectionChanged(false, wr.error);
         }
         else
         {
             var auth = JsonConvert.DeserializeObject<AuthModel>(wr.downloadHandler.text, _jsonSettings);
             _accessToken = auth.Token;
 
-            OnConnectionChanged(true);
+            InvokeConnectionChanged(true);
         }
     }
 
@@ -118,17 +123,23 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         yield return wr.SendWebRequest();
 
         if (wr.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(wr.error);
-        }
+            InvokeErrorOccurred(q, wr);
         else
         {
-            //Debug.Log(wr.downloadHandler.text);
-            var result = JsonConvert.DeserializeObject<PagedResult<ReleaseResult>>(
-                wr.downloadHandler.text,
-                _jsonSettings);
+            try
+            {
 
-            callback.Invoke(result);
+                Debug.Log(wr.downloadHandler.text);
+                var result = JsonConvert.DeserializeObject<PagedResult<ReleaseResult>>(
+                    wr.downloadHandler.text,
+                    _jsonSettings);
+
+                callback.Invoke(result);
+            }
+            catch (Exception ex)
+            {
+                InvokeErrorOccurred(q, ex);
+            }
         }
     }
 
@@ -139,7 +150,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
         if (wr.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("Web request error getting release.");
+            print("Web request error getting release.");
         }
         else
         {
@@ -150,7 +161,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
             }
             catch (Exception ex)
             {
-               print(ex.ToString());
+                print(ex.ToString());
             }
         }
     }
@@ -230,10 +241,56 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         }
     }
 
-    void OnConnectionChanged(bool connected, string error = default)
+    void InvokeConnectionChanged(bool connected, string error = default)
     {
         var args = new ConnectionChangedEventArgs(connected, error);
-        ConnectionChanged?.Invoke(this, args);
+        ConnectionChanged?.Invoke(args);
+    }
+
+    void InvokeErrorOccurred(string q, UnityWebRequest wr)
+    {
+        var args = new ErrorEventArgs(ErrorType.Api, GetMessage(q), GetDescription(wr));
+        ErrorOccurred?.Invoke(args);
+    }
+
+    void InvokeErrorOccurred(string q, Exception ex)
+    {
+        var args = new ErrorEventArgs(ErrorType.Api, GetMessage(q), ex.Message);
+        ErrorOccurred?.Invoke(args);
+    }
+
+    string GetMessage(string q)
+    {
+        var parts = q.Split('?');
+        var endpoint = parts[0];
+        var parameters = parts.Length > 1 ? parts[1] : "";
+        var prefix = "Failed to retrieve";
+        if (!string.IsNullOrEmpty(parameters))
+        {
+            parameters = parameters.Replace("&", ", ").Replace("=", ": ");
+            return $"{prefix} {endpoint} ({parameters})"; // Example: "releases (limit: 50, sort: desc)"
+        }
+
+        return $"{prefix} {endpoint}";
+    }
+
+    string GetDescription(UnityWebRequest wr)
+    {
+        return wr.result switch
+        {
+            UnityWebRequest.Result.ConnectionError => "Network error: Unable to reach the server. Please check your internet connection.",
+            UnityWebRequest.Result.ProtocolError => wr.responseCode switch
+            {
+                400 => "Bad request: The server could not process the request. Please verify your input.",
+                401 => "Unauthorized: Access denied. Please check your credentials.",
+                403 => "Forbidden: You do not have permission to access this resource.",
+                404 => "Not found: The requested resource could not be found on the server.",
+                >= 500 => "Server error: The server encountered an issue. Please try again later.",
+                _ => "Protocol error: An unexpected response was received from the server."
+            },
+            UnityWebRequest.Result.DataProcessingError => "Data processing error: The received data could not be processed.",
+            _ => "An unknown error occurred. Please try again.",
+        };
     }
 
     UnityWebRequest CreateGetRequest(string queryString)
@@ -262,6 +319,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         var uri2 = uri.TrimStart('/');
         return $"{uri1}/{uri2}";
     }
+
 
     class ScanStatusResponse
     {

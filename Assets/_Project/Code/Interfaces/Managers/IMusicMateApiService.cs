@@ -14,12 +14,15 @@ public interface IMusicMateApiService
 
     void SubscribeToConnectionChanged(ConnectionChangedEventHandler handler);
     void UnsubscribeFromConnectionChanged(ConnectionChangedEventHandler handler);
+    void SubscribeToApiError(ApiErrorEventHandler handler);
+    void UnsubscribeFromApiError(ApiErrorEventHandler handler);
 }
 
 #region EventHandlers & EventArgs
-public delegate void ConnectionChangedEventHandler(object sender, ConnectionChangedEventArgs e);
+public delegate void ConnectionChangedEventHandler(ConnectionChangedEventArgs e);
+public delegate void ApiErrorEventHandler(ErrorEventArgs e);
 
-public class ConnectionChangedEventArgs : EventArgs
+public class ConnectionChangedEventArgs
 {
     public ConnectionChangedEventArgs(bool connected, string error = default)
     {
@@ -30,5 +33,19 @@ public class ConnectionChangedEventArgs : EventArgs
     public bool Connected { get; private set; }
 
     public string Error { get; private set; }
+}
+
+public class ErrorEventArgs
+{
+    public ErrorEventArgs(ErrorType error, string message, string description = "")
+    {
+        Error = error;
+        Message = message;
+        Description = description;
+    }
+
+    public ErrorType Error { get; private set; }
+    public string Message { get; private set; }
+    public string Description { get; private set; }
 }
 #endregion

@@ -190,6 +190,12 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         }
     }
 
+    public void SetText(string text)
+    {
+        _text = text;
+        Button.TextComponent.text = text;
+    }
+
     public void SetHeader(string title)
     {
         _headerText = title;

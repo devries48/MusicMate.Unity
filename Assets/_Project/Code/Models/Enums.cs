@@ -22,5 +22,6 @@
 
 public enum ErrorType:short
 {
-    Connection=0
+    Connection=0,
+    Api
 }
