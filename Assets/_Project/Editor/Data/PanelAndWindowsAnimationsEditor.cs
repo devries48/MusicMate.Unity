@@ -12,6 +12,7 @@ public class PanelAndWindowsAnimationsEditor : MusicMateEditorBase
         InitializeFoldoutState("Default Panel Fading");
         InitializeFoldoutState("Login Window");
         InitializeFoldoutState("Error Window");
+        InitializeFoldoutState("Modal Background");
         InitializeFoldoutState("Result Grid");
         InitializeFoldoutState("Details Panel");
         InitializeFoldoutState("Providers Panel");
@@ -50,6 +51,13 @@ public class PanelAndWindowsAnimationsEditor : MusicMateEditorBase
         {
             DrawSectionField("_errorHidePivot", "Hide Pivot Y");
             DrawSectionField("_errorShowPivot", "Show Pivot Y");
+        }
+
+        if (DrawFoldout("Modal Background"))
+        {
+            DrawSectionField("_modalTargetAlpha", "Target Alpha");
+            DrawSectionField("_modalShowDuration", "Show Time");
+            DrawSectionField("_modalHideDuration", "Hide Time");
         }
 
         if (DrawFoldout("Result Grid"))

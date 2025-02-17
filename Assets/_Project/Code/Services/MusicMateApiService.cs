@@ -145,12 +145,14 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
     IEnumerator GetReleaseCore(Guid id, Action<ReleaseModel> callback)
     {
-        using UnityWebRequest wr = CreateGetRequest($"releases/{id}");
+        var q = $"releases/{id}";
+        using UnityWebRequest wr = CreateGetRequest(q);
         yield return wr.SendWebRequest();
 
         if (wr.result != UnityWebRequest.Result.Success)
         {
-            print("Web request error getting release.");
+            InvokeErrorOccurred(q, wr);
+            callback.Invoke(null);
         }
         else
         {
@@ -161,7 +163,8 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
             }
             catch (Exception ex)
             {
-                print(ex.ToString());
+                InvokeErrorOccurred(q, ex);
+                callback.Invoke(null);
             }
         }
     }

@@ -56,6 +56,11 @@ public class DetailsAnimator : MusicMateBehavior
 
             ApiService.GetRelease(release.Id, (model) =>
             {
+                if (model==null)
+                {
+                    StopSpinner();
+                    return;
+                }
                 CurrentRelease = release;
                 NotifyPanelsOnUpdate<IShowDetails<ReleaseResult, ReleaseModel>, ReleaseResult, ReleaseModel>(model);
 
@@ -70,6 +75,11 @@ public class DetailsAnimator : MusicMateBehavior
 
                     ApiService.GetArtist(artist.Id, (model) =>
                     {
+                        if (model == null)
+                        {
+                            StopSpinner();
+                            return;
+                        }
                         CurrentArtist = artist;
                         NotifyPanelsOnUpdate<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(model);
                         StopSpinner();

@@ -13,7 +13,7 @@ public class ReleaseResult
     public string Title { get; set; }
     public DateTime ReleaseDate { get; set; }
     public string Genre { get; set; }
-    public decimal Duration { get; set; }
+    public decimal? Duration { get; set; }
     public string DurationTime { get; set; }
     public string ThumbnailUrl { get; set; }
     public short? Rating { get; set; }

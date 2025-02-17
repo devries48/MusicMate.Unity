@@ -79,6 +79,7 @@ public class MainWindowAnimator : MusicMateBehavior
         _audioPlayer.gameObject.SetActive(activate);
         _releaseResult.gameObject.SetActive(activate);
         _applicationToolbar.gameObject.SetActive(activate);
+        _modeToolbar.gameObject.SetActive(activate);
         _searchToolbar.gameObject.SetActive(activate);
         _importToolbar.gameObject.SetActive(activate);
     }

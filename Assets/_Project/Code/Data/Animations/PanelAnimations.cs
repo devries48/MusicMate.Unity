@@ -29,6 +29,11 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
     [SerializeField, Tooltip("Pivot Y position to hide Error Window")] float _errorHidePivot = 3f;
     [SerializeField, Tooltip("Pivot Y position to show Error Window")] float _errorShowPivot = .5f;
 
+    [Header("Modal Background")]
+    [SerializeField] float _modalTargetAlpha = .8f;
+    [SerializeField] float _modalShowDuration= .1f;
+    [SerializeField] float _modalHideDuration= .8f;
+
     [Header("Result Grid")]
     [SerializeField] float _resultShowTime = .5f;
     [SerializeField] Ease _resultShowEase = Ease.InQuint;
@@ -228,6 +233,33 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
                 });
     }
 
+    public void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground)
+    {
+        if (modalBackground == null) return;
+        
+        if (!modalBackground.TryGetComponent<CanvasGroup>(out var canvasGroup))
+        {
+            Debug.LogWarning("No CanvasGroup found on modal background.");
+            return;
+        }
+
+        var duration = isVisible? _modalShowDuration: _modalHideDuration;
+        var targetAlpha = isVisible ? _modalTargetAlpha : 0f;
+
+        canvasGroup.DOFade(targetAlpha, duration)
+            .SetEase(_fadeEase)
+            .OnStart(() =>
+            {
+                if (isVisible) modalBackground.SetActive(true);
+            })
+            .OnComplete(() =>
+            {
+                if (!isVisible) modalBackground.SetActive(false);
+            });
+
+        canvasGroup.interactable = isVisible;
+        canvasGroup.blocksRaycasts = isVisible;
+    }
     void MoveVertical(bool show, GameObject obj, float hidePivot, float showPivot, float delay = 0f)
     {
         if (show)

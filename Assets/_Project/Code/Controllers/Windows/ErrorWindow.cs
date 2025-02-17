@@ -12,6 +12,7 @@ public class ErrorWindow : MusicMateBehavior
     [SerializeField] Image _warningImage;
     [SerializeField] ButtonAnimator _acceptButton;
     [SerializeField] ButtonAnimator _cancelButton;
+    [SerializeField] GameObject _modalBackground;
     #endregion
 
     ErrorType _errorType;
@@ -32,8 +33,9 @@ public class ErrorWindow : MusicMateBehavior
     protected override void ApplyColors()
     {
         ChangeColor(MusicMateColor.Accent, _warningImage);
-        ChangeColor(MusicMateColor.Accent, _messageText);
         ChangeColor(MusicMateColor.Accent, _titleText);
+        ChangeColor(MusicMateColor.Text, _messageText);
+        ChangeColor(MusicMateColor.Text, _descriptionText);
     }
     #endregion
 
@@ -56,18 +58,29 @@ public class ErrorWindow : MusicMateBehavior
             default:
                 break;
         }
+        if (error != ErrorType.Connection)
+            Animations.Panel.PlayModalBackgroundVisibility(true, _modalBackground);
 
         _messageText.text = message;
         _descriptionText.text = description;
     }
 
-    void OnCancelClicked() => Manager.QuitApplication();
+    void OnCancelClicked()
+    {
+        if (_errorType != ErrorType.Connection)
+            Animations.Panel.PlayModalBackgroundVisibility(false, _modalBackground);
+
+        Manager.QuitApplication();
+    }
 
     void OnAcceptClicked()
     {
         if (_errorType == ErrorType.Connection)
             Manager.ShowLogin();
         else
+        {
+            Animations.Panel.PlayModalBackgroundVisibility(false, _modalBackground);
             Animations.Panel.PlayHideErrorWindow(gameObject);
+        }
     }
 }

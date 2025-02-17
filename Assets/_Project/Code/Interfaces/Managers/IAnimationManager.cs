@@ -87,6 +87,7 @@ public interface IPanelAnimations
     void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails);
     void PlaySwitchDetails(GameObject showGroupObject, CanvasGroup hideGroup);
     void PlayProvidersVisibility(bool isVisible, ProvidersController providers,bool delay=false);
+    void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground);
 }
 
 public interface IToolbarAnimations
