@@ -114,7 +114,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         IsInteractable = _interactable;
 
         if (_isToggleOn && (_buttonType == ToolbarButtonType.Toggle || _buttonType == ToolbarButtonType.ToggleText))
-            SetToggle();
+            SetToggleState();
     }
 
     protected override void ApplyColors()
@@ -148,12 +148,12 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
 
     public void HideSpinner() => Animations.Toolbar.PlayHideSpinner(this);
 
-    public void SetToggle(bool toggle)
+    public void SetToggleState(bool toggle)
     {
         if (toggle != IsToggleOn)
         {
             IsToggleOn = toggle;
-            SetToggle();
+            SetToggleState();
         }
     }
 
@@ -165,7 +165,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (_buttonType == ToolbarButtonType.Toggle || _buttonType == ToolbarButtonType.ToggleText)
         {
             IsToggleOn = !IsToggleOn;
-            SetToggle();
+            SetToggleState();
         }
 
         OnButtonClick?.Invoke();
@@ -181,7 +181,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     /// Toggles the state of the button. 
     /// Ensures all required components are initialized before performing the toggle action.
     /// </summary>
-    void SetToggle()
+    void SetToggleState()
     {
         if (!_isInitialized)
             InitializeComponents();

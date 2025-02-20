@@ -1,5 +1,7 @@
 ﻿#region Usings
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,7 +90,11 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
             _parent.InitImage(_image);
             _artist.SetText(result.Artist.Text);
             _title.SetText(result.Title);
-            m_artist_title.SetText(result.Artist.Text + " - " + result.Title);
+            _yearCountry.text = ReleaseYearCountry(result.ReleaseDate, result.Country);
+            _mainGenre.text = result.MainGenre;
+            _subGenres.text = string.Empty;
+
+            m_artist_title.SetText($"{result.Artist.Text} - {result.Title}");
         }
         else
             m_tracks.ClearSelection();
@@ -96,7 +102,45 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
 
     public void OnUpdated(ReleaseModel model)
     {
+        _subGenres.text = ReleaseSubGenres(model);
+
         _parent.GetImage(model.ThumbnailUrl, _image);
         m_tracks.SetRelease(model);
+    }
+
+    string ReleaseYearCountry(DateTime releaseDate, string country)
+    {
+        var result = string.Empty;
+
+        if (releaseDate != null)
+            result = releaseDate.Year.ToString();
+
+        if (country == null)
+        {
+            if (result.Length > 0 && !string.IsNullOrWhiteSpace(country))
+                result += ", ";
+
+            result += country;
+        }
+
+        return result;
+    }
+
+    string ReleaseSubGenres(ReleaseModel model)
+    {
+        var result = string.Empty;
+
+        foreach (var genre in model.Genres)
+        {
+            if (genre.Text == model.MainGenre)
+                continue;
+
+            if (result.Length > 0)
+                result += ", ";
+
+            result += genre.Text;
+        }
+
+        return result;
     }
 }

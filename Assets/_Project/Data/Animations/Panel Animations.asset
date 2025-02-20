@@ -24,6 +24,9 @@ MonoBehaviour:
   _loginShowPivot: 0.5
   _errorHidePivot: 3
   _errorShowPivot: 0.5
+  _modalTargetAlpha: 0.7
+  _modalShowDuration: 0.1
+  _modalHideDuration: 0.5
   _resultShowTime: 0.1
   _resultShowEase: 20
   _resultHideTime: 0.2

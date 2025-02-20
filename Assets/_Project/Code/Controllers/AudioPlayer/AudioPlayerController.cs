@@ -56,12 +56,46 @@ public class AudioPlayerController : MusicMateBehavior
     {
         PlayerService.SubscribeToStateChanged(OnPlayerStateChanged);
         PlayerService.SubscribeToActionChanged(OnActionChanged);
+
+        _collapseButton.OnButtonClick.AddListener(OnCollapsePlayerClick);
+        _expandButton.OnButtonClick.AddListener(OnExpandPlayerdClick);
+
+        foreach (var button in _playPauseButtons)
+            button.OnButtonClick.AddListener(OnPlayPauseClicked);
+
+        foreach (var button in _nextButtons)
+            button.OnButtonClick.AddListener(OnNextClicked);
+
+        foreach (var button in _previousButtons)
+            button.OnButtonClick.AddListener(OnPreviousClicked);
+
+        _volumeToggle.OnButtonClick.AddListener(OnVolumeToggled);
+
+        _volumeSlider1.onValueChanged.AddListener(delegate { OnVolume1Changed(); });
+        _volumeSlider2.onValueChanged.AddListener(delegate { OnVolume2Changed(); });
     }
 
     protected override void UnregisterEventHandlers()
     {
         PlayerService.UnsubscribeFromStateChanged(OnPlayerStateChanged);
         PlayerService.UnsubscribeFromActionChanged(OnActionChanged);
+
+        _collapseButton.OnButtonClick.RemoveListener(OnCollapsePlayerClick);
+        _expandButton.OnButtonClick.RemoveListener(OnExpandPlayerdClick);
+
+        foreach (var button in _playPauseButtons)
+            button.OnButtonClick.RemoveListener(OnPlayPauseClicked);
+
+        foreach (var button in _nextButtons)
+            button.OnButtonClick.RemoveListener(OnNextClicked);
+
+        foreach (var button in _previousButtons)
+            button.OnButtonClick.RemoveListener(OnPreviousClicked);
+
+        _volumeToggle.OnButtonClick.RemoveListener(OnVolumeToggled);
+
+        _volumeSlider1.onValueChanged.RemoveListener(delegate { OnVolume1Changed(); });
+        _volumeSlider2.onValueChanged.RemoveListener(delegate { OnVolume2Changed(); });
     }
 
     protected override void InitializeComponents()
@@ -118,23 +152,6 @@ public class AudioPlayerController : MusicMateBehavior
         _artistAndTitleMarquee.ClearText();
         _volumeSlider1.value = _volume;
         _volumeSlider2.value = _volume;
-
-        _collapseButton.OnButtonClick.AddListener(CollapsePlayerClick);
-        _expandButton.OnButtonClick.AddListener(ExpandPlayerdClick);
-
-        foreach (var button in _playPauseButtons)
-            button.OnButtonClick.AddListener(OnPlayPauseClicked);
-
-        foreach (var button in _nextButtons)
-            button.OnButtonClick.AddListener(OnNextClicked);
-
-        foreach (var button in _previousButtons)
-            button.OnButtonClick.AddListener(OnPreviousClicked);
-
-        _volumeToggle.OnButtonClick.AddListener(OnVolumeToggled);
-
-        _volumeSlider1.onValueChanged.AddListener(delegate { OnVolume1Changed(); });
-        _volumeSlider2.onValueChanged.AddListener(delegate { OnVolume2Changed(); });
     }
     #endregion
 
@@ -160,9 +177,9 @@ public class AudioPlayerController : MusicMateBehavior
         //_audioSource.loop = repeat;
     }
 
-    void ExpandPlayerdClick() => ExpandPlayer();
+    void OnExpandPlayerdClick() => ExpandPlayer();
 
-    void CollapsePlayerClick() => CollapsePlayer();
+    void OnCollapsePlayerClick() => CollapsePlayer();
 
     /// <summary>
     /// The Audio Player is expanded. Hide mini-player, move player down and notify the parent.

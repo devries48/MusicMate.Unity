@@ -21,7 +21,7 @@ MonoBehaviour:
   _toolbarTooltipPopupTime: 0.1
   _toolbarSpinnerScale: 0.7
   _toolbarSpinTime: 0.4
-  _toolbarPartRotateTime: 0.5
+  _toolbarPartRotateTime: 0.3
   _toolbarPartDelayTime: 0.1
   _normalModeWidth: 125
   _normalModeOffset: 25

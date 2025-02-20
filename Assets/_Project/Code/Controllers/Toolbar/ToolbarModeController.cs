@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,8 @@ public class ToolbarModeController : ToolbarControllerBase
 
         _editModeButton.OnButtonClick.AddListener(OnEditModeClicked);
         _providersButton.OnButtonClick.AddListener(OnProvidersToggleClicked);
+
+        Manager.AppState.SubscribeToMusicMateStateChanged(OnMusicMateStateChanged);
     }
 
     protected override void UnregisterEventHandlers()
@@ -27,6 +30,8 @@ public class ToolbarModeController : ToolbarControllerBase
 
         _editModeButton.OnButtonClick.RemoveListener(OnEditModeClicked);
         _providersButton.OnButtonClick.RemoveListener(OnProvidersToggleClicked);
+
+        Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
     }
 
     protected override void InitializeComponents()
@@ -41,8 +46,8 @@ public class ToolbarModeController : ToolbarControllerBase
 
     protected override void MusicMateModeChanged(MusicMateMode mode)
     {
-        if (mode==MusicMateMode.Collection && _providersButton.IsToggleOn)
-            _providersButton.SetToggle(false);
+        if (mode == MusicMateMode.Collection && _providersButton.IsToggleOn)
+            _providersButton.SetToggleState(false);
 
         Animations.Toolbar.PlayModePanelResize(mode, this);
 
@@ -61,4 +66,14 @@ public class ToolbarModeController : ToolbarControllerBase
     {
         Manager.AppState.InvokeStateChanged(MusicMateStateChange.Providers, _providersButton.IsToggleOn);
     }
+
+    void OnMusicMateStateChanged(MusicMateState state)
+    {
+        if (state.Change == MusicMateStateChange.Providers)
+        {
+            if (_providersButton.IsToggleOn != state.ShowProviders)
+                _providersButton.SetToggleState(state.ShowProviders);
+        }
+    }
+
 }

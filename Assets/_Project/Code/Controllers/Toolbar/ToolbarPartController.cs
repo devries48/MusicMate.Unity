@@ -69,9 +69,9 @@ public class ToolbarPartController : ToolbarControllerBase
     #region ToolbarController Base Class Methods
     protected override void SetElementStates()
     {
-        _releaseToggle.SetToggle(_toggled == DetailsToggle.release);
-        _artistToggle.SetToggle(_toggled == DetailsToggle.artist);
-        _catalogToggle.SetToggle(_toggled == DetailsToggle.catalog);
+        _releaseToggle.SetToggleState(_toggled == DetailsToggle.release);
+        _artistToggle.SetToggleState(_toggled == DetailsToggle.artist);
+        _catalogToggle.SetToggleState(_toggled == DetailsToggle.catalog);
     }
     #endregion
 

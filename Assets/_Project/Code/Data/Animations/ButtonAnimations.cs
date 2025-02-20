@@ -26,6 +26,7 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
  
     // expand/collapse button
     [SerializeField] float _iconAnimationTime = .6f;
+    [SerializeField] int _iconLoops = 3;
 
     IMusicMateManager _manager;
 
@@ -131,16 +132,10 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
         button.TextComponent.DOColor(_manager.AppColors.AccentColor, _animationTime);
         button.ImageComponent.DOColor(_manager.AppColors.AccentColor, _animationTime);
 
-        // Determine the state based on the rotation of the image
         bool isExpanded = Mathf.Approximately(button.ImageComponent.rectTransform.localEulerAngles.z, 180f);
 
         var target = button.ImageComponent.rectTransform;
         var height = target.rect.height;
-
-        // Normalize animation speed based on the button's height
-        //const float defaultHeight = 40f; // Default button height
-        //float speedFactor = height / defaultHeight;
-        float adjustedAnimationTime = _iconAnimationTime;// * speedFactor;
 
         // Kill any existing tween for this target
         if (_expandTweens.ContainsKey(target) && _expandTweens[target] != null)
@@ -149,28 +144,28 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
             _expandTweens.Remove(target);
         }
 
-        var startPos = target.anchoredPosition;
+        var startPos = target.anchoredPosition; // Store the original position
         var offscreenBottom = new Vector2(startPos.x, -height / 2);
         var offscreenTop = new Vector2(startPos.x, height / 2);
 
-        // Determine initial movement direction based on panel state
         var initialTarget = isExpanded ? offscreenTop : offscreenBottom;
         var loopStart = isExpanded ? offscreenBottom : offscreenTop;
         var loopEnd = isExpanded ? offscreenTop : offscreenBottom;
 
-        // Move the sprite out of view first
+        // Move out of view first
         target.anchoredPosition = startPos;
-        Tween initialMove = target.DOAnchorPos(initialTarget, adjustedAnimationTime / 2).SetEase(Ease.Linear);
+        Tween initialMove = target.DOAnchorPos(initialTarget, _iconAnimationTime / 2).SetEase(Ease.Linear);
 
-        // Set up the loop
+        // Set up looping animation
         initialMove.OnComplete(
             () =>
             {
                 Tween loopTween = target
-                .DOAnchorPos(loopEnd, adjustedAnimationTime)
+                .DOAnchorPos(loopEnd, _iconAnimationTime)
                     .From(loopStart)
                     .SetEase(Ease.Linear)
-                    .SetLoops(-1, LoopType.Restart);
+                    .SetLoops(_iconLoops, LoopType.Restart)
+                    .OnComplete(() => target.anchoredPosition = startPos); // Reset position after loops
 
                 _expandTweens[target] = loopTween;
             });

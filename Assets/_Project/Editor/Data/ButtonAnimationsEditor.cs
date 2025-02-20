@@ -50,6 +50,7 @@ public class ButtonAnimationsEditor : MusicMateEditorBase
         if (DrawFoldout("Expand/Collapse Button"))
         {
             DrawSectionField("_iconAnimationTime", "Icon Animation Time");
+            DrawSectionField("_iconLoops", "Number of loops");
         }
 
         serializedObject.ApplyModifiedProperties();
