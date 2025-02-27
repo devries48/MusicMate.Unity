@@ -15,11 +15,11 @@ MonoBehaviour:
   IsNormalState: 1
   _animationDuration: 0.1
   _lengthData:
-    anchoredPosition: {x: 25, y: 28}
+    anchoredPosition: {x: 25, y: 17}
     sizeDelta: {x: 200, y: 25}
   _imageData:
-    anchoredPosition: {x: 25, y: -25}
-    sizeDelta: {x: 500, y: 450}
+    anchoredPosition: {x: 5, y: -5}
+    sizeDelta: {x: 530, y: 460}
   _tracksData:
-    anchoredPosition: {x: 1219, y: 755}
-    sizeDelta: {x: 450, y: 450}
+    anchoredPosition: {x: -20, y: -20}
+    sizeDelta: {x: -20, y: -40}

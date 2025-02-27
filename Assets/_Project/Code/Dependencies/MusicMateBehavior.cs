@@ -9,7 +9,6 @@ public abstract class MusicMateBehavior : MonoBehaviour
     IAudioPlayerService _playerService;
     IMusicMateApiService _apiService;
 
-    MusicMateMode? _currentMode = null;
     bool _initializing;
 
     /// <summary>
@@ -76,12 +75,9 @@ public abstract class MusicMateBehavior : MonoBehaviour
         {
             Manager.AppState.ModeChanged += OnMusicMateModeChanged;
 
-            if (_currentMode != Manager.AppState.CurrentMode)
-            {
                 _initializing = true;
                 ApplyColors();
                 _initializing = false;
-            }
         }
         RegisterEventHandlers();
     }
@@ -148,13 +144,8 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     void OnMusicMateModeChanged(MusicMateMode mode)
     {
-        if (_currentMode != mode)
-        {
-            _currentMode = Manager.AppState.CurrentMode;
-
             MusicMateModeChanged(mode);
             ApplyColors();
-        }
     }
 
     /// <summary>

@@ -254,9 +254,7 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
 
     void OnValidateDelayed()
     {
-        if (Application.isPlaying)
-            return;
-        if (EditorApplication.isCompiling)
+        if (Application.isPlaying || EditorApplication.isCompiling)
             return;
 
         InitializeValues();

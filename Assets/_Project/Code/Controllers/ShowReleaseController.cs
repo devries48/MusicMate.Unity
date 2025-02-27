@@ -1,12 +1,10 @@
 ﻿#region Usings
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-#endregion
 
+#endregion
 public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResult, ReleaseModel>
 {
     #region Serialized Fields
@@ -26,9 +24,10 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
     public TextMeshProUGUI m_total_length;
     public GridTrackController m_tracks;
 
-    // Panels
-    public RectTransform m_imagePanel;
+    // Panels & Zone's
     public RectTransform m_mainInfoPanel;
+    public RectTransform m_imageZone;
+    public ZoneAnimator[] _allZones;
 
     // Buttons
     [SerializeField] ButtonAnimator _stateButton;
@@ -37,40 +36,39 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
     #endregion
 
     internal CanvasGroup m_canvasGroup;
-    private ReleaseResult _currentRelease;
+    ReleaseResult _currentRelease;
 
     #region Base Class Methods
-    protected override void InitializeComponents()
-    {
-        m_canvasGroup = GetComponent<CanvasGroup>();
-    }
-
-    /// <summary>
-    /// Set default state
-    /// </summary>
-    protected override void InitializeValues()
-    {
-        if (_stateButton.IsStateOn)
-            m_maximized.ApplyTransformDataInstant(this);
-        else
-            m_normal.ApplyTransformDataInstant(this);
-    }
+    protected override void InitializeComponents() { m_canvasGroup = GetComponent<CanvasGroup>(); }
 
     protected override void ApplyColors()
     {
+        bool editMode = Manager.AppState.CurrentMode == MusicMateMode.Edit;
+        
+        if (editMode &&
+            _stateButton.IsStateOn &&
+            _stateButton.gameObject.activeInHierarchy)
+            m_normal.ApplyTransformDataInstant(this);
+        else if (!editMode &&
+            _stateButton.IsStateOn &&
+            !_stateButton.gameObject.activeInHierarchy)
+            m_maximized.ApplyTransformDataInstant(this);
+
+        foreach (var zone in _allZones)
+            zone.gameObject.SetActive(editMode);
+
+        _stateButton.gameObject.SetActive(Manager.AppState.CurrentMode != MusicMateMode.Edit);
+        _upButton.gameObject.SetActive(Manager.AppState.CurrentMode != MusicMateMode.Edit);
+        _downButton.gameObject.SetActive(Manager.AppState.CurrentMode != MusicMateMode.Edit);
+
         ChangeState(true, _artist, _title);
         ChangeState(true, _yearCountry, _mainGenre, _subGenres, m_artist_title, m_total_length);
     }
 
-    protected override void RegisterEventHandlers()
-    {
-        _stateButton.OnButtonClick.AddListener(OnStateButtonClicked);
-    }
+    protected override void RegisterEventHandlers() { _stateButton.OnButtonClick.AddListener(OnStateButtonClicked); }
 
     protected override void UnregisterEventHandlers()
-    {
-        _stateButton.OnButtonClick.RemoveListener(OnStateButtonClicked);
-    }
+    { _stateButton.OnButtonClick.RemoveListener(OnStateButtonClicked); }
     #endregion
 
     void OnStateButtonClicked()
@@ -143,4 +141,5 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
 
         return result;
     }
+
 }

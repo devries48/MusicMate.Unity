@@ -10,7 +10,7 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
 
         InitializeFoldoutState("State Actions");
         InitializeFoldoutState("Elements");
-        InitializeFoldoutState("Panels");
+        InitializeFoldoutState("Panels & Zone's");
         InitializeFoldoutState("Buttons");
     }
 
@@ -44,10 +44,12 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
             DrawSectionField("m_total_length", "Total Length");
             DrawSectionField("m_tracks", "Tracks");
         }
-        if (DrawFoldout("Panels"))
+        if (DrawFoldout("Panels & Zone's"))
         {
-            DrawSectionField("m_imagePanel", "Image Panel");
             DrawSectionField("m_mainInfoPanel", "Main Info Panel");
+            DrawSectionField("m_imageZone", "Image Zone");
+            DrawSpace();
+            DrawSectionField("_allZones", "All Zones");
         }
         if (DrawFoldout("Buttons"))
         {

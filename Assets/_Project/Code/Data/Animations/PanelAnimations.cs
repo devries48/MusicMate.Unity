@@ -260,6 +260,29 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
         canvasGroup.interactable = isVisible;
         canvasGroup.blocksRaycasts = isVisible;
     }
+
+    public void PlayZoneOn(ZoneAnimator zone)
+    {
+        zone.m_backgroundImage.gameObject.SetActive(true);
+        zone.m_zoneImage.gameObject.SetActive(true);
+        zone.m_zoneLabel.gameObject.SetActive(true);
+        zone.m_zoneLabel.DOFade(1f, 0.2f);
+        zone.m_backgroundImage.DOFade(0.01f, 0.2f);
+    }
+
+public void PlayZoneOff(ZoneAnimator zone)
+{
+        zone.m_zoneImage.gameObject.SetActive(false);
+        zone.m_backgroundImage.DOFade(0f, 0.1f).OnComplete(() =>
+        {
+            zone.m_backgroundImage.gameObject.SetActive(false);
+        });
+        zone.m_zoneLabel.DOFade(0f, 0.1f).OnComplete(() =>
+        {
+            zone.m_zoneLabel.gameObject.SetActive(false);
+        });
+    }
+
     void MoveVertical(bool show, GameObject obj, float hidePivot, float showPivot, float delay = 0f)
     {
         if (show)
@@ -279,5 +302,4 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
                         obj.SetActive(false);
                 });
     }
-
 }

@@ -88,6 +88,8 @@ public interface IPanelAnimations
     void PlaySwitchDetails(GameObject showGroupObject, CanvasGroup hideGroup);
     void PlayProvidersVisibility(bool isVisible, ProvidersController providers,bool delay=false);
     void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground);
+    void PlayZoneOn(ZoneAnimator zone);
+    void PlayZoneOff(ZoneAnimator zone);
 }
 
 public interface IToolbarAnimations

@@ -41,7 +41,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     }
 
     public bool IsToggleOn { get => _isToggleOn; private set { _isToggleOn = value; } }
-    public bool IsToggleGroup { get  => _isToggleGroup; }
+    public bool IsToggleGroup { get => _isToggleGroup; }
     public bool IsTextToggle { get => _buttonType == ToolbarButtonType.ToggleText; }
 
     public bool IsSpinning { get; set; }
@@ -250,8 +250,8 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
     // Suppress message: "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate”  
     void OnValidateDelayed()
     {
-        if (Application.isPlaying) return;
-        if (EditorApplication.isCompiling) return;
+        if (Application.isPlaying || EditorApplication.isCompiling)
+            return;
 
         // Buttons cannot be toggled when disabled
         if (!_interactable && _isToggleOn)

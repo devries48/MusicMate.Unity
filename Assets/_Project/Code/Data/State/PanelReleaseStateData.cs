@@ -12,7 +12,7 @@ public class PanelReleaseStateData : ScriptableObject
 
     public void ApplyTransformData(ShowReleaseController controller)
     {
-        var imagePanel = controller.m_imagePanel;
+        var imagePanel = controller.m_imageZone;
         var infoCanvas = controller.m_mainInfoPanel.GetComponent<CanvasGroup>();
         var tracks = controller.m_tracks.GetComponent<RectTransform>();
         var length = controller.m_total_length.GetComponent<RectTransform>();
@@ -48,7 +48,7 @@ public class PanelReleaseStateData : ScriptableObject
 
     public void ApplyTransformDataInstant(ShowReleaseController controller)
     {
-        var image = controller.m_imagePanel;
+        var image = controller.m_imageZone;
 
         if (image != null)
         {
@@ -90,7 +90,7 @@ public class PanelReleaseStateData : ScriptableObject
 
     public void SaveState(ShowReleaseController controller)
     {
-        _imageData = GetData(controller.m_imagePanel);
+        _imageData = GetData(controller.m_imageZone);
         _tracksData = GetData(controller.m_tracks.GetComponent<RectTransform>());
         _lengthData = GetData(controller.m_total_length.GetComponent<RectTransform>());
     }
