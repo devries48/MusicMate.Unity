@@ -1,8 +1,8 @@
-using UnityEngine;
 using DG.Tweening;
 using System;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Panel Animations", fileName = "Panel Animations")]
 public class PanelAnimations : ScriptableObject, IPanelAnimations
@@ -31,8 +31,8 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
 
     [Header("Modal Background")]
     [SerializeField] float _modalTargetAlpha = .8f;
-    [SerializeField] float _modalShowDuration= .1f;
-    [SerializeField] float _modalHideDuration= .8f;
+    [SerializeField] float _modalShowDuration = .1f;
+    [SerializeField] float _modalHideDuration = .8f;
 
     [Header("Result Grid")]
     [SerializeField] float _resultShowTime = .5f;
@@ -73,7 +73,6 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
     [SerializeField] Ease _playerLargeShowEase = Ease.OutBack;
     [SerializeField] Ease _playerLargeGrowEase = Ease.OutBack;
 
-
     public void PlayShowLoginWindow(GameObject loginWindow, float delay) => MoveVertical(
         true,
         loginWindow,
@@ -101,7 +100,12 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
         _errorShowPivot,
         _hideDelay);
 
-    public void PlayCollapseAudioPlayer(RectTransform largePlayer, RectTransform smallPlayer, bool delay = false, Action onComplete = null)
+
+    public void PlayCollapseAudioPlayer(
+        RectTransform largePlayer,
+        RectTransform smallPlayer,
+        bool delay = false,
+        Action onComplete = null)
     {
         var scaleTo = largePlayer.transform.localScale * .8f;
 
@@ -176,22 +180,19 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
 
     public void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails)
     {
-        if (isVisible)
-            showDetails.gameObject.SetActive(true);
-
-        var scaleTo = isVisible ? 1f : 0f;
         var easing = isVisible ? _detailsShowEase : _detailsHideEase;
-        var time = isVisible ? _detailsShowTime : _detailsHideTime;
+        var duration = isVisible ? _detailsShowTime : _detailsHideTime;
 
-        showDetails.transform
-            .DOScale(scaleTo, time)
-            .SetEase(easing)
-            .OnComplete(
-                () =>
-                {
-                    if (!isVisible)
-                        showDetails.gameObject.SetActive(false);
-                });
+        MoveScale(isVisible, showDetails.gameObject, easing, duration);
+    }
+
+    public void PlayEditorVisibility(bool isVisible, EditorWindow editorWindow)
+    {
+        var easing = Ease.Linear;
+        var duration = isVisible ? .2f : .1f;
+        
+        PlayModalBackgroundVisibility(isVisible, editorWindow.m_modalBackground,duration);
+        MoveScale(isVisible, editorWindow.gameObject, easing, duration);
     }
 
     public void PlaySwitchDetails(GameObject showGroupObject, CanvasGroup hideGroup)
@@ -201,10 +202,13 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
 
         if (hideGroup != null)
         {
-            hideGroup.DOFade(0, _detailsSwitchTime).SetEase(_detailsSwitchHideEase).OnComplete(() =>
-            {
-                hideGroup.gameObject.SetActive(false);
-            });
+            hideGroup.DOFade(0, _detailsSwitchTime)
+                .SetEase(_detailsSwitchHideEase)
+                .OnComplete(
+                    () =>
+                    {
+                        hideGroup.gameObject.SetActive(false);
+                    });
         }
 
         showGroup.DOFade(1, _detailsSwitchTime).SetEase(_detailsSwitchShowEase);
@@ -233,29 +237,36 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
                 });
     }
 
-    public void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground)
+    public void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground, float duration = 0)
     {
-        if (modalBackground == null) return;
-        
+        if (modalBackground == null)
+            return;
+
         if (!modalBackground.TryGetComponent<CanvasGroup>(out var canvasGroup))
         {
             Debug.LogWarning("No CanvasGroup found on modal background.");
             return;
         }
 
-        var duration = isVisible? _modalShowDuration: _modalHideDuration;
+        if (duration == 0)
+            duration = isVisible ? _modalShowDuration : _modalHideDuration;
+
         var targetAlpha = isVisible ? _modalTargetAlpha : 0f;
 
         canvasGroup.DOFade(targetAlpha, duration)
             .SetEase(_fadeEase)
-            .OnStart(() =>
-            {
-                if (isVisible) modalBackground.SetActive(true);
-            })
-            .OnComplete(() =>
-            {
-                if (!isVisible) modalBackground.SetActive(false);
-            });
+            .OnStart(
+                () =>
+                {
+                    if (isVisible)
+                        modalBackground.SetActive(true);
+                })
+            .OnComplete(
+                () =>
+                {
+                    if (!isVisible)
+                        modalBackground.SetActive(false);
+                });
 
         canvasGroup.interactable = isVisible;
         canvasGroup.blocksRaycasts = isVisible;
@@ -270,17 +281,32 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
         zone.m_backgroundImage.DOFade(0.01f, 0.2f);
     }
 
-public void PlayZoneOff(ZoneAnimator zone)
-{
+    public void PlayZoneOff(ZoneAnimator zone)
+    {
         zone.m_zoneImage.gameObject.SetActive(false);
-        zone.m_backgroundImage.DOFade(0f, 0.1f).OnComplete(() =>
-        {
-            zone.m_backgroundImage.gameObject.SetActive(false);
-        });
-        zone.m_zoneLabel.DOFade(0f, 0.1f).OnComplete(() =>
-        {
-            zone.m_zoneLabel.gameObject.SetActive(false);
-        });
+        zone.m_backgroundImage
+            .DOFade(0f, 0.1f)
+            .OnComplete(
+                () =>
+                {
+                    zone.m_backgroundImage.gameObject.SetActive(false);
+                });
+        zone.m_zoneLabel
+            .DOFade(0f, 0.1f)
+            .OnComplete(
+                () =>
+                {
+                    zone.m_zoneLabel.gameObject.SetActive(false);
+                });
+    }
+
+    public void PlayZoneClicked(ZoneAnimator zone)
+    {
+        var duration = .2f / 2;
+        zone.m_zone
+            .DOScale(.95f, duration)
+            .SetEase(Ease.OutBack)
+            .OnComplete(() => zone.m_zone.DOScale(1f, duration).SetEase(Ease.OutBack));
     }
 
     void MoveVertical(bool show, GameObject obj, float hidePivot, float showPivot, float delay = 0f)
@@ -295,6 +321,24 @@ public void PlayZoneOff(ZoneAnimator zone)
         rect.DOPivotY(pivotTo, _showAndHideDuration)
             .SetEase(easing)
             .SetDelay(delay)
+            .OnComplete(
+                () =>
+                {
+                    if (!show)
+                        obj.SetActive(false);
+                });
+    }
+
+    void MoveScale(bool show, GameObject obj, Ease easing, float duration)
+    {
+        if (show)
+            obj.SetActive(true);
+
+        var scaleTo = show ? 1f : 0f;
+
+        obj.transform
+            .DOScale(scaleTo, duration)
+            .SetEase(easing)
             .OnComplete(
                 () =>
                 {

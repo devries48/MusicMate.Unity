@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,8 +12,9 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 {
     #region Serialized Fields
     [SerializeField] AppSetings _appSettings;
-    [SerializeField] ErrorWindow _errorController;
-    [SerializeField] LoginWindow _loginController;
+    [SerializeField] ErrorWindow _errorWindow;
+    [SerializeField] LoginWindow _loginWindow;
+    [SerializeField] EditorWindow _editorWindow;
     [SerializeField] MainWindowAnimator _mainPage;
     [SerializeField] LogoAnimator _logoAnimator;
     [SerializeField] GameObject _connectionSpinner;
@@ -51,6 +53,8 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     public IColorSettings AppColors => AppState.CurrentColors;
     #endregion
 
+    public event Action<MusicMateZone, object> OnEditComplete;
+
     #region #region Field Declarations
     IAnimationManager _animations;
     IMusicMateApiService _service;
@@ -83,7 +87,7 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     public void Connect()
     {
-        if (_loginController.gameObject.activeInHierarchy)
+        if (_loginWindow.gameObject.activeInHierarchy)
             ShowOrHideLoginPanel(false);
 
         if (!_connectionSpinner.activeInHierarchy)
@@ -94,20 +98,42 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     public void ShowError(ErrorType error, string message, string description = "")
     {
-        _errorController.SetError(error, message, description);
+        _errorWindow.SetError(error, message, description);
         ShowOrHideErrorPanel(true);
     }
 
     public void ShowLogin()
     {
         float delay = 0f;
-        if (_errorController.gameObject.activeSelf)
+        if (_errorWindow.gameObject.activeSelf)
         {
             ShowOrHideErrorPanel(false);
             delay = .5f;
         }
 
         ShowOrHideLoginPanel(true, delay);
+    }
+
+
+    public void ShowEditor(ZoneAnimator zone)
+    {
+        _editorWindow.OnEditorAccepted += OnEditorAccepted;
+        _editorWindow.PanelRect.localPosition = new Vector2(_mainPage.SidePanelExpanded ? -Constants.SidePanelWidth / 2 : 0, 0);
+        _editorWindow.SetEditor(zone);
+
+        ShowOrHideEditorWindow(true);
+    }
+
+    public void HideEditor()
+    {
+        _editorWindow.OnEditorAccepted -= OnEditorAccepted;
+        ShowOrHideEditorWindow(false);
+    }
+
+    void OnEditorAccepted(MusicMateZone zone, object modifiedModel)
+    {
+        OnEditComplete?.Invoke(zone, modifiedModel);
+        Debug.Log($"Editor changes accepted for model: {modifiedModel.GetType().Name}");
     }
 
     public void ShowRelease(ReleaseResult releaseModel)
@@ -130,9 +156,9 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
 
     public void QuitApplication()
     {
-        if (_errorController.gameObject.activeInHierarchy)
+        if (_errorWindow.gameObject.activeInHierarchy)
             ShowOrHideErrorPanel(false);
-        else if (_loginController.gameObject.activeInHierarchy)
+        else if (_loginWindow.gameObject.activeInHierarchy)
             ShowOrHideLoginPanel(false);
 
         if (_logoAnimator.IsLogoActive())
@@ -183,17 +209,22 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
     void ShowOrHideErrorPanel(bool show)
     {
         if (show)
-            Animations.Panel.PlayShowErrorWindow(_errorController.gameObject);
+            Animations.Panel.PlayShowErrorWindow(_errorWindow.gameObject);
         else
-            Animations.Panel.PlayHideErrorWindow(_errorController.gameObject);
+            Animations.Panel.PlayHideErrorWindow(_errorWindow.gameObject);
     }
 
     void ShowOrHideLoginPanel(bool show, float delay = 0f)
     {
         if (show)
-            Animations.Panel.PlayShowLoginWindow(_loginController.gameObject, delay);
+            Animations.Panel.PlayShowLoginWindow(_loginWindow.gameObject, delay);
         else
-            Animations.Panel.PlayHideLoginWindow(_loginController.gameObject);
+            Animations.Panel.PlayHideLoginWindow(_loginWindow.gameObject);
+    }
+
+    void ShowOrHideEditorWindow(bool show)
+    {
+        Animations.Panel.PlayEditorVisibility(show, _editorWindow);
     }
 
     IEnumerator DelayAndConnect(float seconds)
@@ -228,6 +259,6 @@ public class MusicMateManager : SceneSingleton<MusicMateManager>, IMusicMateMana
             HideLogo();
     }
 
-     void OnErrorOccurred(ErrorEventArgs e) => ShowError(e.Error, e.Message, e.Description);
+    void OnErrorOccurred(ErrorEventArgs e) => ShowError(e.Error, e.Message, e.Description);
 
 }

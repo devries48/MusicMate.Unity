@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 2083232244293791190}
   - component: {fileID: 7785890255953431967}
   m_Layer: 5
-  m_Name: Zone Select
+  m_Name: prefab_zone_select
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

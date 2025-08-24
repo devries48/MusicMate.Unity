@@ -83,13 +83,15 @@ public interface IPanelAnimations
     void PlayHideLoginWindow(GameObject loginWindow);
     void PlayShowErrorWindow(GameObject errorWindow);
     void PlayHideErrorWindow(GameObject errorWindow);
+    void PlayEditorVisibility(bool isVisible, EditorWindow editorWindow);
     void PlayReleaseGridVisiblity(bool isVisible, GridReleaseController release);
     void PlayDetailsVisibility(bool isVisible, DetailsAnimator showDetails);
     void PlaySwitchDetails(GameObject showGroupObject, CanvasGroup hideGroup);
     void PlayProvidersVisibility(bool isVisible, ProvidersController providers,bool delay=false);
-    void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground);
+    void PlayModalBackgroundVisibility(bool isVisible, GameObject modalBackground, float duration=0);
     void PlayZoneOn(ZoneAnimator zone);
     void PlayZoneOff(ZoneAnimator zone);
+    void PlayZoneClicked(ZoneAnimator zone);
 }
 
 public interface IToolbarAnimations

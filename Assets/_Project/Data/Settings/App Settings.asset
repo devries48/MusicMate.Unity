@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2eef3d50d577a439d622ac91850620, type: 3}
   m_Name: App Settings
   m_EditorClassIdentifier: 
-  ApiServiceUrl: https://localhost:7111
+  ApiServiceUrl: https://localhost:5001
   User: Admin
   encryptedPassword: 
   Colors: {fileID: 11400000, guid: 6812727ca4414e349b275ec425d69d93, type: 2}
   ColorsEditMode: {fileID: 11400000, guid: b8277ea494d57ed4aacc295fcac88598, type: 2}
+  ColorsImportMode: {fileID: 11400000, guid: 3294c1b80acaf674a9b4d6d6fe4842c5, type: 2}
   PlaySprite: {fileID: 21300000, guid: 835f9ee7e8087414db410ffdbef75890, type: 3}
   PauseSprite: {fileID: 21300000, guid: a82d55f7a65dd9c4194d4cda31519ca5, type: 3}
   MuteSprite: {fileID: 21300000, guid: 7e08cacdb7047a34e96f6cb190c8cefd, type: 3}

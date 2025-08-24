@@ -13,6 +13,7 @@ public class AppSetings : ScriptableObject
     [Header("Colors")]
     public ColorSettings Colors;
     public ColorSettings ColorsEditMode;
+    public ColorSettings ColorsImportMode;
 
     [Header("Sprites")]
     public Sprite PlaySprite;

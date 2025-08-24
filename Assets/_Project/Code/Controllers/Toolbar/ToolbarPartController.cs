@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -16,13 +17,20 @@ public class ToolbarPartController : ToolbarControllerBase
     [SerializeField] ToolbarButtonAnimator _artistToggle;
     [SerializeField] ToolbarButtonAnimator _catalogToggle;
 
+    [Header("Import Part")]
+    [SerializeField] GameObject _importPart;
+    [SerializeField] string _titleImport;
+    [SerializeField] ToolbarButtonAnimator _importFolderButton;
+    [SerializeField] ToolbarButtonAnimator _importLastFmButton;
+
+
     internal RectTransform m_rectTransform;
     internal GameObject m_activePart;
 
     DetailsToggle _toggled;
     Part _currentPart;
 
-    enum Part { search, details };
+    enum Part { search, details, import };
     enum DetailsToggle { release, artist, catalog }
 
     #region MusicMate Base Class Methods
@@ -48,7 +56,6 @@ public class ToolbarPartController : ToolbarControllerBase
         base.RegisterEventHandlers();
 
         Manager.AppState.SubscribeToMusicMateStateChanged(OnMusicMateStateChanged);
-
         _releaseToggle.OnButtonClick.AddListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.AddListener(OnArtistToggleClicked);
         _catalogToggle.OnButtonClick.AddListener(OnCatalogToggleClicked);
@@ -63,6 +70,11 @@ public class ToolbarPartController : ToolbarControllerBase
         _releaseToggle.OnButtonClick.RemoveListener(OnReleaseToggleClicked);
         _artistToggle.OnButtonClick.RemoveListener(OnArtistToggleClicked);
         _catalogToggle.OnButtonClick.RemoveListener(OnCatalogToggleClicked);
+    }
+
+    protected override void MusicMateModeChanged(MusicMateMode mode)
+    {
+        ActivatePart(mode == MusicMateMode.Import ? Part.import : _currentPart);
     }
     #endregion
 
@@ -112,23 +124,34 @@ public class ToolbarPartController : ToolbarControllerBase
             return;
 
         _currentPart = part;
+        ActivatePart(part);
+    }
 
-        string title = default;
-        GameObject hidePart = m_activePart;
-        GameObject showPart = default;
+    void ActivatePart(Part part)
+    {
+        string title;
+        var hidePart = m_activePart;
+        GameObject showPart;
 
-        if (part == Part.search)
+        switch (part)
         {
-            title = _titleSearch;
-            showPart = _searchPart;
-        }
-        else if (part == Part.details)
-        {
-            title = _titleRelease;
-            showPart = _releasePart;
+            case Part.search:
+                title = _titleSearch;
+                showPart = _searchPart;
+                break;
+            case Part.details:
+                title = _titleRelease;
+                showPart = _releasePart;
+                break;
+            case Part.import:
+                title = _titleImport;
+                showPart = _importPart;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(part), part, null);
         }
 
-        if (title != default)
+        if (title != null)
             Animations.Toolbar.PlayPartRotate(this, title, showPart, hidePart);
     }
 }

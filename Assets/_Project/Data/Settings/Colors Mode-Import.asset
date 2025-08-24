@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174375c57a3b78f47a4ef6923e5a334e, type: 3}
+  m_Name: Colors Mode-Import
+  m_EditorClassIdentifier: 
+  _accentColor:
+    serializedVersion: 2
+    rgba: 4287168256
+  _defaultColor:
+    serializedVersion: 2
+    rgba: 4282153219
+  _textColor:
+    serializedVersion: 2
+    rgba: 4288333957
+  _backgroundColor:
+    serializedVersion: 2
+    rgba: 4281277697
+  _panelColor:
+    serializedVersion: 2
+    rgba: 3206561027

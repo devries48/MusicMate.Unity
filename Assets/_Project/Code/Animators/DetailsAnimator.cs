@@ -14,8 +14,8 @@ public class DetailsAnimator : MusicMateBehavior
     [SerializeField] Image _spinnerBackground;
     [SerializeField] Image _spinner;
 
-    public ReleaseResult CurrentRelease { get; private set; } = null;
-    public DataResult CurrentArtist { get; private set; } = null;
+    public ReleaseModel ReleaseModel { get; private set; } = null;
+    public ArtistModel ArtistModel { get; private set; } = null;
 
     public bool IsLoading { get; set; }
 
@@ -24,11 +24,23 @@ public class DetailsAnimator : MusicMateBehavior
 
     Image _panel;
     MusicMateStateDetails _current;
+    ReleaseResult _currentRelease = null;
+    DataResult _currentArtist = null;
 
     #region Base Class Methods
-    protected override void RegisterEventHandlers() { _closeButton.onClick.AddListener(OnCloseClicked); }
+    protected override void RegisterEventHandlers()
+    {
+        Manager.OnEditComplete += OnEditComplete;
 
-    protected override void UnregisterEventHandlers() { _closeButton.onClick.RemoveListener(OnCloseClicked); }
+        _closeButton.onClick.AddListener(OnCloseClicked);
+    }
+
+    protected override void UnregisterEventHandlers()
+    {
+        Manager.OnEditComplete -= OnEditComplete;
+
+        _closeButton.onClick.RemoveListener(OnCloseClicked);
+    }
 
     protected override void InitializeComponents() { _panel = GetComponent<Image>(); }
 
@@ -49,42 +61,45 @@ public class DetailsAnimator : MusicMateBehavior
 
     public void SetRelease(ReleaseResult release)
     {
-        if (release != CurrentRelease)
+        if (release != _currentRelease)
         {
             StartSpinner();
             NotifyPanelsOnInit<IShowDetails<ReleaseResult, ReleaseModel>, ReleaseResult, ReleaseModel>(release);
 
+            _currentRelease = release;
+
             ApiService.GetRelease(release.Id, (model) =>
             {
-                if (model==null)
+                ReleaseModel = model;
+
+                if (model == null)
                 {
                     StopSpinner();
                     return;
                 }
-                CurrentRelease = release;
                 NotifyPanelsOnUpdate<IShowDetails<ReleaseResult, ReleaseModel>, ReleaseResult, ReleaseModel>(model);
 
-                var artist = CurrentRelease.Artist;
+                var artist = _currentRelease.Artist;
 
-                if (CurrentArtist == artist)
-                    StopSpinner();
-
-                if (CurrentRelease.Artist != CurrentArtist)
+                if (_currentArtist == artist)
                 {
-                    NotifyPanelsOnInit<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(artist);
-
-                    ApiService.GetArtist(artist.Id, (model) =>
-                    {
-                        if (model == null)
-                        {
-                            StopSpinner();
-                            return;
-                        }
-                        CurrentArtist = artist;
-                        NotifyPanelsOnUpdate<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(model);
-                        StopSpinner();
-                    });
+                    StopSpinner();
+                    return;
                 }
+
+                NotifyPanelsOnInit<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(artist);
+
+                _currentArtist = artist;
+
+                ApiService.GetArtist(artist.Id, (model) =>
+                {
+                    ArtistModel = model;
+
+                    if (model != null)
+                        NotifyPanelsOnUpdate<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(model);
+                  
+                    StopSpinner();
+                });
             });
         }
     }
@@ -137,6 +152,14 @@ public class DetailsAnimator : MusicMateBehavior
         _current = details;
 
         Animations.Panel.PlaySwitchDetails(showGroup, hideGroup);
+    }
+
+    void OnEditComplete(MusicMateZone zone, object mocdel)
+    {
+        if (mocdel is ReleaseModel releaseModel)
+            _releaseDetails.UpdateModel(zone, releaseModel);
+        else if (mocdel is ArtistModel artistModel)
+            _artistDetails.UpdateModel(zone, artistModel);
     }
 
     void OnCloseClicked() => CloseDetails();

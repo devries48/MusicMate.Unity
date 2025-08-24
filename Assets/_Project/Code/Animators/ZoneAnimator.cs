@@ -6,16 +6,21 @@ using UnityEngine.UI;
 
 public class ZoneAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    [Header("Editor")]
+    public DetailsAnimator m_parent;
+    public MusicMateZone m_editorZone;
+    public string m_text;
+
+    [Header("Elements")]
+    public Transform m_zone;
     public TextMeshProUGUI m_zoneLabel;
     public Image m_backgroundImage;
     public Image m_zoneImage;
 
-    [SerializeField] string _text;
-
     protected override void InitializeValues()
     {
         if (m_zoneLabel != null)
-            m_zoneLabel.text = _text;
+            m_zoneLabel.text = m_text;
     }
 
     protected override void ApplyColors()
@@ -26,18 +31,13 @@ public class ZoneAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExi
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        throw new System.NotImplementedException();
+        Animations.Panel.PlayZoneClicked(this);
+        Manager.ShowEditor(this);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        Animations.Panel.PlayZoneOn(this);
-    }
+    public void OnPointerEnter(PointerEventData eventData) => Animations.Panel.PlayZoneOn(this);
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        Animations.Panel.PlayZoneOff(this);
-    }
+    public void OnPointerExit(PointerEventData eventData) => Animations.Panel.PlayZoneOff(this);
 
     #region Editor-Specific Code
 

@@ -30,7 +30,17 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     #endregion
 
     #region Properties
-    public ButtonInteractable Button { get; private set; }
+    public ButtonInteractable Button
+    {
+        get
+        {
+            if (_button == null)
+                _button = (ButtonInteractable)GetComponent<Button>();
+
+            return _button;
+        }
+    }
+    ButtonInteractable _button;
 
     public bool IsStateOn { get { return _isStateOn; } }
 
@@ -49,8 +59,6 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
         Button.onClick.RemoveListener(OnButtonClicked);
         Button.OnInteractableChanged -= OnInteractableChanged;
     }
-
-    protected override void InitializeComponents() { Button = (ButtonInteractable)GetComponent<Button>(); }
 
     protected override void InitializeValues()
     {

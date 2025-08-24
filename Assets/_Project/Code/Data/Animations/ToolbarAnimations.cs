@@ -23,9 +23,9 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
     [SerializeField, Tooltip("Delay before rotating the new part into view")] float _toolbarPartDelayTime = 0.1f;
 
     [Header("Mode Resize")]
-    [SerializeField] float _normalModeWidth = 125;
+    [SerializeField] float _normalModeWidth = 150;
     [SerializeField] float _normalModeOffset = 25;
-    [SerializeField] float _editModeWidth = 250;
+    [SerializeField] float _editModeWidth = 275;
     [SerializeField] float _editModeOffset = 0;
     [SerializeField] float _modeResizeTime = .2f;
     [SerializeField] Ease _modeResizeEase = Ease.OutQuad;
@@ -182,8 +182,8 @@ public class ToolbarAnimations : ScriptableObject, IToolbarAnimations
 
     public void PlayModePanelResize(MusicMateMode mode, ToolbarModeController controller)
     {
-        var width = mode == MusicMateMode.Edit ? _editModeWidth : _normalModeWidth;
-        var offset = mode == MusicMateMode.Edit ? _editModeOffset : _normalModeOffset;
+        var width = mode is MusicMateMode.Edit or MusicMateMode.Import ? _editModeWidth : _normalModeWidth;
+        var offset = mode is MusicMateMode.Edit or MusicMateMode.Import? _editModeOffset : _normalModeOffset;
 
         DOTween.To(
             () => controller.m_layoutElement.preferredWidth,

@@ -12,7 +12,8 @@ public class MainWindowAnimator : MusicMateBehavior
     [SerializeField] ToolbarApplicationController _applicationToolbar;
     [SerializeField] ToolbarModeController _modeToolbar;
     [SerializeField] ToolbarPartController _searchToolbar;
-    [SerializeField] ToolbarImportController _importToolbar;
+
+    public bool SidePanelExpanded => _releaseResult.SidePanelExpanded;
 
     State _state;
     float _fadeTime = 0;
@@ -20,7 +21,11 @@ public class MainWindowAnimator : MusicMateBehavior
     #region Base Class Methods
     protected override void InitializeComponents() => _state = new State();
 
-    protected override void InitializeValues() => ActivatePanels(false);
+    protected override void InitializeValues()
+    {
+        _releaseResult.SetRightMargin(true);
+        ActivatePanels(false);
+    }
 
     protected override void RegisterEventHandlers()
     {
@@ -53,8 +58,7 @@ public class MainWindowAnimator : MusicMateBehavior
             _audioPlayer.m_canvasGroupExpanded,
             _applicationToolbar.m_CanvasGroup,
             _modeToolbar.m_CanvasGroup,
-            _searchToolbar.m_CanvasGroup,
-            _importToolbar.m_CanvasGroup);
+            _searchToolbar.m_CanvasGroup);
 
         // Delay the display of the result for a better experience.
         Animations.Panel.PlayPanelVisibility(connected, _fadeTime, 1.5f, _releaseResult.m_canvasGroup);
@@ -81,7 +85,6 @@ public class MainWindowAnimator : MusicMateBehavior
         _applicationToolbar.gameObject.SetActive(activate);
         _modeToolbar.gameObject.SetActive(activate);
         _searchToolbar.gameObject.SetActive(activate);
-        _importToolbar.gameObject.SetActive(activate);
     }
 
     /// <summary>

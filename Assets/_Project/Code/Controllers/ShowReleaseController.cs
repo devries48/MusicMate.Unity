@@ -142,4 +142,8 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
         return result;
     }
 
+    internal void UpdateModel(MusicMateZone zone, ReleaseModel releaseModel)
+    {
+        throw new NotImplementedException();
+    }
 }

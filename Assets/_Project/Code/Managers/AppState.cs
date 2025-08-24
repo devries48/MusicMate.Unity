@@ -25,10 +25,12 @@ public class AppState : IAppState
 
             _currentMode = value;
 
-            if (value == MusicMateMode.Edit)
-                CurrentColors = _config.ColorsEditMode;
-            else
-                CurrentColors = _config.Colors;
+            CurrentColors = value switch
+            {
+                MusicMateMode.Edit => _config.ColorsEditMode,
+                MusicMateMode.Import => _config.ColorsImportMode,
+                _ => _config.Colors
+            };
 
             ModeChanged?.Invoke(_currentMode);
         }

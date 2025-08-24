@@ -27,8 +27,9 @@ public class MusicMateManagerEditor : MusicMateEditorBase
 
         if (DrawFoldout("Windows"))
         {
-            DrawSectionField("_errorController", "Error Window");
-            DrawSectionField("_loginController", "Login Window");
+            DrawSectionField("_errorWindow", "Error Window");
+            DrawSectionField("_loginWindow", "Login Window");
+            DrawSectionField("_editorWindow", "Editor Window");
         }
 
         if (DrawFoldout("Animators"))

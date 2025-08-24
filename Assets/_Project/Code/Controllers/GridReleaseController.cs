@@ -22,6 +22,8 @@ public class GridReleaseController : MusicMateBehavior
     GridLayoutGroup _releaseGrid;
     CellReleaseAnimator _selectedCell;
 
+    public bool SidePanelExpanded { get; private set; }
+
     internal CanvasGroup m_canvasGroup;
     internal float _setMarginDuration = .5f;
 
@@ -50,7 +52,8 @@ public class GridReleaseController : MusicMateBehavior
     /// <param name="margin"></param>
     public void SetRightMargin(bool isExpanded, float delay = 0)
     {
-        var margin = isExpanded ? (2 * _margin) + AudioPlayerService.Instance.PlayerWidth : _margin;
+        SidePanelExpanded = isExpanded;
+        var margin = isExpanded ? (2 * _margin) + Constants.SidePanelWidth : _margin;
         var endval = new Vector2(-margin, -140);
         DOTween.To(() => _parentTrans.offsetMax, x => _parentTrans.offsetMax = x, endval, _setMarginDuration).SetDelay(delay);
     }

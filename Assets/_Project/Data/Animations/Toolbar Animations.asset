@@ -23,9 +23,9 @@ MonoBehaviour:
   _toolbarSpinTime: 0.4
   _toolbarPartRotateTime: 0.3
   _toolbarPartDelayTime: 0.1
-  _normalModeWidth: 125
-  _normalModeOffset: 25
-  _editModeWidth: 250
-  _editModeOffset: 0
+  _normalModeWidth: 175
+  _normalModeOffset: 10
+  _editModeWidth: 325
+  _editModeOffset: 5
   _modeResizeTime: 0.2
   _modeResizeEase: 6

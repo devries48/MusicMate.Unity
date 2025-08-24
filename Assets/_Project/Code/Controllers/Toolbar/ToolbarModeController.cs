@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class ToolbarModeController : ToolbarControllerBase
 {
     [SerializeField] ToolbarButtonAnimator _editModeButton;
+    [SerializeField] ToolbarButtonAnimator _importModeButton;
     [SerializeField] ToolbarButtonAnimator _providersButton;
 
     internal LayoutElement m_layoutElement;
@@ -16,6 +17,7 @@ public class ToolbarModeController : ToolbarControllerBase
         base.RegisterEventHandlers();
 
         _editModeButton.OnButtonClick.AddListener(OnEditModeClicked);
+        _importModeButton.OnButtonClick.AddListener(OnImportModeClicked);
         _providersButton.OnButtonClick.AddListener(OnProvidersToggleClicked);
 
         Manager.AppState.SubscribeToMusicMateStateChanged(OnMusicMateStateChanged);
@@ -28,6 +30,7 @@ public class ToolbarModeController : ToolbarControllerBase
         CancelInvoke();
 
         _editModeButton.OnButtonClick.RemoveListener(OnEditModeClicked);
+        _importModeButton.OnButtonClick.RemoveListener(OnImportModeClicked);
         _providersButton.OnButtonClick.RemoveListener(OnProvidersToggleClicked);
 
         Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
@@ -50,14 +53,24 @@ public class ToolbarModeController : ToolbarControllerBase
 
         Animations.Toolbar.PlayModePanelResize(mode, this);
 
-        _providersButton.gameObject.SetActive(mode == MusicMateMode.Edit);
+        _providersButton.gameObject.SetActive(mode is MusicMateMode.Edit or MusicMateMode.Import);
     }
 
     #endregion
 
     void OnEditModeClicked()
     {
+        _importModeButton.SetToggleState(false);
+        
         var mode = _editModeButton.IsToggleOn ? MusicMateMode.Edit : MusicMateMode.Collection;
+        Manager.AppState.NotifyModeChanged(mode);
+    }
+
+    void OnImportModeClicked()
+    {
+        _editModeButton.SetToggleState(false);
+        
+        var mode = _importModeButton.IsToggleOn ? MusicMateMode.Import : MusicMateMode.Collection;
         Manager.AppState.NotifyModeChanged(mode);
     }
 

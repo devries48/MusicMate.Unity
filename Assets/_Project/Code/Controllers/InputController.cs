@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class InputController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InputController : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] string _labelText;
 
@@ -14,28 +14,31 @@ public class InputController : MonoBehaviour, IPointerEnterHandler, IPointerExit
     [HideInInspector]
     public UnityEvent ValueTextChanged;
 
-    AnimationManager _animations;
-
-    void Awake() => _animations = AnimationManager.Instance;
-
-    void Start()
-    {
-        _label.text = _labelText;
-        _inputTextField.onValueChanged.AddListener(delegate { OnValueTextChanged(); });
-        _animations.Input.PlayTextNormal(_inputTextField);
-    }
-
-    void OnEnable()
+    #region Base Class Methods
+    protected override void RegisterEventHandlers()
     {
         _inputTextField.onSelect.AddListener(OnSelect);
         _inputTextField.onDeselect.AddListener(OnDeselect);
     }
 
-    void OnDisable()
+    protected override void UnregisterEventHandlers()
     {
         _inputTextField.onSelect.RemoveListener(OnSelect);
         _inputTextField.onDeselect.RemoveListener(OnDeselect);
     }
+
+    protected override void InitializeValues()
+    {
+        _label.text = _labelText;
+        _inputTextField.onValueChanged.AddListener(delegate { OnValueTextChanged(); });
+        Animations.Input.PlayTextNormal(_inputTextField);
+    }
+
+    protected override void ApplyColors()
+    {
+        ChangeColor(MusicMateColor.Text, _label);
+    }
+    #endregion
 
     public string ValueText { get => _inputTextField.text; set => _inputTextField.text = value; }
 
@@ -47,13 +50,13 @@ public class InputController : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     // Animations 
     // ==========
-    void OnSelect(string _) => _animations.Input.PlayTextSelect(_inputTextField);
+    void OnSelect(string _) => Animations.Input.PlayTextSelect(_inputTextField);
 
-    void OnDeselect(string _) => _animations.Input.PlayTextNormal(_inputTextField);
+    void OnDeselect(string _) => Animations.Input.PlayTextNormal(_inputTextField);
 
-    public void OnPointerEnter(PointerEventData eventData) => _animations.Input.PlayTextHighlight(_inputTextField);
+    public void OnPointerEnter(PointerEventData eventData) => Animations.Input.PlayTextHighlight(_inputTextField);
 
-    public void OnPointerExit(PointerEventData eventData) => _animations.Input.PlayTextNormal(_inputTextField);
+    public void OnPointerExit(PointerEventData eventData) => Animations.Input.PlayTextNormal(_inputTextField);
     // ==========
 
 #if UNITY_EDITOR

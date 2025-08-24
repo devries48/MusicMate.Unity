@@ -1,7 +1,8 @@
 public enum MusicMateMode
 {
     Collection,
-    Edit
+    Edit,
+    Import
 }
 
 public enum MusicMateColor
@@ -28,6 +29,15 @@ public enum MusicMateStateDetails
     Release,
     Artist,
     Catalog
+}
+
+public enum MusicMateZone
+{
+    ReleaseImage,
+    ReleaseTitle,
+    ReleaseYear,
+    ReleaseGenre,
+    ReleaseTracks,
 }
 
 public enum PlayerState

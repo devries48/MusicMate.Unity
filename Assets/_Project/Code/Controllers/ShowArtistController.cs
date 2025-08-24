@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,5 +35,10 @@ public class ShowArtistController : MusicMateBehavior, IShowDetails<DataResult, 
     public void OnUpdated(ArtistModel model)
     {
         _parent.GetImage(model.ThumbnailUrl, _artistImage);
+    }
+
+    internal void UpdateModel(MusicMateZone zone, ArtistModel artistModel)
+    {
+        throw new NotImplementedException();
     }
 }
