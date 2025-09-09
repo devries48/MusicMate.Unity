@@ -1,15 +1,19 @@
+using System;
 using UnityEngine;
 
 public class MainWindowAnimator : MusicMateBehavior
 {
-    [Header("Panel Controllers")]
-    [SerializeField] AudioPlayerController _audioPlayer;
+    [Header("Panel Controllers")] [SerializeField]
+    AudioPlayerController _audioPlayer;
+
     [SerializeField] GridReleaseController _releaseResult;
+    [SerializeField] GridImportController _importResult;
     [SerializeField] DetailsAnimator _showDetails;
     [SerializeField] ProvidersController _providers;
 
-    [Header("Toolbar Controllers")]
-    [SerializeField] ToolbarApplicationController _applicationToolbar;
+    [Header("Toolbar Controllers")] [SerializeField]
+    ToolbarApplicationController _applicationToolbar;
+
     [SerializeField] ToolbarModeController _modeToolbar;
     [SerializeField] ToolbarPartController _searchToolbar;
 
@@ -19,6 +23,7 @@ public class MainWindowAnimator : MusicMateBehavior
     float _fadeTime = 0;
 
     #region Base Class Methods
+
     protected override void InitializeComponents() => _state = new State();
 
     protected override void InitializeValues()
@@ -41,8 +46,28 @@ public class MainWindowAnimator : MusicMateBehavior
 
     protected override void MusicMateModeChanged(MusicMateMode mode)
     {
+        ShowResults(mode);
+
         if (mode == MusicMateMode.Collection && _state.ProvidersVisible)
             SetStateProviders(false);
+    }
+
+    void ShowResults(MusicMateMode mode)
+    {
+        switch (mode)
+        {
+            case MusicMateMode.Collection:
+                _releaseResult.gameObject.SetActive(true);
+                _importResult.gameObject.SetActive(false);
+                break;
+            case MusicMateMode.Import:
+                _releaseResult.gameObject.SetActive(false);
+                _importResult.gameObject.SetActive(true);
+                break;
+            case MusicMateMode.Edit:
+            default:
+                return;
+        }
     }
     #endregion
 
@@ -90,7 +115,7 @@ public class MainWindowAnimator : MusicMateBehavior
     /// <summary>
     /// Initial result on startup.
     /// </summary>
-    void GetInitialReleasesCallback(PagedResult<ReleaseResult> result)
+    void GetInitialReleasesCallback(PagedResultOld<ReleaseResult> result)
     {
         _releaseResult.SetResult(result);
         Manager.HideSpinner();

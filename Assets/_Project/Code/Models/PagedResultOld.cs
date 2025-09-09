@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class PagedResult<T>
+public class PagedResultOld<T>
 {
     public int? CurrentPage { get; set; }
     public bool? IsSuccess { get; set; }

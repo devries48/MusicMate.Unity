@@ -18,7 +18,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
         get
         {
-            if (_animations == null)
+            if (!_animations)
                 _animations = AnimationManager.Instance;
 
             return _animations;
@@ -363,7 +363,6 @@ public abstract class MusicMateBehavior : MonoBehaviour
             MusicMateColor.Text => Manager.AppColors.TextColor,
             MusicMateColor.DisabledText => Manager.AppColors.DisabledTextColor,
             MusicMateColor.Panel => Manager.AppColors.PanelColor,
-            MusicMateColor.Background => Manager.AppColors.BackgroundColor,
             MusicMateColor.AccentText => Manager.AppColors.AccentTextColor,
             MusicMateColor.Icon => Manager.AppColors.IconColor,
             MusicMateColor.DisabledIcon => Manager.AppColors.DisabledIconColor,

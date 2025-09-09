@@ -28,32 +28,32 @@ public class GridAnimations : ScriptableObject, IGridAnimations
     [SerializeField] float _rowHidePanelTime = 0.2f;
     [SerializeField] Ease _rowHidePanelEase = Ease.OutCirc;
 
-    public void PlayCellHoverEnter(CellReleaseAnimator cell) => Scale(
-        cell.transform,
+    public void PlayCellHoverEnter(ICellAnimator cell) => Scale(
+        cell.CellTransform,
         _cellHoverScale,
         _cellHoverEnterTime,
         _cellHoverEnterEase);
 
-    public void PlayCellHoverExit(CellReleaseAnimator cell) => Scale(
-        cell.transform,
+    public void PlayCellHoverExit(ICellAnimator cell) => Scale(
+        cell.CellTransform,
         1f,
         _cellHoverExitTime,
         _cellHhoverExitEase);
 
-    public void PlayCellClick(CellReleaseAnimator cell)
+    public void PlayCellClick(ICellAnimator cell)
     {
         if (cell.IsSelected)
             return;
 
         var duration = _cellShowPanelTime / 2;
 
-        cell.transform
+        cell.CellTransform
             .DOScale(_clickScale, duration)
             .SetEase(Ease.OutBack)
             .OnComplete(
                 () =>
                 {
-                    cell.transform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
+                    cell.CellTransform.DOScale(_cellHoverScale, duration).SetEase(Ease.OutBack);
                 });
     }
 
@@ -64,9 +64,9 @@ public class GridAnimations : ScriptableObject, IGridAnimations
             .SetEase(Ease.OutBack)
             .OnComplete(() => row.transform.DOScale(1, _clickDuration / 2).SetEase(Ease.OutBack));
     }
-    public void PlayCellSelect(bool isSelected, CellReleaseAnimator cell) { CellSelect(isSelected, cell); }
+    public void PlayCellSelect(bool isSelected, ICellAnimator cell) { CellSelect(isSelected, cell); }
 
-    void CellSelect(bool isSelected, CellReleaseAnimator cell, bool isAbort = false, Action onComplete = null)
+    void CellSelect(bool isSelected, ICellAnimator cell, bool isAbort = false, Action onComplete = null)
     {
         var duration = isSelected ? _cellShowPanelTime : _cellHidePanelTime;
 
@@ -74,38 +74,40 @@ public class GridAnimations : ScriptableObject, IGridAnimations
 
         if (isSelected)
         {
-            cell.transform
+            cell.CellTransform
                 .DOScale(_clickScale, duration / 2)
                 .SetEase(Ease.OutBack)
                 .OnComplete(
                     () =>
                     {
-                        cell.m_actionPanel = cell.m_parent.CreateActionPanel(cell);
-                        cell.m_actionPanel
-                            .DOPivotY(0, duration)
-                            .SetEase(_cellShowPanelEase)
-                            .OnComplete(() => onComplete?.Invoke());
-
-                        cell.transform.DOScale(_cellHoverScale, duration / 2).SetEase(Ease.OutBack);
+                        cell.ActionPanel = cell.ParentGrid.CreateActionPanel(cell);
+                        if (cell.ActionPanel)
+                        {
+                            cell.ActionPanel
+                                .DOPivotY(0, duration)
+                                .SetEase(_cellShowPanelEase)
+                                .OnComplete(() => onComplete?.Invoke());
+                        }
+                        cell.CellTransform.DOScale(_cellHoverScale, duration / 2).SetEase(Ease.OutBack);
                     });
         }
         else
         {
             PlayCellHoverExit(cell);
-            cell.m_actionPanel
+            cell.ActionPanel
                 .DOPivotY(1, duration)
                 .SetEase(_cellHidePanelEase)
                 .OnComplete(
                     () =>
                     {
-                        cell.m_parent.DestroyActionPanel(cell);
+                        cell.ParentGrid.DestroyActionPanel(cell);
                         onComplete?.Invoke();
                     })
                 .Play();
         }
     }
 
-    public void AbortCellSelect(CellReleaseAnimator cell)
+    public void AbortCellSelect(ICellAnimator cell)
     {
         CellSelect(
             false,

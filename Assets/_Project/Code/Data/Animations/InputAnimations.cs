@@ -15,7 +15,7 @@ public class InputAnimations : ScriptableObject,IInputAnimations
     public void PlayTextNormal(TMP_InputField input)
     {
         SetColor(input, _manager.AppColors.TextColor);
-        SetBackgroundColor(input, _manager.AppColors.BackgroundColor);
+        SetBackgroundColor(input, _manager.AppColors.PanelColor);
     }
 
     public void PlayTextSelect(TMP_InputField input)

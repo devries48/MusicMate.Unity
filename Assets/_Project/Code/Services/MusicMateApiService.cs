@@ -47,6 +47,7 @@ using UnityEngine.Networking;
 /// </summary>
 public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMateApiService
 {
+    #region Fields & Properties
     string _apiUrl;
     string _accessToken;
 
@@ -54,14 +55,16 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver()
     };
-
-    event ConnectionChangedEventHandler ConnectionChanged;
-    event ApiErrorEventHandler ErrorOccurred;
-
+    
     public bool IsConnected => _accessToken != null;
 
     public IMusicMateApiService GetClient() => this;
-
+    #endregion
+    
+    #region  Events
+    event ConnectionChangedEventHandler ConnectionChanged;
+    event ApiErrorEventHandler ErrorOccurred;
+    
     public void SubscribeToConnectionChanged(ConnectionChangedEventHandler handler) => ConnectionChanged += handler;
 
     public void UnsubscribeFromConnectionChanged(ConnectionChangedEventHandler handler) => ConnectionChanged -= handler;
@@ -70,27 +73,22 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
     public void UnsubscribeFromApiError(ApiErrorEventHandler handler) => ErrorOccurred -= handler;
 
+    #endregion
+    
     public void SignIn(string url, string user, string password) => StartCoroutine(PostSignInRequest(url, user, password));
 
-    public void GetInitialReleases(Action<PagedResult<ReleaseResult>> callback) => StartCoroutine(GetReleases(callback));
+    public void GetInitialReleases(Action<PagedResultOld<ReleaseResult>> callback) => StartCoroutine(GetReleases(callback));
 
     public void GetRelease(Guid id, Action<ReleaseModel> callback) => StartCoroutine(GetReleaseCore(id, callback));
 
     public void GetArtist(Guid id, Action<ArtistModel> callback) => StartCoroutine(GetArtistCore(id, callback));
 
     public void DownloadImage(string url, Action<Sprite> callback) => StartCoroutine(GetImage(url, callback));
-
-    public void IsFolderImportRunning(Action<bool> callback) => StartCoroutine(FolderImportRunning(callback));
-
-    public void FolderImportStart(Action<string> callback)
+    
+    public void GetFolderImport(int pageNumber, int pageSize, Action<PagedResult<ImportReleaseResult>> callback)
     {
-        IsFolderImportRunning(running =>
-        {
-            if (running)
-                callback.Invoke("Folder import process is already running!");
-            else
-                StartCoroutine(GetFolderImport(callback));
-        });
+        var endpoint = $"import/find/disk?pageNumber={pageNumber}&pageSize={pageSize}";
+        StartCoroutine(GetFolderImportCore(endpoint, callback));
     }
 
     IEnumerator PostSignInRequest(string url, string user, string password)
@@ -99,7 +97,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
 
         var model = JsonUtility.ToJson(new LoginModel { Username = user, Password = password });
         using UnityWebRequest wr = UnityWebRequest.Post(UriCombine("auth/token"), model, "application/json");
-        wr.certificateHandler = new CertificateWhore();
+        wr.certificateHandler = new CertificateBypassHandler();
 
         yield return wr.SendWebRequest();
 
@@ -116,10 +114,10 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         }
     }
 
-    IEnumerator GetReleases(Action<PagedResult<ReleaseResult>> callback)
+    IEnumerator GetReleases(Action<PagedResultOld<ReleaseResult>> callback)
     {
         var q = CreateQueryString("releases", 50);
-        using UnityWebRequest wr = CreateGetRequest(q);
+        using var wr = CreateGetRequest(q);
         yield return wr.SendWebRequest();
 
         if (wr.result != UnityWebRequest.Result.Success)
@@ -128,9 +126,8 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         {
             try
             {
-
                 Debug.Log(wr.downloadHandler.text);
-                var result = JsonConvert.DeserializeObject<PagedResult<ReleaseResult>>(
+                var result = JsonConvert.DeserializeObject<PagedResultOld<ReleaseResult>>(
                     wr.downloadHandler.text,
                     _jsonSettings);
 
@@ -212,37 +209,10 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
             callback.Invoke(sprite);
         }
     }
-
-    IEnumerator FolderImportRunning(Action<bool> callback)
+     
+    private IEnumerator GetFolderImportCore(string endpoint, Action<PagedResult<ImportReleaseResult>> callback)
     {
-        using UnityWebRequest wr = CreateGetRequest("import/scan/status");
-        yield return wr.SendWebRequest();
-
-        if (wr.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(wr.error);
-            callback.Invoke(false);
-        }
-        else
-        {
-            var status = JsonUtility.FromJson<ScanStatusResponse>(wr.downloadHandler.text);
-            callback.Invoke(status.IsScanRunning);
-        }
-    }
-
-    IEnumerator GetFolderImport(Action<string> callback)
-    {
-        using UnityWebRequest www = CreateGetRequest("import/scan/inbound");
-        yield return www.SendWebRequest();
-
-        if (www.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log("Import process started successfully.");
-        }
-        else
-        {
-            Debug.LogError("Failed to start the import process.");
-        }
+        yield return GetRequest(endpoint, callback);
     }
 
     void InvokeConnectionChanged(bool connected, string error = default)
@@ -257,6 +227,17 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         ErrorOccurred?.Invoke(args);
     }
 
+    void InvokeErrorOccurred(UnityWebRequest wr)
+    {
+        var args = new ErrorEventArgs(ErrorType.Api, GetDescription(wr));
+        ErrorOccurred?.Invoke(args);
+    }
+    
+    void InvokeErrorOccurred(UnityWebRequest wr, Exception ex)
+    {
+        var args = new ErrorEventArgs(ErrorType.Api, GetDescription(wr),ex.Message);
+        ErrorOccurred?.Invoke(args);
+    }
     void InvokeErrorOccurred(string q, Exception ex)
     {
         var args = new ErrorEventArgs(ErrorType.Api, GetMessage(q), ex.Message);
@@ -289,6 +270,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
                 401 => "Unauthorized: Access denied. Please check your credentials.",
                 403 => "Forbidden: You do not have permission to access this resource.",
                 404 => "Not found: The requested resource could not be found on the server.",
+                405 => "Not Allowed: You do not have permission to access this resource.",
                 >= 500 => "Server error: The server encountered an issue. Please try again later.",
                 _ => "Protocol error: An unexpected response was received from the server."
             },
@@ -323,16 +305,34 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         var uri2 = uri.TrimStart('/');
         return $"{uri1}/{uri2}";
     }
-
-
-    class ScanStatusResponse
+    
+    private IEnumerator GetRequest<T>(string endpoint, Action<T> callback)
     {
-        public bool IsScanRunning = false;
-    }
+        using var wr = CreateGetRequest(endpoint);
+        yield return wr.SendWebRequest();
 
+        if (wr.result != UnityWebRequest.Result.Success)
+        {
+            InvokeErrorOccurred(endpoint, wr);
+            callback?.Invoke(default);
+        }
+        else
+        {
+            try
+            {
+                var result = JsonConvert.DeserializeObject<T>(wr.downloadHandler.text, _jsonSettings);
+                callback?.Invoke(result);
+            }
+            catch (Exception ex)
+            {
+                InvokeErrorOccurred(endpoint, ex);
+                callback?.Invoke(default);
+            }
+        }
+    }
 }
 
-public class CertificateWhore : CertificateHandler
+public class CertificateBypassHandler : CertificateHandler
 {
     protected override bool ValidateCertificate(byte[] certificateData) => true;
 }

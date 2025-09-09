@@ -12,7 +12,6 @@ public enum MusicMateColor
     Text,
     DisabledText,
     Panel,
-    Background,
     AccentText,
     Icon,
     DisabledIcon

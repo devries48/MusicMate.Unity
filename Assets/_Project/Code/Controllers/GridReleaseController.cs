@@ -2,21 +2,20 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Collections;
-using System;
 using DG.Tweening;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class GridReleaseController : MusicMateBehavior
+public class GridReleaseController : MusicMateBehavior,IGridController
 {
-    [SerializeField] GameObject _prefabReleaseCell;
-    [SerializeField] GameObject _prefabActionPanel;
-
+    [SerializeField] GameObject prefabReleaseCell;
+    [SerializeField] GameObject prefabActionPanel;
+    
     [Header("Thumbnail Size")]
-    [SerializeField] ThumbnailSize _selectedSize;
-    [SerializeField, Range(100, 149)] int _tiny = 100;
-    [SerializeField, Range(150, 249)] int _small = 150;
-    [SerializeField, Range(250, 349)] int _medium = 250;
-    [SerializeField, Range(350, 449)] int _large = 350;
+    [SerializeField] ThumbnailSize selectedSize;
+    [SerializeField, Range(100, 149)] int tiny = 100;
+    [SerializeField, Range(150, 249)] int small = 150;
+    [SerializeField, Range(250, 349)] int medium = 250;
+    [SerializeField, Range(350, 449)] int large = 350;
 
     RectTransform _parentTrans;
     GridLayoutGroup _releaseGrid;
@@ -25,9 +24,8 @@ public class GridReleaseController : MusicMateBehavior
     public bool SidePanelExpanded { get; private set; }
 
     internal CanvasGroup m_canvasGroup;
-    internal float _setMarginDuration = .5f;
-
-    const float _margin = 10f;
+    const float SetMarginDuration = .5f;
+    const float Margin = 10f;
 
     #region Base Class Methods
     protected override void InitializeComponents()
@@ -43,19 +41,18 @@ public class GridReleaseController : MusicMateBehavior
     }
     #endregion
 
-    public void SetResult(PagedResult<ReleaseResult> result) => StartCoroutine(ProcessResult(result?.Rows));
+    public void SetResult(PagedResultOld<ReleaseResult> result) => StartCoroutine(ProcessResult(result?.Rows));
 
     /// <summary>
     /// Set the right margin for the result by setting the parent transforms' margin.
     /// The top margin is the bottom position of the toolbar + the border margin.
     /// </summary>
-    /// <param name="margin"></param>
     public void SetRightMargin(bool isExpanded, float delay = 0)
     {
         SidePanelExpanded = isExpanded;
-        var margin = isExpanded ? (2 * _margin) + Constants.SidePanelWidth : _margin;
-        var endval = new Vector2(-margin, -140);
-        DOTween.To(() => _parentTrans.offsetMax, x => _parentTrans.offsetMax = x, endval, _setMarginDuration).SetDelay(delay);
+        var margin = isExpanded ? (2 * Margin) + Constants.SidePanelWidth : Margin;
+        var endVal = new Vector2(-margin, -140);
+        DOTween.To(() => _parentTrans.offsetMax, x => _parentTrans.offsetMax = x, endVal, SetMarginDuration).SetDelay(delay);
     }
 
     public void ChangeSelection(CellReleaseAnimator cell)
@@ -74,37 +71,39 @@ public class GridReleaseController : MusicMateBehavior
             ChangeSelection(_selectedCell);
     }
 
-    public RectTransform CreateActionPanel(CellReleaseAnimator release)
+    public RectTransform CreateActionPanel(ICellAnimator releaseCell)
     {
-        var rectPanel = Instantiate(_prefabActionPanel, release.transform).GetComponent<RectTransform>();
+        var rectPanel = Instantiate(prefabActionPanel, releaseCell.CellTransform).GetComponent<RectTransform>();
         rectPanel.anchoredPosition = Vector2.zero;
         rectPanel.pivot = new Vector2(rectPanel.pivot.x, 1);
 
         var controller = rectPanel.GetComponent<ActionPanelController>();
-        controller.OnActionClicked += release.OnActionClicked;
-        controller.Initialize(release);
-        release.SetActionPanel(rectPanel);
+        var cell = (CellReleaseAnimator)releaseCell;
+        controller.OnActionClicked += cell.OnActionClicked;
+        controller.Initialize(cell);
+        cell.SetActionPanel(rectPanel);
 
-        return release.m_actionPanel;
+        return releaseCell.ActionPanel;
     }
 
-    public void DestroyActionPanel(CellReleaseAnimator release)
+    public void DestroyActionPanel(ICellAnimator releaseCell)
     {
-        var controller = release.m_actionPanel.GetComponent<ActionPanelController>();
-        controller.OnActionClicked -= release.OnActionClicked;
+        var controller = releaseCell.ActionPanel.GetComponent<ActionPanelController>();
+        var cell = (CellReleaseAnimator)releaseCell;
+        controller.OnActionClicked -= cell.OnActionClicked;
 
-        Destroy(release.m_actionPanel.gameObject);
+        Destroy(releaseCell.ActionPanel.gameObject);
     }
 
     IEnumerator ProcessResult(List<ReleaseResult> result)
     {
-        CalculateGridColums();
+        CalculateGridColumns();
         yield return null;
 
         var trans = _releaseGrid.transform;
-        int childs = trans.childCount;
+        var count = trans.childCount;
 
-        for (int i = childs - 1; i >= 0; i--)
+        for (var i = count - 1; i >= 0; i--)
         {
             DestroyImmediate(trans.GetChild(i).gameObject);
             yield return null;
@@ -113,9 +112,9 @@ public class GridReleaseController : MusicMateBehavior
         for (int i = 0; i < result.Count; i++)
         {
             var release = result[i];
-            var cell = Instantiate(_prefabReleaseCell, trans);
-            var controller = cell.GetComponent<CellReleaseAnimator>();
-            controller.Initialize(release, this);
+            var cell = Instantiate(prefabReleaseCell, trans);
+            var animator = cell.GetComponent<CellReleaseAnimator>();
+            animator.Initialize(release, this);
 
             cell.name = $"{i}_release";
             cell.SetActive(true);
@@ -124,22 +123,22 @@ public class GridReleaseController : MusicMateBehavior
         }
     }
 
-    void CalculateGridColums()
+    void CalculateGridColumns()
     {
-        var cellSize = _selectedSize switch
+        var cellSize = selectedSize switch
         {
-            ThumbnailSize.Tiny => _tiny,
-            ThumbnailSize.Small => _small,
-            ThumbnailSize.Medium => _medium,
-            _ => _large
+            ThumbnailSize.Tiny => tiny,
+            ThumbnailSize.Small => small,
+            ThumbnailSize.Medium => medium,
+            _ => large
         };
 
         var minSpace = cellSize / 6f;
         var maxWidth = _parentTrans.rect.width;
         var offsetMax = Mathf.Abs(_parentTrans.offsetMax.x);
 
-        if (offsetMax > _margin)
-            maxWidth += (2 * _margin) + AudioPlayerService.Instance.PlayerWidth;
+        if (offsetMax > Margin)
+            maxWidth += (2 * Margin) + AudioPlayerService.Instance.PlayerWidth;
 
         var columns = (int)maxWidth / cellSize;
         var freeSpaceTot = maxWidth - (columns * cellSize);
@@ -165,7 +164,7 @@ public class GridReleaseController : MusicMateBehavior
     void OnValidate()
     {
         if (_parentTrans != null)
-            CalculateGridColums();
+            CalculateGridColumns();
     }
 #endif
 }

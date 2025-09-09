@@ -53,11 +53,11 @@ public interface IButtonAnimations
 
 public interface IGridAnimations
 {
-    void PlayCellHoverEnter(CellReleaseAnimator cell);
-    void PlayCellHoverExit(CellReleaseAnimator cell);
-    void PlayCellClick(CellReleaseAnimator cell);
-    void PlayCellSelect(bool isSelected, CellReleaseAnimator cell);
-    void AbortCellSelect(CellReleaseAnimator cell);
+    void PlayCellHoverEnter(ICellAnimator cell);
+    void PlayCellHoverExit(ICellAnimator cell);
+    void PlayCellClick(ICellAnimator cell);
+    void PlayCellSelect(bool isSelected, ICellAnimator cell);
+    void AbortCellSelect(ICellAnimator cell);
     void PlayRowClick(RowTrackAnimator row);
     void PlayShowActionPanel(RectTransform panelRect, RowTrackAnimator row);
     void PlayHideActionPanel(RectTransform panelRect);

@@ -1,15 +1,13 @@
 #region Usings
 using DG.Tweening;
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 #endregion
 
-public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class CellReleaseAnimator : MusicMateBehavior, ICellAnimator,IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     #region Fields
     RectTransform _rectTransform;
@@ -22,12 +20,15 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     TextMeshProUGUI _titleText;
 
     public bool IsSelected { get; set; } = false;
+    public Transform CellTransform => transform;
+    public RectTransform ActionPanel { get; set; }
+    public IGridController ParentGrid { get;private set; }
 
     bool _showText = true;
     readonly float _maxPanelScale = 2;
 
-    internal GridReleaseController m_parent;
-    internal RectTransform m_actionPanel;
+    //internal GridReleaseController m_parent;
+    //internal RectTransform m_actionPanel;
     internal ReleaseResult m_release;
     #endregion
 
@@ -51,7 +52,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     public void Initialize(ReleaseResult model, GridReleaseController controller)
     {
         m_release = model;
-        m_parent = controller;
+        ParentGrid = controller;
 
         ApiService.DownloadImage(model.ThumbnailUrl, ProcessImage);
 
@@ -61,7 +62,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     public void SetActionPanel(RectTransform rectPanel)
     {
-        m_actionPanel = rectPanel;
+        ActionPanel = rectPanel;
         OnRectTransformDimensionsChange();
     }
 
@@ -69,7 +70,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
     {
         IsSelected = !IsSelected;
 
-        m_parent.ChangeSelection(this); // Notify parent
+        ((GridReleaseController)ParentGrid).ChangeSelection(this); // Notify parent
 
         Animations.Grid.PlayCellSelect(IsSelected, this);
     }
@@ -113,16 +114,15 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
             }
         }
 
-        if (m_actionPanel != null)
-        {
-            var scale = width / 100;
+        if (!ActionPanel) return;
+        
+        var scale = width / 100;
 
-            if (scale > _maxPanelScale)
-                scale = _maxPanelScale;
+        if (scale > _maxPanelScale)
+            scale = _maxPanelScale;
 
-            if (m_actionPanel.localScale.x != scale)
-                m_actionPanel.localScale = new Vector3(scale, scale, 0);
-        }
+        if (!Mathf.Approximately(ActionPanel.localScale.x, scale))
+            ActionPanel.localScale = new Vector3(scale, scale, 0);
     }
 
     void ProcessImage(Sprite sprite)
@@ -158,7 +158,7 @@ public class CellReleaseAnimator : MusicMateBehavior, IPointerEnterHandler, IPoi
 
     void HandleDoubleClick()
     {
-        m_parent.ClearSelection();
+        ((GridReleaseController)ParentGrid).ClearSelection();
 
         Animations.Grid.PlayCellClick(this);
         OnActionClicked(ActionPanelButton.Show);

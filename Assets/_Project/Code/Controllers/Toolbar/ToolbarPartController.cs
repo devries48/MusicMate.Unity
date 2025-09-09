@@ -20,9 +20,6 @@ public class ToolbarPartController : ToolbarControllerBase
     [Header("Import Part")]
     [SerializeField] GameObject _importPart;
     [SerializeField] string _titleImport;
-    [SerializeField] ToolbarButtonAnimator _importFolderButton;
-    [SerializeField] ToolbarButtonAnimator _importLastFmButton;
-
 
     internal RectTransform m_rectTransform;
     internal GameObject m_activePart;

@@ -122,7 +122,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         if (_buttonType == ToolbarButtonType.ToggleText)
         {
             ChangeState(_interactable, m_background);
-            ChangeColor(MusicMateColor.Background, m_text);
+            ChangeColor(MusicMateColor.Panel, m_text);
         }
         else
         {
@@ -133,7 +133,7 @@ public class ToolbarButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IP
         }
 
         ChangeColor(MusicMateColor.Accent, m_toggleIcon, m_spinner);
-        ChangeColor(MusicMateColor.Background, m_tooltipBackground);
+        ChangeColor(MusicMateColor.Panel, m_tooltipBackground);
         ChangeColor(MusicMateColor.Text, m_tooltipText);
     }
     #endregion
