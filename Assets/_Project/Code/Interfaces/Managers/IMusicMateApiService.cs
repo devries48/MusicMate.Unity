@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IMusicMateApiService
@@ -7,10 +8,12 @@ public interface IMusicMateApiService
     void GetInitialReleases(Action<PagedResultOld<ReleaseResult>> callback);
     void GetRelease(Guid id, Action<ReleaseModel> callback);
     void GetArtist(Guid id, Action<ArtistModel> callback);
+    void GetSuggestions(LookupSuggestion lookup, string query, Action<IReadOnlyList<SuggestionResult>> callback);
  
     void DownloadImage(string url, Action<Sprite> callback);
     void GetFolderImport(int pageNumber, int pageSize, Action<PagedResult<ImportReleaseResult>> callback);
-
+    
+    
     void SubscribeToConnectionChanged(ConnectionChangedEventHandler handler);
     void UnsubscribeFromConnectionChanged(ConnectionChangedEventHandler handler);
     void SubscribeToApiError(ApiErrorEventHandler handler);

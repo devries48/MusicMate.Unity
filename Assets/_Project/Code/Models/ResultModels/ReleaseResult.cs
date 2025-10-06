@@ -5,13 +5,12 @@ using System.Linq;
 public class ReleaseResult
 {
     public Guid Id { get; set; } = Guid.Empty;
-    public Statuses Status { get; set; }
-    public WorkflowStatus? WorkflowStatus { get; set; }
+    public ReleaseStatus Status { get; set; }
     public int DatabaseId { get; set; }
     public DataResult Artist { get; set; }
     public string Country { get; set; }
     public string Title { get; set; }
-    public DateTime ReleaseDate { get; set; }
+    public int ReleaseYear { get; set; }
     public string MainGenre { get; set; }
     public decimal? Duration { get; set; }
     public string DurationTime { get; set; }

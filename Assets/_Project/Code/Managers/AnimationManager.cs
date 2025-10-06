@@ -1,4 +1,6 @@
 using System;
+using Data.Animations;
+using Interfaces.Managers;
 using UnityEngine;
 
 public class AnimationManager : SceneSingleton<AnimationManager>, IAnimationManager

@@ -19,3 +19,6 @@ MonoBehaviour:
   - editorType: 2
     prefab: {fileID: 4047421859194743673, guid: 2b5b433d774a48f47889b3ca072f378b,
       type: 3}
+  - editorType: 3
+    prefab: {fileID: 4450444738151994689, guid: 907117c0d7fc37f428bb1ce61ded8e42,
+      type: 3}

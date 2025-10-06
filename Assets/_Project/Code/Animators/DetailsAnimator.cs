@@ -4,59 +4,91 @@ using UnityEngine.UI;
 
 public class DetailsAnimator : MusicMateBehavior
 {
-    [Header("Show Details Controllers")]
-    [SerializeField] ShowReleaseController _releaseDetails;
-    [SerializeField] ShowArtistController _artistDetails;
-    [SerializeField] ShowCatalogController _catalogDetails;
+    [Header("Tabs")] 
+    [SerializeField] TabItemAnimator releaseTab;
+    [SerializeField] TabItemAnimator artistTab;
+    [SerializeField] TabItemAnimator catalogTab;
 
-    [Header("Elements")]
-    [SerializeField] ButtonInteractable _closeButton;
-    [SerializeField] Image _spinnerBackground;
-    [SerializeField] Image _spinner;
+    [Header("Controllers")] 
+    [SerializeField] ShowReleaseController releaseDetails;
+    [SerializeField] ShowArtistController artistDetails;
+    [SerializeField] ShowCatalogController catalogDetails;
 
-    public ReleaseModel ReleaseModel { get; private set; } = null;
-    public ArtistModel ArtistModel { get; private set; } = null;
+    [Header("Elements")] [SerializeField] ButtonInteractable closeButton;
+    [SerializeField] Image spinnerBackground;
+    [SerializeField] Image spinner;
 
-    public bool IsLoading { get; set; }
+    public ReleaseModel ReleaseModel { get; private set; }
+    public ArtistModel ArtistModel { get; private set; }
 
-    readonly float _speed = 1.5f;
+    bool IsLoading { get; set; }
+
     readonly Color32 _initialBackgroundColor = new(255, 255, 255, 3);
 
-    Image _panel;
-    MusicMateStateDetails _current;
-    ReleaseResult _currentRelease = null;
-    DataResult _currentArtist = null;
+    Image _background;
+    MusicMateStateDetails _currentTab;
+    ReleaseResult _currentRelease;
+    DataResult _currentArtist;
+
+    const float Speed = 1.5f;
 
     #region Base Class Methods
+
     protected override void RegisterEventHandlers()
     {
         Manager.OnEditComplete += OnEditComplete;
 
-        _closeButton.onClick.AddListener(OnCloseClicked);
+        closeButton.onClick.AddListener(OnCloseClicked);
+
+        releaseTab.OnTabItemClick.AddListener(OnReleaseTabClicked);
+        artistTab.OnTabItemClick.AddListener(OnArtistTabClicked);
+        catalogTab.OnTabItemClick.AddListener(OnCatalogTabClicked);
     }
 
     protected override void UnregisterEventHandlers()
     {
         Manager.OnEditComplete -= OnEditComplete;
 
-        _closeButton.onClick.RemoveListener(OnCloseClicked);
+        closeButton.onClick.RemoveListener(OnCloseClicked);
+
+        releaseTab.OnTabItemClick.RemoveListener(OnReleaseTabClicked);
+        artistTab.OnTabItemClick.RemoveListener(OnArtistTabClicked);
+        catalogTab.OnTabItemClick.RemoveListener(OnCatalogTabClicked);
     }
 
-    protected override void InitializeComponents() { _panel = GetComponent<Image>(); }
+    protected override void InitializeComponents()
+    {
+        //_background = GetComponent<Image>();
+        transform.Find("Content").TryGetComponent(out _background);
+    }
 
-    protected override void InitializeValues() { _current = MusicMateStateDetails.Release; }
+    protected override void InitializeValues()
+    {
+        _currentTab = MusicMateStateDetails.Release;
+        SetElementStates(_currentTab);
+    }
 
     protected override void ApplyColors()
     {
-        ChangeColor(MusicMateColor.Panel, _panel);
-        ChangeColor(MusicMateColor.Accent, _spinner);
+        ChangeColor(MusicMateColor.Panel, _background);
+        ChangeColor(MusicMateColor.Accent, spinner);
     }
+
     #endregion
+
+    void SetElementStates(MusicMateStateDetails tab)
+    {
+        releaseTab.SetActive(tab == MusicMateStateDetails.Release);
+        artistTab.SetActive(tab == MusicMateStateDetails.Artist);
+        catalogTab.SetActive(tab == MusicMateStateDetails.Catalog);
+        
+        Manager.AppState.InvokeStateChanged(tab);
+    }
 
     void Update()
     {
         if (IsLoading)
-            _spinner.transform.Rotate(new Vector3(0, 0, -1 * _speed));
+            spinner.transform.Rotate(new Vector3(0, 0, -1 * Speed));
     }
 
     public void SetRelease(ReleaseResult release)
@@ -77,6 +109,7 @@ public class DetailsAnimator : MusicMateBehavior
                     StopSpinner();
                     return;
                 }
+
                 NotifyPanelsOnUpdate<IShowDetails<ReleaseResult, ReleaseModel>, ReleaseResult, ReleaseModel>(model);
 
                 var artist = _currentRelease.Artist;
@@ -91,13 +124,14 @@ public class DetailsAnimator : MusicMateBehavior
 
                 _currentArtist = artist;
 
-                ApiService.GetArtist(artist.Id, (model) =>
+                ApiService.GetArtist(artist.Id, artistModel =>
                 {
-                    ArtistModel = model;
+                    ArtistModel = artistModel;
 
-                    if (model != null)
-                        NotifyPanelsOnUpdate<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(model);
-                  
+                    if (artistModel != null)
+                        NotifyPanelsOnUpdate<IShowDetails<DataResult, ArtistModel>, DataResult, ArtistModel>(
+                            artistModel);
+
                     StopSpinner();
                 });
             });
@@ -122,47 +156,62 @@ public class DetailsAnimator : MusicMateBehavior
         image.color = _initialBackgroundColor;
     }
 
-    public void CloseDetails()
+    public void Show(MusicMateStateDetails details)
+    {
+        if (details == _currentTab)
+            return;
+
+        var showGroup = details switch
+        {
+            MusicMateStateDetails.Release => releaseDetails.gameObject,
+            MusicMateStateDetails.Artist => artistDetails.gameObject,
+            MusicMateStateDetails.Catalog => catalogDetails.gameObject,
+            _ => null
+        };
+
+        var hideGroup = _currentTab switch
+        {
+            MusicMateStateDetails.Release => releaseDetails.m_canvasGroup,
+            MusicMateStateDetails.Artist => artistDetails.m_canvasGroup,
+            MusicMateStateDetails.Catalog => catalogDetails.m_canvasGroup,
+            _ => null
+        };
+
+        _currentTab = details;
+
+        Animations.Panel.PlaySwitchDetails(showGroup, hideGroup);
+    }
+
+    void OnEditComplete(MusicMateZone zone, object model)
+    {
+        if (model is ReleaseModel releaseModel)
+            releaseDetails.UpdateModel(zone, releaseModel);
+        else if (model is ArtistModel artistModel)
+            artistDetails.UpdateModel(zone, artistModel);
+    }
+
+    void OnCloseClicked() => CloseDetails();
+
+    void CloseDetails()
     {
         Animations.Panel.PlayDetailsVisibility(false, this);
         Manager.AppState.InvokeStateChanged(MusicMateStateChange.Details, false);
     }
 
-    public void Show(MusicMateStateDetails details)
+    void OnReleaseTabClicked()
     {
-        if (details == _current)
-            return;
-
-        var showGroup = details switch
-        {
-            MusicMateStateDetails.Release => _releaseDetails.gameObject,
-            MusicMateStateDetails.Artist => _artistDetails.gameObject,
-            MusicMateStateDetails.Catalog => _catalogDetails.gameObject,
-            _ => null
-        };
-
-        var hideGroup = _current switch
-        {
-            MusicMateStateDetails.Release => _releaseDetails.m_canvasGroup,
-            MusicMateStateDetails.Artist => _artistDetails.m_canvasGroup,
-            MusicMateStateDetails.Catalog => _catalogDetails.m_canvasGroup,
-            _ => null
-        };
-
-        _current = details;
-
-        Animations.Panel.PlaySwitchDetails(showGroup, hideGroup);
+        SetElementStates(MusicMateStateDetails.Release);
     }
 
-    void OnEditComplete(MusicMateZone zone, object mocdel)
+    void OnArtistTabClicked()
     {
-        if (mocdel is ReleaseModel releaseModel)
-            _releaseDetails.UpdateModel(zone, releaseModel);
-        else if (mocdel is ArtistModel artistModel)
-            _artistDetails.UpdateModel(zone, artistModel);
+        SetElementStates(MusicMateStateDetails.Artist);
     }
 
-    void OnCloseClicked() => CloseDetails();
+    void OnCatalogTabClicked()
+    {
+        SetElementStates(MusicMateStateDetails.Catalog);
+    }
 
     void NotifyPanelsOnInit<TPanel, TInit, TModel>(TInit initData) where TPanel : IShowDetails<TInit, TModel>
     {
@@ -178,21 +227,17 @@ public class DetailsAnimator : MusicMateBehavior
 
     void StartSpinner()
     {
-        _spinner.DOFade(1, .1f);
-        _spinnerBackground.DOFade(1, .1f);
+        spinner.DOFade(1, .1f);
+        spinnerBackground.DOFade(1, .1f);
 
         IsLoading = true;
     }
 
     void StopSpinner()
     {
-        _spinner.DOFade(0, .25f).SetDelay(.25f);
-        _spinnerBackground.DOFade(0, .25f)
+        spinner.DOFade(0, .25f).SetDelay(.25f);
+        spinnerBackground.DOFade(0, .25f)
             .SetDelay(.25f)
-            .OnComplete(
-                () =>
-                {
-                    IsLoading = false;
-                });
+            .OnComplete(() => { IsLoading = false; });
     }
 }

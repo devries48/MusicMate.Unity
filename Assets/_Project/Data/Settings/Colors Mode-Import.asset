@@ -17,13 +17,13 @@ MonoBehaviour:
     rgba: 4282954999
   _defaultColor:
     serializedVersion: 2
-    rgba: 4280765955
+    rgba: 4282076457
   _textColor:
     serializedVersion: 2
     rgba: 4288651167
-  _backgroundColor:
-    serializedVersion: 2
-    rgba: 4281277697
   _panelColor:
     serializedVersion: 2
     rgba: 3206293775
+  _backgroundColor:
+    serializedVersion: 2
+    rgba: 4280622092

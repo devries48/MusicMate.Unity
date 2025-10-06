@@ -1,3 +1,4 @@
+using Interfaces.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -75,10 +76,11 @@ public abstract class MusicMateBehavior : MonoBehaviour
         {
             Manager.AppState.ModeChanged += OnMusicMateModeChanged;
 
-                _initializing = true;
-                ApplyColors();
-                _initializing = false;
+            _initializing = true;
+            ApplyColors();
+            _initializing = false;
         }
+
         RegisterEventHandlers();
     }
 
@@ -144,8 +146,8 @@ public abstract class MusicMateBehavior : MonoBehaviour
 
     void OnMusicMateModeChanged(MusicMateMode mode)
     {
-            MusicMateModeChanged(mode);
-            ApplyColors();
+        MusicMateModeChanged(mode);
+        ApplyColors();
     }
 
     /// <summary>
@@ -181,20 +183,20 @@ public abstract class MusicMateBehavior : MonoBehaviour
     {
     }
 
-    protected void ChangeState<T>(bool enabled, params T[] args) where T : class
+    protected void ChangeState<T>(bool enable, params T[] args) where T : class
     {
         foreach (var item in args)
         {
             if (item is ButtonAnimator)
             {
-                (item as ButtonAnimator).SetInteractable(enabled);
+                (item as ButtonAnimator).SetInteractable(enable);
                 continue;
             }
             else if (item is Slider)
-                (item as Slider).interactable = enabled;
+                (item as Slider).interactable = enable;
 
             var animate = !_initializing && IsGameObjectActive(item);
-            var targetColor = GetItemColor(item, enabled);
+            var targetColor = GetItemColor(item, enable);
 
             ChangeColor(item, targetColor, animate);
         }
@@ -313,8 +315,6 @@ public abstract class MusicMateBehavior : MonoBehaviour
                 case Marquee marq:
                     marq.TextColor = toColor;
                     break;
-                default:
-                    break;
             }
         }
     }
@@ -345,11 +345,9 @@ public abstract class MusicMateBehavior : MonoBehaviour
         }
     }
 
-    Color32 EnsureAlphaConsistency(Color32 currentColor, Color32 targetColor)
+    static Color32 EnsureAlphaConsistency(Color32 currentColor, Color32 targetColor)
     {
-        // If the alpha values differ, use the current color's alpha for the target color
-        if (currentColor.a != targetColor.a)
-            targetColor.a = currentColor.a;
+        targetColor.a = currentColor.a;
 
         return targetColor;
     }
@@ -366,6 +364,7 @@ public abstract class MusicMateBehavior : MonoBehaviour
             MusicMateColor.AccentText => Manager.AppColors.AccentTextColor,
             MusicMateColor.Icon => Manager.AppColors.IconColor,
             MusicMateColor.DisabledIcon => Manager.AppColors.DisabledIconColor,
+            MusicMateColor.Background => Manager.AppColors.BackgroundColor,
             _ => throw new System.NotImplementedException(),
         };
     }

@@ -13,9 +13,6 @@ public class ToolbarPartController : ToolbarControllerBase
     [Header("Details Release Part")]
     [SerializeField] GameObject _releasePart;
     [SerializeField] string _titleRelease;
-    [SerializeField] ToolbarButtonAnimator _releaseToggle;
-    [SerializeField] ToolbarButtonAnimator _artistToggle;
-    [SerializeField] ToolbarButtonAnimator _catalogToggle;
 
     [Header("Import Part")]
     [SerializeField] GameObject _importPart;
@@ -24,11 +21,9 @@ public class ToolbarPartController : ToolbarControllerBase
     internal RectTransform m_rectTransform;
     internal GameObject m_activePart;
 
-    DetailsToggle _toggled;
     Part _currentPart;
 
     enum Part { search, details, import };
-    enum DetailsToggle { release, artist, catalog }
 
     #region MusicMate Base Class Methods
     protected override void InitializeComponents()
@@ -53,20 +48,13 @@ public class ToolbarPartController : ToolbarControllerBase
         base.RegisterEventHandlers();
 
         Manager.AppState.SubscribeToMusicMateStateChanged(OnMusicMateStateChanged);
-        _releaseToggle.OnButtonClick.AddListener(OnReleaseToggleClicked);
-        _artistToggle.OnButtonClick.AddListener(OnArtistToggleClicked);
-        _catalogToggle.OnButtonClick.AddListener(OnCatalogToggleClicked);
     }
 
     protected override void UnregisterEventHandlers()
     {
         base.UnregisterEventHandlers();
 
-        Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
-
-        _releaseToggle.OnButtonClick.RemoveListener(OnReleaseToggleClicked);
-        _artistToggle.OnButtonClick.RemoveListener(OnArtistToggleClicked);
-        _catalogToggle.OnButtonClick.RemoveListener(OnCatalogToggleClicked);
+        Manager.AppState.UnsubscribeFromMusicMateStateChanged(OnMusicMateStateChanged);
     }
 
     protected override void MusicMateModeChanged(MusicMateMode mode)
@@ -75,41 +63,8 @@ public class ToolbarPartController : ToolbarControllerBase
     }
     #endregion
 
-    #region ToolbarController Base Class Methods
-    protected override void SetElementStates()
-    {
-        _releaseToggle.SetToggleState(_toggled == DetailsToggle.release);
-        _artistToggle.SetToggleState(_toggled == DetailsToggle.artist);
-        _catalogToggle.SetToggleState(_toggled == DetailsToggle.catalog);
-    }
-    #endregion
-
     public void SetHeader(string title) => _header.SetHeader(title);
-
-    void OnReleaseToggleClicked()
-    {
-        _toggled = DetailsToggle.release;
-        SetElementStates();
-
-        Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Release);
-    }
-
-    void OnArtistToggleClicked()
-    {
-        _toggled = DetailsToggle.artist;
-        SetElementStates();
-
-        Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Artist);
-    }
     
-    void OnCatalogToggleClicked()
-    {
-        _toggled = DetailsToggle.catalog;
-        SetElementStates();
-
-        Manager.AppState.InvokeStateChanged(MusicMateStateDetails.Catalog);
-    }
-
     void OnMusicMateStateChanged(MusicMateState state)
     {
         if (state.Change != MusicMateStateChange.Details)

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections.Generic;
+using Interfaces.Managers;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Button Animations", fileName = "Button Animations")]
@@ -22,7 +23,6 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
     [SerializeField] float _imageLargeScale = 1f;
     [SerializeField] float _imageLargeHoverScale = 1.2f;
     [SerializeField] float _imageLargeClickScale = 0.8f;
-
  
     // expand/collapse button
     [SerializeField] float _iconAnimationTime = .6f;
@@ -124,6 +124,37 @@ public class ButtonAnimations : ScriptableObject, IButtonAnimations
                 foregroundColor = _manager.AppColors.AccentTextColor;
         }
         PlayInteractable(button, backgroundColor, foregroundColor, buttonType);
+    }
+
+    public void PlayClicked(TabItemAnimator tabItem)
+    {
+        if (tabItem.m_IsActive)
+            return;
+        
+        var duration = _animationTime / 2;
+        tabItem.m_Text.transform
+            .DOScale(.8f, duration)
+            .SetEase(_animationEase)
+            .OnComplete(() =>
+            {
+                tabItem.m_Text.transform.DOScale(1, duration).SetEase(_animationEase);
+            });
+    }
+
+    public void PlayHoverEnter(TabItemAnimator tabItem)
+    {
+        if (tabItem.m_IsActive)
+            return;
+
+        tabItem.m_Text.transform.DOScale(1.2f, _animationTime).SetEase(_animationEase);
+    }
+
+    public void PlayHoverExit(TabItemAnimator tabItem)
+    {
+        if (tabItem.m_IsActive)
+            return;
+
+        tabItem.m_Text.transform.DOScale(1, _animationTime).SetEase(_animationEase);
     }
 
 

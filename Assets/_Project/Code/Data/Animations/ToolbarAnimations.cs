@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Interfaces.Managers;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Toolbar Animations", fileName = "Toolbar Animations")]

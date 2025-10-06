@@ -34,9 +34,9 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
     {
         get
         {
-            if (_button == null)
-                _button = (ButtonInteractable)GetComponent<Button>();
-
+            if (!_button)
+                TryGetComponent(out _button); // _button = (ButtonInteractable)GetComponent<Button>();
+            
             return _button;
         }
     }
@@ -118,7 +118,6 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                 Button.PlaceholderTransform.anchorMin = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.anchorMax = new Vector2(0.5f, 0.5f);
                 Button.PlaceholderTransform.pivot = new Vector2(0.5f, 0.5f);
-                Button.PlaceholderTransform.anchoredPosition = Vector2.zero;
             }
             else
             {
@@ -126,34 +125,35 @@ public class ButtonAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerE
                 Button.PlaceholderTransform.anchorMin = new Vector2(1f, 0.5f);
                 Button.PlaceholderTransform.anchorMax = new Vector2(1f, 0.5f);
                 Button.PlaceholderTransform.pivot = new Vector2(1f, 0.5f);
-                Button.PlaceholderTransform.anchoredPosition = Vector2.zero; // Adjust as necessary
+                // Adjust as necessary
             }
+
+            Button.PlaceholderTransform.anchoredPosition = Vector2.zero;
         }
     }
 
     protected override void ApplyColors()
     {
-        if (Button == null)
+        if (!Button)
             return;
 
         ChangeColor(_isPrimary ? MusicMateColor.AccentText : MusicMateColor.Text, Button.TextComponent);
 
-        if (Button.ImageComponent != null)
-        {
-            var iconColor = MusicMateColor.Icon;
+        if (!Button.ImageComponent) return;
+        
+        var iconColor = MusicMateColor.Icon;
 
-            if (_buttonType == ButtonType.DefaultImage ||
-                _buttonType == ButtonType.LargeImage ||
-                _buttonType == ButtonType.StateImage)
+        if (_buttonType == ButtonType.DefaultImage ||
+            _buttonType == ButtonType.LargeImage ||
+            _buttonType == ButtonType.StateImage)
 
-                iconColor = !Button.interactable
-                    ? MusicMateColor.DisabledIcon
-                    : _isPrimary ? MusicMateColor.Accent : MusicMateColor.Icon;
-            else if (_buttonType != ButtonType.ExpandCollapse)
-                iconColor = _isPrimary ? MusicMateColor.Accent : MusicMateColor.Default;
+            iconColor = !Button.interactable
+                ? MusicMateColor.DisabledIcon
+                : _isPrimary ? MusicMateColor.Accent : MusicMateColor.Icon;
+        else if (_buttonType != ButtonType.ExpandCollapse)
+            iconColor = _isPrimary ? MusicMateColor.Accent : MusicMateColor.Default;
 
-            ChangeColor(iconColor, Button.ImageComponent);
-        }
+        ChangeColor(iconColor, Button.ImageComponent);
     }
     #endregion
 

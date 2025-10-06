@@ -35,7 +35,7 @@ public class EditorWindow : MusicMateBehavior
             return _panelRect;
         }
     }
-
+    
     public event Action<MusicMateZone, object> OnEditorAccepted;
 
     #region Base Class Methods
@@ -52,8 +52,7 @@ public class EditorWindow : MusicMateBehavior
     }
 
     protected override void InitializeComponents() { InitPanel(); }
-
-
+    
     protected override void ApplyColors() 
     { 
         ChangeColor(MusicMateColor.Accent, _title); 
@@ -63,37 +62,32 @@ public class EditorWindow : MusicMateBehavior
 
     void InitPanel()
     {
-        if (_panel != null)
-            return;
-
         _panel = GetComponent<Image>();
         _panelRect = GetComponent<RectTransform>();
         _contentRect = _content.GetComponent<RectTransform>();
 
-        _initialPanelSize = new SizeF(MathF.Abs(_panelRect.sizeDelta.x), MathF.Abs(_panelRect.sizeDelta.y));
-        _initialContentSize = new SizeF(MathF.Abs(_contentRect.sizeDelta.x), MathF.Abs(_contentRect.sizeDelta.y));
+        _initialPanelSize = new SizeF(_panelRect.rect.width, _panelRect.rect.height);
+        _initialContentSize = new SizeF(_contentRect.rect.width, _contentRect.rect.height);
     }
 
     public void SetEditor(ZoneAnimator zone)
     {
         _currentZone = zone.m_editorZone;
-
-        InitPanel();
-
-        if (_currentEditorInstance != null)
+        
+        if (_currentEditorInstance)
         {
             DestroyImmediate(_currentEditorInstance);
             _currentEditorInstance = null;
         }
 
         var prefab = _editorPrefabConfig.GetPrefab(zone.m_editorZone);
-        if (prefab == null)
+        if (!prefab)
         {
             Debug.LogWarning($"No prefab assigned for {zone.m_editorZone} in EditorPrefabConfig.");
             return;
         }
         var prefabRect = prefab.GetComponent<RectTransform>();
-        var prefabSize = new SizeF(MathF.Abs(prefabRect.sizeDelta.x), MathF.Abs(prefabRect.sizeDelta.y));
+        var prefabSize = new SizeF(prefabRect.rect.width, prefabRect.rect.height);
         
         _currentEditorInstance = Instantiate(prefab, _content.transform);
         _currentEditorInstance.transform.localScale = Vector3.one;
@@ -101,7 +95,7 @@ public class EditorWindow : MusicMateBehavior
         var model = zone.m_parent.ReleaseModel;
 
         if (_currentEditorInstance.TryGetComponent(out IEditorComponent<ReleaseModel> editorComponent))
-            editorComponent.SetModel((ReleaseModel)model);
+            editorComponent.SetModel(model);
 
         ResizeToFitContent(prefabSize);
     }
@@ -112,14 +106,14 @@ public class EditorWindow : MusicMateBehavior
             return;
 
         var childRect = _content.transform.GetChild(0).GetComponent<RectTransform>();
-        if (childRect == null)
+        if (!childRect)
             return;
 
-        float width = childSize.Width > _initialContentSize.Width
+        var width = childSize.Width > _initialContentSize.Width
             ? _initialPanelSize.Width + childSize.Width - _initialContentSize.Width
             : _initialPanelSize.Width;
 
-        float height = childSize.Height > _initialContentSize.Height
+        var height = childSize.Height > _initialContentSize.Height
             ? _initialPanelSize.Height + childSize.Height - _initialContentSize.Height
             : _initialPanelSize.Height;
 

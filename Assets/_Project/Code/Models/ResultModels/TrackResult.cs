@@ -18,6 +18,8 @@ public class TrackResult
 
     public string TrackPlayUrl { get; set; }
 
+    public string FilePath { get; set; }
+    
     public string DurationString
     {
         get

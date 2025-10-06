@@ -14,7 +14,8 @@ public enum MusicMateColor
     Panel,
     AccentText,
     Icon,
-    DisabledIcon
+    DisabledIcon,
+    Background
 }
 
 public enum MusicMateStateChange
@@ -36,6 +37,7 @@ public enum MusicMateZone
     ReleaseTitle,
     ReleaseYear,
     ReleaseGenre,
+    ReleaseLabel,
     ReleaseTracks,
 }
 

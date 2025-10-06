@@ -41,7 +41,7 @@ public class MainWindowAnimator : MusicMateBehavior
     protected override void UnregisterEventHandlers()
     {
         PlayerService.UnsubscribeFromExpandedChanged(OnAudioPlayerExpandedChanged);
-        Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
+        Manager.AppState.UnsubscribeFromMusicMateStateChanged(OnMusicMateStateChanged);
     }
 
     protected override void MusicMateModeChanged(MusicMateMode mode)

@@ -38,7 +38,7 @@ public class GridImportController : MusicMateBehavior, IGridController
 
     /// <summary>
     /// Set the right margin for the result by setting the parent transforms' margin.
-    /// The top margin is the bottom position of the toolbar + the border margin.
+    /// The top margin is the bottom position of the toolbar and the border margin.
     /// </summary>
     public void SetRightMargin(bool isExpanded, float delay = 0)
     {

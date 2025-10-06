@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _accentColor:
     serializedVersion: 2
-    rgba: 4294835968
+    rgba: 4282954999
   _defaultColor:
     serializedVersion: 2
     rgba: 4287653635
   _textColor:
     serializedVersion: 2
     rgba: 4291345797
-  _backgroundColor:
-    serializedVersion: 2
-    rgba: 4281277697
   _panelColor:
     serializedVersion: 2
     rgba: 3211081987
+  _backgroundColor:
+    serializedVersion: 2
+    rgba: 4280622092

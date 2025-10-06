@@ -12,7 +12,7 @@
     void InvokeStateChanged(MusicMateStateDetails details);
     void InvokeStateChanged(MusicMateStateChange change, bool value);
     void SubscribeToMusicMateStateChanged(MusicMateStateChangedHandler handler);
-    void UnsubscribeFromMusicMateStateChangedd(MusicMateStateChangedHandler handler);
+    void UnsubscribeFromMusicMateStateChanged(MusicMateStateChangedHandler handler);
 }
 
 #region EventHandlers & EventArgs

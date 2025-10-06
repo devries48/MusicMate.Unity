@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
 {
     #region Serialized Fields
     [SerializeField] DetailsAnimator _parent;
+    [SerializeField] CountryFlags countryFlags;
     public PanelReleaseStateData m_normal;
     public PanelReleaseStateData m_maximized;
 
@@ -16,13 +18,18 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
     [SerializeField] Image _image;
     [SerializeField] Marquee _artist;
     [SerializeField] Marquee _title;
+    [SerializeField] TextMeshProUGUI _type;
     [SerializeField] TextMeshProUGUI _yearCountry;
+    [SerializeField] Image countryFlag;
     [SerializeField] TextMeshProUGUI _mainGenre;
     [SerializeField] TextMeshProUGUI _subGenres;
+    [SerializeField] TextMeshProUGUI _label;
 
     public TextMeshProUGUI m_artist_title;
     public TextMeshProUGUI m_total_length;
     public GridTrackController m_tracks;
+
+    [SerializeField] private TextMeshProUGUI _info;
 
     // Panels & Zone's
     public RectTransform m_mainInfoPanel;
@@ -43,7 +50,7 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
 
     protected override void ApplyColors()
     {
-        bool editMode = Manager.AppState.CurrentMode == MusicMateMode.Edit;
+        var editMode = Manager.AppState.CurrentMode == MusicMateMode.Edit;
         
         if (editMode &&
             _stateButton.IsStateOn &&
@@ -62,7 +69,8 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
         _downButton.gameObject.SetActive(Manager.AppState.CurrentMode != MusicMateMode.Edit);
 
         ChangeState(true, _artist, _title);
-        ChangeState(true, _yearCountry, _mainGenre, _subGenres, m_artist_title, m_total_length);
+        ChangeState(true, _type, _yearCountry, _mainGenre, _subGenres, _label, m_artist_title, m_total_length);
+        ChangeState(true, _info);
     }
 
     protected override void RegisterEventHandlers() { _stateButton.OnButtonClick.AddListener(OnStateButtonClicked); }
@@ -88,10 +96,13 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
             _parent.InitImage(_image);
             _artist.SetText(result.Artist.Text);
             _title.SetText(result.Title);
-            _yearCountry.text = ReleaseYearCountry(result.ReleaseDate, result.Country);
+            _type.text=string.Empty;
+            SetReleaseYearCountry(result.ReleaseYear, result.Country);
             _mainGenre.text = result.MainGenre;
             _subGenres.text = string.Empty;
-
+            _label.text = string.Empty;
+            _info.text = string.Empty;  
+            
             m_artist_title.SetText($"{result.Artist.Text} - {result.Title}");
         }
         else
@@ -100,31 +111,39 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
 
     public void OnUpdated(ReleaseModel model)
     {
+        _type.text = model.ReleaseType?.ToString();
         _subGenres.text = ReleaseSubGenres(model);
-
+        _label.text=ReleaseLabels(model);
+        _info.text = model.Info;
+        
         _parent.GetImage(model.ThumbnailUrl, _image);
         m_tracks.SetRelease(model);
     }
 
-    string ReleaseYearCountry(DateTime releaseDate, string country)
+    void SetReleaseYearCountry(int releaseYear, string country)
     {
         var result = string.Empty;
 
-        if (releaseDate != null)
-            result = releaseDate.Year.ToString();
+        if (releaseYear >0)
+            result = releaseYear.ToString();
 
         if (country == null)
         {
-            if (result.Length > 0 && !string.IsNullOrWhiteSpace(country))
-                result += ", ";
-
-            result += country;
+            _yearCountry.text = result;
+            countryFlag.enabled = false;
+            return ;
         }
+        
+        if (result.Length > 0 && !string.IsNullOrWhiteSpace(country))
+            result += ", ";
 
-        return result;
+        result += CountryFlags.GetCountryName(country);
+        _yearCountry.text = result;
+        countryFlag.sprite = countryFlags.GetFlag(country);
+        countryFlag.enabled = true;
     }
 
-    string ReleaseSubGenres(ReleaseModel model)
+    static string ReleaseSubGenres(ReleaseModel model)
     {
         var result = string.Empty;
 
@@ -140,6 +159,11 @@ public class ShowReleaseController : MusicMateBehavior, IShowDetails<ReleaseResu
         }
 
         return result;
+    }
+
+    static string ReleaseLabels(ReleaseModel model)
+    {
+        return model.Labels?.FirstOrDefault()?.Label.Text ?? string.Empty;
     }
 
     internal void UpdateModel(MusicMateZone zone, ReleaseModel releaseModel)

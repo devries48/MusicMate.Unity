@@ -25,6 +25,7 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
 
         DrawSectionHeader("Parent & State Objects");
         DrawSectionField("_parent", "Parent");
+        DrawSectionField("countryFlags", "Country Flags") ;
         DrawSectionField("m_normal", "Normal State");
         DrawSectionField("m_maximized", "Maximized State");
 
@@ -37,12 +38,16 @@ public class ShowReleaseControllerEditor : MusicMateEditorBase
             DrawSectionField("_image", "Release Image");
             DrawSectionField("_artist", "Artist");
             DrawSectionField("_title", "Title");
+            DrawSectionField("_type", "Type");
             DrawSectionField("_yearCountry", "Tear & Country");
+            DrawSectionField("countryFlag", "Country Flag");
             DrawSectionField("_mainGenre", "Main Genre");
             DrawSectionField("_subGenres", "Sub Genres");
+            DrawSectionField("_label", "Label");
             DrawSectionField("m_artist_title", "Artist & Title");
             DrawSectionField("m_total_length", "Total Length");
             DrawSectionField("m_tracks", "Tracks");
+            DrawSectionField("_info", "Info");
         }
         if (DrawFoldout("Panels & Zone's"))
         {

@@ -77,6 +77,6 @@ public class AppState : IAppState
 
     public void SubscribeToMusicMateStateChanged(MusicMateStateChangedHandler handler) => StateChanged += handler;
 
-    public void UnsubscribeFromMusicMateStateChangedd(MusicMateStateChangedHandler handler) => StateChanged -= handler;
+    public void UnsubscribeFromMusicMateStateChanged(MusicMateStateChangedHandler handler) => StateChanged -= handler;
 
 }

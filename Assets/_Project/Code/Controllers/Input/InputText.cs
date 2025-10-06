@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class InputController : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
+public class InputText : MusicMateBehavior, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] string _labelText;
 

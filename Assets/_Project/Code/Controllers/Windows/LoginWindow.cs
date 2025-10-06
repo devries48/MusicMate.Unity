@@ -5,9 +5,9 @@ using UnityEngine.UI;
 public class LoginWindow : MusicMateBehavior
 {
     [Header("Controllers")]
-    [SerializeField] InputController _inputUrl;
-    [SerializeField] InputController _inputUser;
-    [SerializeField] InputController _inputPassword;
+    [SerializeField] InputText _inputUrl;
+    [SerializeField] InputText _inputUser;
+    [SerializeField] InputText _inputPassword;
 
     [Header("Elements")]
     [SerializeField] TextMeshProUGUI _titleText;

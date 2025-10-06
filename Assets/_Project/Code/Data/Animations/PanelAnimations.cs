@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using Interfaces.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -277,6 +278,7 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
         zone.m_backgroundImage.gameObject.SetActive(true);
         zone.m_zoneImage.gameObject.SetActive(true);
         zone.m_zoneLabel.gameObject.SetActive(true);
+        zone.m_backgroundLabel.gameObject.SetActive(true);
         zone.m_zoneLabel.DOFade(1f, 0.2f);
         zone.m_backgroundImage.DOFade(0.01f, 0.2f);
     }
@@ -297,6 +299,7 @@ public class PanelAnimations : ScriptableObject, IPanelAnimations
                 () =>
                 {
                     zone.m_zoneLabel.gameObject.SetActive(false);
+                    zone.m_backgroundLabel.gameObject.SetActive(false);
                 });
     }
 

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using Interfaces.Managers;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "MusicMate/Animations/Grid Animations", fileName = "Grid Animations")]

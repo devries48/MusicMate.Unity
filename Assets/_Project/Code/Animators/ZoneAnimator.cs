@@ -15,6 +15,7 @@ public class ZoneAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExi
     public Transform m_zone;
     public TextMeshProUGUI m_zoneLabel;
     public Image m_backgroundImage;
+    public Image m_backgroundLabel;
     public Image m_zoneImage;
 
     protected override void InitializeValues()
@@ -26,6 +27,7 @@ public class ZoneAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExi
     protected override void ApplyColors()
     {
         ChangeColor(MusicMateColor.Accent, m_backgroundImage, m_zoneImage);
+        ChangeColor(MusicMateColor.Panel, m_backgroundLabel);
         ChangeColor(MusicMateColor.Accent, m_zoneLabel);
     }
 
@@ -43,7 +45,7 @@ public class ZoneAnimator : MusicMateBehavior, IPointerEnterHandler, IPointerExi
 
 #if UNITY_EDITOR
 
-    // To suppress message: "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate”  
+    // To suppress message: "SendMessage cannot be called during Awake, CheckConsistency, or OnValidateï¿½  
     void OnValidate() { EditorApplication.delayCall += OnValidateDelayed; }
 
     void OnValidateDelayed()

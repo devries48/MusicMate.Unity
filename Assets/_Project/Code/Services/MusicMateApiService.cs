@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
@@ -82,12 +84,20 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
     public void GetRelease(Guid id, Action<ReleaseModel> callback) => StartCoroutine(GetReleaseCore(id, callback));
 
     public void GetArtist(Guid id, Action<ArtistModel> callback) => StartCoroutine(GetArtistCore(id, callback));
+    
+    public void GetSuggestions(LookupSuggestion lookup, string query, Action<IReadOnlyList<SuggestionResult>> callback)
+    {
+        var endpoint = $"lookup/{lookup}?query={Uri.EscapeDataString(query)}";
+        
+        StopCoroutine(GetSuggestionsCore(endpoint, callback));
+        StartCoroutine(GetSuggestionsCore(endpoint, callback));
+    }
 
     public void DownloadImage(string url, Action<Sprite> callback) => StartCoroutine(GetImage(url, callback));
     
     public void GetFolderImport(int pageNumber, int pageSize, Action<PagedResult<ImportReleaseResult>> callback)
     {
-        var endpoint = $"import/find/disk?pageNumber={pageNumber}&pageSize={pageSize}";
+        var endpoint = $"import/disk/find?pageNumber={pageNumber}&pageSize={pageSize}";
         StartCoroutine(GetFolderImportCore(endpoint, callback));
     }
 
@@ -190,6 +200,24 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
             }
         }
     }
+    
+    public async Task<List<SuggestionResult>> GetSuggestionsAsync(LookupSuggestion lookup, string query)
+    {
+        var url = $"https://yourserver/api/lookup/{lookup}?query={Uri.EscapeDataString(query)}";
+
+        using var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync(url);
+
+        response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<List<SuggestionResult>>(json);
+    }
+
+    IEnumerator GetSuggestionsCore(string endpoint, Action<IReadOnlyList<SuggestionResult>> callback)
+    {
+        yield return GetRequest(endpoint, callback);
+    }
 
     //TODO Cache images
     IEnumerator GetImage(string url, Action<Sprite> callback)
@@ -201,15 +229,15 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
             Debug.Log(wrt.error);
         else
         {
-            Texture2D tex = ((DownloadHandlerTexture)wrt.downloadHandler).texture;
-            Sprite sprite = Sprite.Create(
+            var tex = ((DownloadHandlerTexture)wrt.downloadHandler).texture;
+            var sprite = Sprite.Create(
                 tex,
                 new Rect(0, 0, tex.width, tex.height),
                 new Vector2(tex.width / 2, tex.height / 2));
             callback.Invoke(sprite);
         }
     }
-     
+    
     private IEnumerator GetFolderImportCore(string endpoint, Action<PagedResult<ImportReleaseResult>> callback)
     {
         yield return GetRequest(endpoint, callback);
@@ -238,6 +266,7 @@ public class MusicMateApiService : SceneSingleton<MusicMateApiService>, IMusicMa
         var args = new ErrorEventArgs(ErrorType.Api, GetDescription(wr),ex.Message);
         ErrorOccurred?.Invoke(args);
     }
+    
     void InvokeErrorOccurred(string q, Exception ex)
     {
         var args = new ErrorEventArgs(ErrorType.Api, GetMessage(q), ex.Message);

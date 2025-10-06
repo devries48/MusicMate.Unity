@@ -33,7 +33,7 @@ public class ToolbarModeController : ToolbarControllerBase
         _importModeButton.OnButtonClick.RemoveListener(OnImportModeClicked);
         _providersButton.OnButtonClick.RemoveListener(OnProvidersToggleClicked);
 
-        Manager.AppState.UnsubscribeFromMusicMateStateChangedd(OnMusicMateStateChanged);
+        Manager.AppState.UnsubscribeFromMusicMateStateChanged(OnMusicMateStateChanged);
     }
 
     protected override void InitializeComponents()
